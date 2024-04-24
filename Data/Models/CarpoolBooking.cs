@@ -1,13 +1,15 @@
-﻿namespace ecomove_back.Data.Models;
-
-public class CarpoolBooking
+﻿namespace ecomove_back.Data.Models
 {
-    public bool Confirmed { get; set; }
 
-    public Guid CarpoolAnnouncementId { get; set; }
-    public CarpoolAnnouncement CarpoolAnnouncement { get; set; }
+    public class CarpoolBooking
+    {
+        public bool Confirmed { get; set; }
 
-    public string AppUserId { get; set; }
-    public AppUser AppUser { get; set; }
+        public Guid CarpoolAnnouncementId { get; set; }
+        public CarpoolAnnouncement CarpoolAnnouncement { get; set; }
+
+        public string AppUserId { get; set; }
+        public AppUser AppUser { get; set; }
+    }
+
 }
-

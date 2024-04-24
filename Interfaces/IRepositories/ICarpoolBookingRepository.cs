@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ecomove_back.Repositories.VehicleBrand
+namespace ecomove_back.Interfaces.IRepositories
 {
-    public interface IVehicleBrandRepository
+    public interface ICarpoolBookingRepository
     {
 
     }

@@ -1,4 +1,3 @@
-
 namespace ecomove_back.Data.Models
 {
     public class Category

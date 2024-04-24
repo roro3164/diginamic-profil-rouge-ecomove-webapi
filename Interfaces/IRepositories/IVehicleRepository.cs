@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ecomove_back.Repositories.CarpoolBooking
+namespace ecomove_back.Interfaces.IRepositories
 {
-    public interface ICarpoolBookingRepository
+    public interface IVehicleRepository
     {
-        
+
     }
 }
