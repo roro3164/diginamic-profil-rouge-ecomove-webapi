@@ -29,7 +29,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<VehicleCategoryForCreationDTO>
                 {
-                    Message = $"La catégorie {category.CategroyLabel} a été bien créée",
+                    Message = $"La catégorie {category.CategroyLabel} a bien été créée",
                     Data = categoryDTO,
                     IsSuccess = true,
                 };
