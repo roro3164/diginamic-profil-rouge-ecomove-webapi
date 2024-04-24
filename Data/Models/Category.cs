@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace ecomove_back.Data.Models
 {
     public class Category
