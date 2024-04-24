@@ -7,3 +7,4 @@
         public required bool IsSuccess { get; set; }
     }
 }
+
