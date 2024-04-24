@@ -7,6 +7,8 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddScoped<IVehicleStatusRepository, VehicleStatusRepository>();
 builder.Services.AddScoped<IVehicleBrandRepository, VehicleBrandRepository>();
 builder.Services.AddScoped<IVehicleCategoryRepository, VehicleCategoryRepository>();
 builder.Services.AddScoped<IVehicleMotorizationRepository, VehicleMotorizationRepository>();
