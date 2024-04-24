@@ -7,7 +7,7 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// VehicleCategory service 
+builder.Services.AddScoped<IVehicleBrandRepository, VehicleBrandRepository>();
 builder.Services.AddScoped<IVehicleCategoryRepository, VehicleCategoryRepository>();
 
 builder.Services.AddControllers();
