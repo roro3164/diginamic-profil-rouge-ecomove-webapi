@@ -15,7 +15,7 @@ namespace ecomove_back.Repositories
             _ecoMoveDbContext = ecoMoveDbContext;
         }
 
-        public async Task<Response<Category>> CreateVehicleCategoryAsync(VehicleCategoryForCreationDTO categoryDTO)
+        public async Task<Response<VehicleCategoryForCreationDTO>> CreateVehicleCategoryAsync(VehicleCategoryForCreationDTO categoryDTO)
         {
             Category category = new Category
             {
@@ -27,16 +27,16 @@ namespace ecomove_back.Repositories
                 await _ecoMoveDbContext.Categories.AddAsync(category);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<Category>
+                return new Response<VehicleCategoryForCreationDTO>
                 {
                     Message = $"La catégorie {category.CategroyLabel} a été bien créée",
-                    Data = category,
+                    Data = categoryDTO,
                     IsSuccess = true,
                 };
             }
             catch (Exception e)
             {
-                return new Response<Category>
+                return new Response<VehicleCategoryForCreationDTO>
                 {
                     Message = e.Message,
                     Data = null,

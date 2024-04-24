@@ -20,7 +20,7 @@ namespace ecomove_back.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateVehicleCategory(VehicleCategoryForCreationDTO vehicleCategory)
         {
-            Response<Category> response = await _vehicleCategoryRepository.CreateVehicleCategoryAsync(vehicleCategory);
+            Response<VehicleCategoryForCreationDTO> response = await _vehicleCategoryRepository.CreateVehicleCategoryAsync(vehicleCategory);
 
             if (response.IsSuccess)
             {

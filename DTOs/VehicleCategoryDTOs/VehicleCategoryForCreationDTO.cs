@@ -1,6 +1,4 @@
-﻿using ecomove_back.Data.Models;
-
-namespace ecomove_back.DTOs.VehicleCategoryDTOs
+﻿namespace ecomove_back.DTOs.VehicleCategoryDTOs
 {
     public class VehicleCategoryForCreationDTO
     {

@@ -6,7 +6,7 @@ namespace ecomove_back.Interfaces.IRepositories
 {
     public interface IVehicleCategoryRepository
     {
-        Task<Response<Category>> CreateVehicleCategoryAsync(VehicleCategoryForCreationDTO category);
+        Task<Response<VehicleCategoryForCreationDTO>> CreateVehicleCategoryAsync(VehicleCategoryForCreationDTO category);
         Task<Response<Category>> UpdateVehicleCategoryAsync(int categoryId, VehicleCategoryForCreationDTO category);
         Task<Response<string>> DeleteVehicleCategoryAsync(int cateogoryId);
         Task<Response<Category>> GetVehicleCategoryByIdAsync(int cateogoryId);
