@@ -9,8 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IVehicleBrandRepository, VehicleBrandRepository>();
 builder.Services.AddScoped<IVehicleCategoryRepository, VehicleCategoryRepository>();
+builder.Services.AddScoped<IVehicleMotorizationRepository, VehicleMotorizationRepository>();
 
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
