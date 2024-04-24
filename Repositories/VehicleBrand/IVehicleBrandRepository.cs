@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace ecomove_back.Repositories.VehicleBrand
 {
-    public interface IVehicleRepository
+    public interface IVehicleBrandRepository
     {
-        
+
     }
 }
