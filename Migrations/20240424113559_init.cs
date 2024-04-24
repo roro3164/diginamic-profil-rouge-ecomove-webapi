@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ecomove_back.Migrations
 {
     /// <inheritdoc />
-    public partial class RoleConstraint : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,7 +53,7 @@ namespace ecomove_back.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "Categories",
                 columns: table => new
                 {
                     CategoryId = table.Column<int>(type: "int", nullable: false)
@@ -62,7 +62,7 @@ namespace ecomove_back.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.CategoryId);
+                    table.PrimaryKey("PK_Categories", x => x.CategoryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -248,7 +248,7 @@ namespace ecomove_back.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vehicle",
+                name: "Vehicles",
                 columns: table => new
                 {
                     VehicleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -263,24 +263,24 @@ namespace ecomove_back.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vehicle", x => x.VehicleId);
+                    table.PrimaryKey("PK_Vehicles", x => x.VehicleId);
                     table.ForeignKey(
-                        name: "FK_Vehicle_Category_CategoryId",
+                        name: "FK_Vehicles_Categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "Category",
+                        principalTable: "Categories",
                         principalColumn: "CategoryId");
                     table.ForeignKey(
-                        name: "FK_Vehicle_Models_ModelId",
+                        name: "FK_Vehicles_Models_ModelId",
                         column: x => x.ModelId,
                         principalTable: "Models",
                         principalColumn: "ModelId");
                     table.ForeignKey(
-                        name: "FK_Vehicle_Motorizations_MotorizationId",
+                        name: "FK_Vehicles_Motorizations_MotorizationId",
                         column: x => x.MotorizationId,
                         principalTable: "Motorizations",
                         principalColumn: "MotorizationId");
                     table.ForeignKey(
-                        name: "FK_Vehicle_Status_StatusId",
+                        name: "FK_Vehicles_Status_StatusId",
                         column: x => x.StatusId,
                         principalTable: "Status",
                         principalColumn: "StatusId");
@@ -318,9 +318,9 @@ namespace ecomove_back.Migrations
                         principalTable: "CarpoolAddresses",
                         principalColumn: "CarpoolAddressId");
                     table.ForeignKey(
-                        name: "FK_CarpoolAnnouncements_Vehicle_VehicleId",
+                        name: "FK_CarpoolAnnouncements_Vehicles_VehicleId",
                         column: x => x.VehicleId,
-                        principalTable: "Vehicle",
+                        principalTable: "Vehicles",
                         principalColumn: "VehicleId");
                 });
 
@@ -344,9 +344,9 @@ namespace ecomove_back.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RentalVehicles_Vehicle_VehicleId",
+                        name: "FK_RentalVehicles_Vehicles_VehicleId",
                         column: x => x.VehicleId,
-                        principalTable: "Vehicle",
+                        principalTable: "Vehicles",
                         principalColumn: "VehicleId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -458,23 +458,23 @@ namespace ecomove_back.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicle_CategoryId",
-                table: "Vehicle",
+                name: "IX_Vehicles_CategoryId",
+                table: "Vehicles",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicle_ModelId",
-                table: "Vehicle",
+                name: "IX_Vehicles_ModelId",
+                table: "Vehicles",
                 column: "ModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicle_MotorizationId",
-                table: "Vehicle",
+                name: "IX_Vehicles_MotorizationId",
+                table: "Vehicles",
                 column: "MotorizationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicle_StatusId",
-                table: "Vehicle",
+                name: "IX_Vehicles_StatusId",
+                table: "Vehicles",
                 column: "StatusId");
         }
 
@@ -512,13 +512,13 @@ namespace ecomove_back.Migrations
                 name: "CarpoolAddresses");
 
             migrationBuilder.DropTable(
-                name: "Vehicle");
+                name: "Vehicles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Models");

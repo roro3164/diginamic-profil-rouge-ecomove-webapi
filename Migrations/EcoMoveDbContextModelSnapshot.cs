@@ -339,7 +339,7 @@ namespace ecomove_back.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ecomove_back.Data.Models.Model", b =>
@@ -465,7 +465,7 @@ namespace ecomove_back.Migrations
 
                     b.HasIndex("StatusId");
 
-                    b.ToTable("Vehicle");
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
