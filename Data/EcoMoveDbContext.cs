@@ -9,13 +9,16 @@ namespace ecomove_back.Data;
 
 public class EcoMoveDbContext : IdentityDbContext<AppUser>
 {
-    DbSet<Brand> Brands { get; set; }
-    DbSet<CarpoolAddress> CarpoolAddresses { get; set; }
-    DbSet<CarpoolAnnouncement> CarpoolAnnouncements { get; set; }
-    DbSet<CarpoolBooking> CarpoolBookings { get; set; }
-    DbSet<Motorization> Motorizations { get; set; }
-    DbSet<RentalVehicle> RentalVehicles { get; set; }
-    DbSet<Model> Models { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<CarpoolAddress> CarpoolAddresses { get; set; }
+    public DbSet<CarpoolAnnouncement> CarpoolAnnouncements { get; set; }
+    public DbSet<CarpoolBooking> CarpoolBookings { get; set; }
+    public DbSet<Motorization> Motorizations { get; set; }
+    public DbSet<RentalVehicle> RentalVehicles { get; set; }
+    public DbSet<Model> Models { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Status> Status { get; set; }
+    public DbSet<Vehicle> Vehicles { get; set; }
 
     public EcoMoveDbContext(DbContextOptions<EcoMoveDbContext> options) : base(options)
     {
