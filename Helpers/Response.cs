@@ -6,7 +6,5 @@
         public T? Data { get; set; }
         public required bool IsSuccess { get; set; }
     }
-
-    
-
 }
+

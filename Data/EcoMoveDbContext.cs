@@ -1,9 +1,7 @@
 ﻿using ecomove_back.Data.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
-using System.Text.RegularExpressions;
+
 
 namespace ecomove_back.Data;
 
@@ -26,10 +24,11 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+
         builder.Entity<CarpoolAnnouncement>()
-                    .HasOne(m => m.PickupAddress)
-                    .WithOne(p => p.PickupAddressCarpool)
-                    .OnDelete(DeleteBehavior.NoAction);
+                     .HasOne(m => m.PickupAddress)
+                     .WithOne(p => p.PickupAddressCarpool)
+                     .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<CarpoolAnnouncement>()
             .HasOne(m => m.DropOffAddress)
