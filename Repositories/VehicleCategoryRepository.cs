@@ -3,6 +3,7 @@ using ecomove_back.Data.Models;
 using ecomove_back.DTOs.VehicleCategoryDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace ecomove_back.Repositories
 {
@@ -29,7 +30,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<VehicleCategoryForCreationDTO>
                 {
-                    Message = $"La catégorie {category.CategroyLabel} a été bien créée",
+                    Message = $"La catégorie {category.CategroyLabel} a bien été créée",
                     Data = categoryDTO,
                     IsSuccess = true,
                 };
@@ -39,15 +40,44 @@ namespace ecomove_back.Repositories
                 return new Response<VehicleCategoryForCreationDTO>
                 {
                     Message = e.Message,
-                    Data = null,
                     IsSuccess = false,
                 };
             }
         }
 
-        public Task<Response<string>> DeleteVehicleCategoryAsync(int cateogoryId)
+        public async Task<Response<string>> DeleteVehicleCategoryAsync(int cateogoryId)
         {
-            throw new NotImplementedException();
+            Category? category = await _ecoMoveDbContext
+            .Categories.FirstOrDefaultAsync(category => category.CategoryId == cateogoryId);
+
+            if (category is null)
+            {
+                return new Response<string>
+                {
+                    Message = "La catégorie que vous voulez supprimer n'existe pas.",
+                    IsSuccess = false,
+                };
+            }
+
+            try
+            {
+                _ecoMoveDbContext.Categories.Remove(category);
+                await _ecoMoveDbContext.SaveChangesAsync();
+
+                return new Response<string>
+                {
+                    Message = $"La catégorie {category.CategroyLabel} a été supprimée avec succés.",
+                    IsSuccess = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<string>
+                {
+                    Message = ex.Message,
+                    IsSuccess = false
+                };
+            }
         }
 
         public Task<Response<List<Category>>> GetAllVehiclesCategoryAsync()

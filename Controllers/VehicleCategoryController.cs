@@ -31,5 +31,20 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
             }
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteVehicleCategory(int vehicleCategoryId)
+        {
+            Response<string> response = await _vehicleCategoryRepository.DeleteVehicleCategoryAsync(vehicleCategoryId);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return Problem(response.Message);
+            }
+        }
     }
 }
