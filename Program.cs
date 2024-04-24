@@ -1,4 +1,6 @@
 using ecomove_back.Data;
+using ecomove_back.Interfaces.IRepositories;
+using ecomove_back.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -6,6 +8,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IVehicleStatusRepository, VehicleStatusRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
