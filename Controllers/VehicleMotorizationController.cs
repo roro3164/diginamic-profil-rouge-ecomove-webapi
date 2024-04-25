@@ -40,10 +40,10 @@ namespace ecomove_back.Controllers
 
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteVehicleMotorization(int vehicleMotorizationId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteVehicleMotorization(int id)
         {
-            Response<string> response = await _vehicleMotorizationRepository.DeleteVehicleMotorizationAsync(vehicleMotorizationId);
+            Response<string> response = await _vehicleMotorizationRepository.DeleteVehicleMotorizationAsync(id);
 
             if (response.IsSuccess)
                 return Ok(response.Message);
