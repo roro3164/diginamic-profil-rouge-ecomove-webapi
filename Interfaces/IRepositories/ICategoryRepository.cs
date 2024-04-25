@@ -1,4 +1,4 @@
-using ecomove_back.DTOs.VehicleVehicleCategoryDTOs;
+using ecomove_back.DTOs.CategoryDTOs;
 using ecomove_back.Helpers;
 
 namespace ecomove_back.Interfaces.IRepositories
