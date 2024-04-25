@@ -24,8 +24,6 @@ namespace ecomove_back.Controllers
 
             if (response.IsSuccess)
                 return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
             else
                 return Problem(response.Message);
         }
@@ -60,8 +58,6 @@ namespace ecomove_back.Controllers
                 return NotFound(response.Message);
             else
                 return Problem(response.Message);
-
-
         }
     }
 }
