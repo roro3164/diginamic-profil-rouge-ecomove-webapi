@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 namespace ecomove_back.Repositories
 {
     public class VehicleMotorizationRepository : IVehicleMotorizationRepository
-    { 
-        private EcoMoveDbContext _dbContext;
+    {
+        private EcoMoveDbContext _ecoMoveDbContext;
         public VehicleMotorizationRepository(EcoMoveDbContext ecoMoveDbContext)
         {
-            _dbContext = ecoMoveDbContext;
+            _ecoMoveDbContext = ecoMoveDbContext;
         }
 
         public async Task<Response<VehicleMotorizationForCreationDTO>> CreateVehicleMotorizationAsync(VehicleMotorizationForCreationDTO motorizationDTO)
@@ -29,11 +29,11 @@ namespace ecomove_back.Repositories
             try
             {
 
-                await _dbContext.Motorizations.AddAsync(motorizationVehicle);
-                await _dbContext.SaveChangesAsync();
+                await _ecoMoveDbContext.Motorizations.AddAsync(motorizationVehicle);
+                await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<VehicleMotorizationForCreationDTO> 
-                { 
+                return new Response<VehicleMotorizationForCreationDTO>
+                {
                     Message = $"La motorisation {motorizationVehicle.MotorizationLabel} a bien été créée",
                     Data = motorizationDTO,
                     IsSuccess = true
@@ -41,7 +41,42 @@ namespace ecomove_back.Repositories
             }
             catch (Exception e)
             {
-                return new Response<VehicleMotorizationForCreationDTO> 
+                return new Response<VehicleMotorizationForCreationDTO>
+                {
+                    Message = e.Message,
+                    IsSuccess = false
+                };
+            }
+        }
+        public async Task<Response<string>> DeleteVehicleMotorizationAsync(int motorizationId)
+        {
+            Motorization? motorization = await _ecoMoveDbContext
+            .Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == motorizationId);
+
+            if (motorization is null)
+            {
+                return new Response<string>
+                {
+                    Message = "La motorisation que vous voulez supprimer n'existe pas.",
+                    IsSuccess = false,
+                    CodeStatus = 404
+                };
+            }
+
+            try
+            {
+                _ecoMoveDbContext.Motorizations.Remove(motorization);
+                await _ecoMoveDbContext.SaveChangesAsync();
+
+                return new Response<string>
+                {
+                    Message = $"La motorisation {motorization.MotorizationLabel} a été supprimée avec succés.",
+                    IsSuccess = true
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<string>
                 {
                     Message = e.Message,
                     IsSuccess = false

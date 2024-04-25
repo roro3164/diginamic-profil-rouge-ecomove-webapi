@@ -11,5 +11,6 @@ namespace ecomove_back.Interfaces.IRepositories
     public interface IVehicleMotorizationRepository
     {
         public Task<Response<VehicleMotorizationForCreationDTO>> CreateVehicleMotorizationAsync(VehicleMotorizationForCreationDTO MotorizationDTO);
+        Task<Response<string>> DeleteVehicleMotorizationAsync(int vehicleMotorizationId);
     }
 }
