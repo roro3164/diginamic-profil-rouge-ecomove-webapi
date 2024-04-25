@@ -1,6 +1,6 @@
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs.VehicleCategoryDTOs;
+using ecomove_back.DTOs.VehicleVehicleCategoryDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +16,11 @@ namespace ecomove_back.Repositories
             _ecoMoveDbContext = ecoMoveDbContext;
         }
 
-        public async Task<Response<VehicleCategoryForCreationDTO>> CreateVehicleCategoryAsync(VehicleCategoryForCreationDTO categoryDTO)
+        public async Task<Response<VehicleCategoryDTO>> CreateVehicleCategoryAsync(VehicleCategoryDTO VehicleCategoryDTO)
         {
             Category category = new Category
             {
-                CategoryLabel = categoryDTO.CategroyLabel,
+                CategoryLabel = VehicleCategoryDTO.CategoryLabel,
             };
 
             try
@@ -28,16 +28,17 @@ namespace ecomove_back.Repositories
                 await _ecoMoveDbContext.Categories.AddAsync(category);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<VehicleCategoryForCreationDTO>
+                return new Response<VehicleCategoryDTO>
                 {
                     Message = $"La catégorie {category.CategoryLabel} a bien été créée",
-                    Data = categoryDTO,
+                    Data = VehicleCategoryDTO,
                     IsSuccess = true,
+                    CodeStatus = 201,
                 };
             }
             catch (Exception e)
             {
-                return new Response<VehicleCategoryForCreationDTO>
+                return new Response<VehicleCategoryDTO>
                 {
                     Message = e.Message,
                     IsSuccess = false,
@@ -80,22 +81,22 @@ namespace ecomove_back.Repositories
             }
         }
 
-        public async Task<Response<List<VehicleCategoryForCreationDTO>>> GetAllVehiclesCategoriesAsync()
+        public async Task<Response<List<VehicleCategoryDTO>>> GetAllVehiclesCategoriesAsync()
         {
             try
             {
                 List<Category> categories = await _ecoMoveDbContext.Categories.ToListAsync();
 
-                List<VehicleCategoryForCreationDTO> vehicleCategoriesDTO = new();
+                List<VehicleCategoryDTO> vehicleCategoriesDTO = new();
 
                 foreach (var category in categories)
                 {
-                    vehicleCategoriesDTO.Add(new VehicleCategoryForCreationDTO { CategroyLabel = category.CategoryLabel });
+                    vehicleCategoriesDTO.Add(new VehicleCategoryDTO { CategoryLabel = category.CategoryLabel });
                 }
 
                 if (categories.Count > 0)
                 {
-                    return new Response<List<VehicleCategoryForCreationDTO>>
+                    return new Response<List<VehicleCategoryDTO>>
                     {
                         IsSuccess = true,
                         Data = vehicleCategoriesDTO,
@@ -105,7 +106,7 @@ namespace ecomove_back.Repositories
                 }
                 else
                 {
-                    return new Response<List<VehicleCategoryForCreationDTO>>
+                    return new Response<List<VehicleCategoryDTO>>
                     {
                         IsSuccess = false,
                         Message = "La liste des catégories est vide",
@@ -116,7 +117,7 @@ namespace ecomove_back.Repositories
             }
             catch (Exception ex)
             {
-                return new Response<List<VehicleCategoryForCreationDTO>>
+                return new Response<List<VehicleCategoryDTO>>
                 {
                     IsSuccess = false,
                     Message = ex.Message
@@ -125,14 +126,79 @@ namespace ecomove_back.Repositories
 
         }
 
-        public Task<Response<Category>> GetVehicleCategoryByIdAsync(int cateogoryId)
+        public async Task<Response<VehicleCategoryDTO>> GetVehicleCategoryByIdAsync(int cateogoryId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Category? category = await _ecoMoveDbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == cateogoryId);
+
+
+                if (category is null)
+                {
+                    return new Response<VehicleCategoryDTO>
+                    {
+                        CodeStatus = 404,
+                        Message = $"La catégorie que vous recherchez n'existe pas.",
+                        IsSuccess = false
+                    };
+                }
+                else
+                {
+                    VehicleCategoryDTO vehicleVehicleCategoryDTO = new() { CategoryLabel = category.CategoryLabel };
+
+                    return new Response<VehicleCategoryDTO>
+                    {
+                        Data = vehicleVehicleCategoryDTO,
+                        CodeStatus = 200,
+                        IsSuccess = true,
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Response<VehicleCategoryDTO>
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                };
+            }
         }
 
-        public Task<Response<Category>> UpdateVehicleCategoryAsync(int categoryId, VehicleCategoryForCreationDTO category)
+        public async Task<Response<VehicleCategoryDTO>> UpdateVehicleCategoryAsync(int categoryId, VehicleCategoryDTO VehicleCategoryDTO)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Category? category = await _ecoMoveDbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == categoryId);
+
+                if (category is null)
+                {
+                    return new Response<VehicleCategoryDTO>
+                    {
+                        CodeStatus = 404,
+                        Message = "La catégorie que vous recherez n'existe pas",
+                        IsSuccess = false,
+                    };
+                }
+
+                category.CategoryLabel = VehicleCategoryDTO.CategoryLabel;
+                await _ecoMoveDbContext.SaveChangesAsync();
+
+                return new Response<VehicleCategoryDTO>
+                {
+                    Message = $"La catégorie a été bien modifiéée",
+                    IsSuccess = true,
+                    CodeStatus = 201,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<VehicleCategoryDTO>
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500,
+                };
+            }
         }
     }
 }
