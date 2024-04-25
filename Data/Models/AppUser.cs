@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
 
 namespace ecomove_back.Data.Models
 {
     public class AppUser : IdentityUser
     {
-        public string RoleId { get; set; }
+        public string RoleId { get; set; } = string.Empty;
         [ForeignKey("RoleId")]
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public IdentityRole Role { get; set; }
+        public IdentityRole Role { get; set; } = new();
 
         [InverseProperty(nameof(AppUser))]
         public List<RentalVehicle>? RentalVehicles { get; set; }
@@ -18,6 +17,6 @@ namespace ecomove_back.Data.Models
         [InverseProperty(nameof(AppUser))]
         public List<CarpoolBooking>? CarpoolsBooking { get; set; }
 
-        public List<CarpoolAnnouncement>? CarpoolsAnnouncements { get; set;}
+        public List<CarpoolAnnouncement>? CarpoolsAnnouncements { get; set; }
     }
 }

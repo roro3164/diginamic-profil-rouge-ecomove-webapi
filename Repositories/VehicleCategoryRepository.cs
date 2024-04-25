@@ -20,7 +20,7 @@ namespace ecomove_back.Repositories
         {
             Category category = new Category
             {
-                CategroyLabel = categoryDTO.CategroyLabel,
+                CategoryLabel = categoryDTO.CategroyLabel,
             };
 
             try
@@ -30,7 +30,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<VehicleCategoryForCreationDTO>
                 {
-                    Message = $"La catégorie {category.CategroyLabel} a bien été créée",
+                    Message = $"La catégorie {category.CategoryLabel} a bien été créée",
                     Data = categoryDTO,
                     IsSuccess = true,
                 };
@@ -66,7 +66,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<string>
                 {
-                    Message = $"La catégorie {category.CategroyLabel} a été supprimée avec succés.",
+                    Message = $"La catégorie {category.CategoryLabel} a été supprimée avec succés.",
                     IsSuccess = true
                 };
             }

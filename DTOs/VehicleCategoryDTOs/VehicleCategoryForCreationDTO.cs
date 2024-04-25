@@ -2,6 +2,6 @@
 {
     public class VehicleCategoryForCreationDTO
     {
-        public string CategroyLabel { get; set; }
+        public string CategroyLabel { get; set; } = string.Empty;
     }
 }

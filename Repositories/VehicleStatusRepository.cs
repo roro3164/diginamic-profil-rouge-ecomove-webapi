@@ -38,13 +38,13 @@ namespace ecomove_back.Repositories
 
                 return new Response<VehicleStatusForCreationDTO>
                 {
-                    Message = $"Le statut {statusVehicle.StatusLabel} a bien été créé",
+                    Message = $"Le statut {statusVehicle.StatusLabel} a bien ï¿½tï¿½ crï¿½ï¿½",
                     Data = statusDTO,
                     IsSuccess = true
                 };
 
             }
-            catch (Exception e)      
+            catch (Exception e)
             {
                 return new Response<VehicleStatusForCreationDTO>
                 {
@@ -53,9 +53,9 @@ namespace ecomove_back.Repositories
                 };
             }
 
-                        
+
         }
 
-       
+
     }
 }

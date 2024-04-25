@@ -2,6 +2,6 @@
 {
     public class VehicleBrandForCreationDTO
     {
-        public string BrandLabel { get; set; }
+        public string BrandLabel { get; set; } = string.Empty;
     }
 }

@@ -1,12 +1,11 @@
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.VehicleStatusDTOs;
 
+using ecomove_back.Data;
 
-namespace ecomove_back.DTOs.VehicleStatusDTOs 
-{ 
-	public class VehicleStatusForCreationDTO 
-	
-	{ 
-		public string StatusLabel { get; set; }
-	} 
+namespace ecomove_back.DTOs.VehicleStatusDTOs
+{
+	public class VehicleStatusForCreationDTO
+
+	{
+		public StatusEnum StatusLabel { get; set; }
+	}
 }

@@ -25,15 +25,15 @@ namespace ecomove_back.Controllers
         {
             Response<VehicleStatusForCreationDTO> response = await _vehicleStatusRepository.CreateVehicleStatusAsync(vehicleStatusForCreationDTO);
 
-            if (response.IsSuccess) 
+            if (response.IsSuccess)
             {
                 return Ok(response);
             }
-            else 
+            else
             {
                 return Problem(response.Message);
             }
         }
 
-    } 
+    }
 }

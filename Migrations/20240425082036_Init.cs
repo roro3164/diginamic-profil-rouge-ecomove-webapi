@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ecomove_back.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,7 +31,7 @@ namespace ecomove_back.Migrations
                 {
                     BrandId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BrandLabel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    BrandLabel = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,7 +43,7 @@ namespace ecomove_back.Migrations
                 columns: table => new
                 {
                     CarpoolAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: false),
                     Latitude = table.Column<double>(type: "float", nullable: false)
                 },
@@ -58,7 +58,7 @@ namespace ecomove_back.Migrations
                 {
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CategroyLabel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CategoryLabel = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,7 +71,7 @@ namespace ecomove_back.Migrations
                 {
                     MotorizationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MotorizationLabel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    MotorizationLabel = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -84,7 +84,7 @@ namespace ecomove_back.Migrations
                 {
                     StatusId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StatusLabel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    StatusLabel = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -149,7 +149,7 @@ namespace ecomove_back.Migrations
                 {
                     ModelId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ModelLabel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ModelLabel = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BrandId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -253,7 +253,7 @@ namespace ecomove_back.Migrations
                 {
                     VehicleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CarSeatNumber = table.Column<int>(type: "int", nullable: false),
-                    Registration = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Registration = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Photo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     C02emission = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StatusId = table.Column<int>(type: "int", nullable: false),
@@ -421,6 +421,18 @@ namespace ecomove_back.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Brands_BrandLabel",
+                table: "Brands",
+                column: "BrandLabel",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CarpoolAddresses_Address",
+                table: "CarpoolAddresses",
+                column: "Address",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CarpoolAnnouncements_AppUserId",
                 table: "CarpoolAnnouncements",
                 column: "AppUserId");
@@ -428,14 +440,12 @@ namespace ecomove_back.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CarpoolAnnouncements_DropOffAddressId",
                 table: "CarpoolAnnouncements",
-                column: "DropOffAddressId",
-                unique: true);
+                column: "DropOffAddressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarpoolAnnouncements_PickupAddressId",
                 table: "CarpoolAnnouncements",
-                column: "PickupAddressId",
-                unique: true);
+                column: "PickupAddressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarpoolAnnouncements_VehicleId",
@@ -448,14 +458,32 @@ namespace ecomove_back.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Categories_CategoryLabel",
+                table: "Categories",
+                column: "CategoryLabel",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Models_BrandId",
                 table: "Models",
                 column: "BrandId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Motorizations_MotorizationLabel",
+                table: "Motorizations",
+                column: "MotorizationLabel",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RentalVehicles_AppUserId",
                 table: "RentalVehicles",
                 column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Status_StatusLabel",
+                table: "Status",
+                column: "StatusLabel",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_CategoryId",
@@ -471,6 +499,12 @@ namespace ecomove_back.Migrations
                 name: "IX_Vehicles_MotorizationId",
                 table: "Vehicles",
                 column: "MotorizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_Registration",
+                table: "Vehicles",
+                column: "Registration",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_StatusId",

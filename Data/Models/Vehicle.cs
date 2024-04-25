@@ -1,31 +1,38 @@
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ecomove_back.Data.Models
 {
+    [Index("Registration", IsUnique = true)]
     public class Vehicle
     {
         public Guid VehicleId { get; set; }
+
+        [Range(2, 8)]
         public int CarSeatNumber { get; set; }
-        public string Registration { get; set; }
-        public string Photo { get; set; }
-        public string C02emission { get; set; }
+
+        [MaxLength(10)]
+        public string Registration { get; set; } = string.Empty;
+
+        [DataType(DataType.Url)]
+        public string Photo { get; set; } = string.Empty;
+        public string C02emission { get; set; } = string.Empty;
 
         public int StatusId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Status Status { get; set; }
-
+        public Status Status { get; set; } = new();
         public int CategoryId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Category Category { get; set; }
+        public Category Category { get; set; } = new();
 
         public int MotorizationId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Motorization Motorization { get; set; }
+        public Motorization Motorization { get; set; } = new();
 
         public int ModelId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Model Model { get; set; }
+        public Model Model { get; set; } = new();
 
         public List<RentalVehicle>? RentalVehicles { get; set; }
 

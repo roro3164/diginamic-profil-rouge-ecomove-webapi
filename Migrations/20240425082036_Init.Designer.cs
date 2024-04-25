@@ -12,8 +12,8 @@ using ecomove_back.Data;
 namespace ecomove_back.Migrations
 {
     [DbContext(typeof(EcoMoveDbContext))]
-    [Migration("20240424135808_init")]
-    partial class init
+    [Migration("20240425082036_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -239,9 +239,13 @@ namespace ecomove_back.Migrations
 
                     b.Property<string>("BrandLabel")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("BrandId");
+
+                    b.HasIndex("BrandLabel")
+                        .IsUnique();
 
                     b.ToTable("Brands");
                 });
@@ -254,7 +258,8 @@ namespace ecomove_back.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
@@ -263,6 +268,9 @@ namespace ecomove_back.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("CarpoolAddressId");
+
+                    b.HasIndex("Address")
+                        .IsUnique();
 
                     b.ToTable("CarpoolAddresses");
                 });
@@ -299,11 +307,9 @@ namespace ecomove_back.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.HasIndex("DropOffAddressId")
-                        .IsUnique();
+                    b.HasIndex("DropOffAddressId");
 
-                    b.HasIndex("PickupAddressId")
-                        .IsUnique();
+                    b.HasIndex("PickupAddressId");
 
                     b.HasIndex("VehicleId");
 
@@ -336,11 +342,15 @@ namespace ecomove_back.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
 
-                    b.Property<string>("CategroyLabel")
+                    b.Property<string>("CategoryLabel")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("CategoryId");
+
+                    b.HasIndex("CategoryLabel")
+                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
@@ -358,7 +368,8 @@ namespace ecomove_back.Migrations
 
                     b.Property<string>("ModelLabel")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("ModelId");
 
@@ -377,9 +388,13 @@ namespace ecomove_back.Migrations
 
                     b.Property<string>("MotorizationLabel")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("MotorizationId");
+
+                    b.HasIndex("MotorizationLabel")
+                        .IsUnique();
 
                     b.ToTable("Motorizations");
                 });
@@ -416,11 +431,13 @@ namespace ecomove_back.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusId"));
 
-                    b.Property<string>("StatusLabel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("StatusLabel")
+                        .HasColumnType("int");
 
                     b.HasKey("StatusId");
+
+                    b.HasIndex("StatusLabel")
+                        .IsUnique();
 
                     b.ToTable("Status");
                 });
@@ -453,7 +470,8 @@ namespace ecomove_back.Migrations
 
                     b.Property<string>("Registration")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -465,6 +483,9 @@ namespace ecomove_back.Migrations
                     b.HasIndex("ModelId");
 
                     b.HasIndex("MotorizationId");
+
+                    b.HasIndex("Registration")
+                        .IsUnique();
 
                     b.HasIndex("StatusId");
 
@@ -542,14 +563,14 @@ namespace ecomove_back.Migrations
                         .IsRequired();
 
                     b.HasOne("ecomove_back.Data.Models.CarpoolAddress", "DropOffAddress")
-                        .WithOne("DropOffAddressCarpool")
-                        .HasForeignKey("ecomove_back.Data.Models.CarpoolAnnouncement", "DropOffAddressId")
+                        .WithMany("DropOffAddressCarpool")
+                        .HasForeignKey("DropOffAddressId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ecomove_back.Data.Models.CarpoolAddress", "PickupAddress")
-                        .WithOne("PickupAddressCarpool")
-                        .HasForeignKey("ecomove_back.Data.Models.CarpoolAnnouncement", "PickupAddressId")
+                        .WithMany("PickupAddressCarpool")
+                        .HasForeignKey("PickupAddressId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -668,11 +689,9 @@ namespace ecomove_back.Migrations
 
             modelBuilder.Entity("ecomove_back.Data.Models.CarpoolAddress", b =>
                 {
-                    b.Navigation("DropOffAddressCarpool")
-                        .IsRequired();
+                    b.Navigation("DropOffAddressCarpool");
 
-                    b.Navigation("PickupAddressCarpool")
-                        .IsRequired();
+                    b.Navigation("PickupAddressCarpool");
                 });
 
             modelBuilder.Entity("ecomove_back.Data.Models.Category", b =>
