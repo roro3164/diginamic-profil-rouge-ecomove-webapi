@@ -80,36 +80,49 @@ namespace ecomove_back.Repositories
             }
         }
 
-        public async Task<Response<List<Category>>> GetAllVehiclesCategoryAsync()
+        public async Task<Response<List<VehicleCategoryForCreationDTO>>> GetAllVehiclesCategoriesAsync()
         {
-            List<Category> categories = await _ecoMoveDbContext.Categories.ToListAsync();
+            try
+            {
+                List<Category> categories = await _ecoMoveDbContext.Categories.ToListAsync();
 
-            if (categories.Count > 0)
-            {
-                return new Response<List<Category>>
+                List<VehicleCategoryForCreationDTO> vehicleCategoriesDTO = new();
+
+                foreach (var category in categories)
                 {
-                    IsSuccess = true,
-                    Data = categories,
-                    Message = null,
-                    CodeStatus = 200,
-                };
+                    vehicleCategoriesDTO.Add(new VehicleCategoryForCreationDTO { CategroyLabel = category.CategoryLabel });
+                }
+
+                if (categories.Count > 0)
+                {
+                    return new Response<List<VehicleCategoryForCreationDTO>>
+                    {
+                        IsSuccess = true,
+                        Data = vehicleCategoriesDTO,
+                        Message = null,
+                        CodeStatus = 200,
+                    };
+                }
+                else
+                {
+                    return new Response<List<VehicleCategoryForCreationDTO>>
+                    {
+                        IsSuccess = false,
+                        Message = "La liste des catégories est vide",
+                        CodeStatus = 404
+                    };
+                }
+
             }
-            else if (categories.Count == 0)
+            catch (Exception ex)
             {
-                return new Response<List<Category>>
+                return new Response<List<VehicleCategoryForCreationDTO>>
                 {
                     IsSuccess = false,
-                    Message = "La liste des catégories est vide",
-                    CodeStatus = 404
+                    Message = ex.Message
                 };
             }
-            else
-            {
-                return new Response<List<Category>>
-                {
-                    IsSuccess = false,
-                };
-            }
+
         }
 
         public Task<Response<Category>> GetVehicleCategoryByIdAsync(int cateogoryId)

@@ -52,20 +52,15 @@ namespace ecomove_back.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllVehicleCategories()
         {
-            Response<List<Category>> response = await _vehicleCategoryRepository.GetAllVehiclesCategoryAsync();
+            Response<List<VehicleCategoryForCreationDTO>> response = await _vehicleCategoryRepository.GetAllVehiclesCategoriesAsync();
 
             if (response.IsSuccess)
-            {
                 return Ok(response.Data);
-            }
             else if (response.CodeStatus == 404)
-            {
                 return NotFound(response.Message);
-            }
             else
-            {
                 return Problem(response.Message);
-            }
+
 
         }
     }
