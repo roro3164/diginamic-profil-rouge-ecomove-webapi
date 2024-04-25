@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
 using ecomove_back.DTOs.VehicleMotorizationDTOs;
+using ecomove_back.DTOs.VehicleVehicleCategoryDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using ecomove_back.Repositories;
@@ -90,6 +91,18 @@ namespace ecomove_back.Controllers
             {
                 return Problem(response.Message);
             }
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateMotorizationById(int motorizationId, VehicleMotorizationDTO VehicleMotorizationDTO)
+        {
+            Response<VehicleMotorizationDTO>? respone = await _vehicleMotorizationRepository.UpdateVehicleMotorizationByIdAsync(motorizationId, VehicleMotorizationDTO);
+
+            if (respone.IsSuccess)
+                return Ok(respone);
+            else if (respone.CodeStatus == 404)
+                return NotFound();
+            else
+                return Problem();
         }
     }      
 }
