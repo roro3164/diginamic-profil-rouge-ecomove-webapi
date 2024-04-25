@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ecomove_back.Data;
 using ecomove_back.Data.Models;
 using ecomove_back.DTOs.VehicleMotorizationDTOs;
 using ecomove_back.Helpers;
@@ -16,7 +17,7 @@ namespace ecomove_back.Controllers
     [Route("api/[controller]/[action]")]
     public class VehicleMotorizationController : ControllerBase
     {
-        private readonly IVehicleMotorizationRepository _vehicleMotorizationRepository; 
+        private readonly IVehicleMotorizationRepository _vehicleMotorizationRepository;
 
         public VehicleMotorizationController(IVehicleMotorizationRepository vehiculeMotorizationRepository)
         {
@@ -24,9 +25,9 @@ namespace ecomove_back.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateVehicleMotorization(VehicleMotorizationForCreationDTO vehicleMotorizationDTO)
+        public async Task<IActionResult> CreateVehicleMotorization(VehicleMotorizationDTO vehicleMotorizationDTO)
         {
-            Response<VehicleMotorizationForCreationDTO> response = await _vehicleMotorizationRepository.CreateVehicleMotorizationAsync(vehicleMotorizationDTO);
+            Response<VehicleMotorizationDTO> response = await _vehicleMotorizationRepository.CreateVehicleMotorizationAsync(vehicleMotorizationDTO);
 
             if (response.IsSuccess)
             {
@@ -52,5 +53,43 @@ namespace ecomove_back.Controllers
             else
                 return Problem(response.Message);
         }
-    }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllVehicleMotorizations()
+        {
+            Response<List<Motorization>> response = await _vehicleMotorizationRepository.GetAllVehicleMotorizationsAsync();
+
+            if (response.IsSuccess)
+            {
+                return Ok(response.Data);
+            }
+            else if (response.CodeStatus == 404)
+            {
+                return NotFound(response.Message);
+            }
+            else
+            {
+                return Problem(response.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetVehicleMotorizationById(int id)
+        {
+            Response<int> response = await _vehicleMotorizationRepository.GetVehicleMotorizationByIdAsync(id);
+            
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            else if (response.CodeStatus == 404)
+            {
+                return NotFound(response.Message);
+            }
+            else
+            {
+                return Problem(response.Message);
+            }
+        }
+    }      
 }
