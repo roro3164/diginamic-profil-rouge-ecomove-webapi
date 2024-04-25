@@ -22,9 +22,9 @@ namespace ecomove_back.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateVehicleStatus(VehicleStatusForCreationDTO vehicleStatusForCreationDTO)
+        public async Task<IActionResult> CreateVehicleStatus(VehicleStatusDTO vehicleStatusForCreationDTO)
         {
-            Response<VehicleStatusForCreationDTO> response = await _vehicleStatusRepository.CreateVehicleStatusAsync(vehicleStatusForCreationDTO);
+            Response<VehicleStatusDTO> response = await _vehicleStatusRepository.CreateVehicleStatusAsync(vehicleStatusForCreationDTO);
 
             if (response.IsSuccess)
             {
@@ -50,5 +50,34 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllVehicleStatusAsync()
+        {
+            
+            Response<List<VehicleStatusDTO>> response = await _vehicleStatusRepository.GetAllVehicleStatusAsync();
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+
+        }
+
+        [HttpGet("{vehicleStatusId}")]
+        public async Task<IActionResult> GetByIdVehicleStatusAsync(int vehicleStatusId)
+        {
+
+            Response<VehicleStatusDTO> response = await _vehicleStatusRepository.GetByIdVehicleStatusAsync(vehicleStatusId);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+
+        }
     }
 }

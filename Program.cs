@@ -9,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddScoped<IVehicleStatusRepository, VehicleStatusRepository>();
-builder.Services.AddScoped<IVehicleBrandRepository, VehicleBrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IVehicleMotorizationRepository, VehicleMotorizationRepository>();
 
 builder.Services.AddControllers();
