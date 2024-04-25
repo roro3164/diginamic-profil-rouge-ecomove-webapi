@@ -11,5 +11,7 @@ namespace ecomove_back.Interfaces.IRepositories
     public interface IVehicleBrandRepository
     {
         public Task<Response<VehicleBrandForCreationDTO>> CreateBrandVehicleAsync(VehicleBrandForCreationDTO vehicleBrandForCreationDTO);
+        public Task<Response<string>> DeleteBrandVehicleAsync(int brandId);
+
     }
 }
