@@ -15,9 +15,9 @@ namespace ecomove_back.Controllers
     [Route("api/[controller]/[action]")]
     public class VehicleBrandController : ControllerBase
     {
-        private readonly IVehicleBrandRepository _vehicleBrandRepository;
+        private readonly IBrandRepository _vehicleBrandRepository;
 
-        public VehicleBrandController(IVehicleBrandRepository vehicleBrandRepository)
+        public VehicleBrandController(IBrandRepository vehicleBrandRepository)
         {
             _vehicleBrandRepository = vehicleBrandRepository;
         }

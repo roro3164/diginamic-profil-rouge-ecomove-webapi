@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ecomove_back.Repositories
 {
-    public class VehicleBrandRepository : IVehicleBrandRepository
+    public class VehicleBrandRepository : IBrandRepository
     {
         private EcoMoveDbContext _ecoMoveDbContext;
 
