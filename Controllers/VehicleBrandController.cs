@@ -104,6 +104,24 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
         }
 
+        /// <summary>
+        /// Permet de modifier une Marque
+        /// </summary>
+        /// <param name="id">int : identifiant de la marque</param>
+        /// <param name="brandDto"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateVehiclesBrandById(int id, VehicleBrandDTO brandDto)
+        {
+            Response<VehicleBrandDTO> response = await _vehicleBrandRepository.UpdateBrandAysnc(id, brandDto);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
 
 
 

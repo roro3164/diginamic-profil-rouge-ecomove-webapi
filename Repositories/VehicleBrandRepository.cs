@@ -164,9 +164,43 @@ namespace ecomove_back.Repositories
             }
         }
 
+        public async Task<Response<VehicleBrandDTO>> UpdateBrandAysnc(int brandId, VehicleBrandDTO brandDTO)
+        {
+            try
+            {
+                Brand? brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == brandId);
 
+                if (brand == null)
+                {
+                    return new Response<VehicleBrandDTO>
+                    {
+                        Message = "La Marque que vous voulez modifier n'existe pas",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
 
+                brand.BrandLabel = brandDTO.BrandLabel;
 
+                await _ecoMoveDbContext.SaveChangesAsync();
 
-    }
+                return new Response<VehicleBrandDTO>
+                {
+                    Message = "La Marque a bien été modifiée",
+                    Data = brandDTO,
+                    IsSuccess = true
+                };
+
+            }
+            catch (Exception e)
+            {
+                return new Response<VehicleBrandDTO>
+                {
+                    Message = e.Message,
+                    IsSuccess = false
+                };
+            }
+
+        }
+     }
 }
