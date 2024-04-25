@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ecomove_back.DTOs.VehicleStatusDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using ecomove_back.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ecomove_back.Controllers
@@ -33,6 +34,20 @@ namespace ecomove_back.Controllers
             {
                 return Problem(response.Message);
             }
+        }
+
+
+        [HttpDelete("{vehicleStatusId}")]
+        public async Task<IActionResult> DeleteVehicleStatus(int vehicleStatusId)
+        {
+            Response<string> response = await _vehicleStatusRepository.DeleteVehicleStatusAsync(vehicleStatusId);
+
+            if (response.IsSuccess)
+                return Ok(response.Message);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
         }
 
     }
