@@ -11,7 +11,6 @@ using ecomove_back.DTOs.VehicleStatusDTOs;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using ecomove_back.Helpers;
-using ecomove_back.DTOs.VehicleCategoryDTOs;
 
 namespace ecomove_back.Repositories
 {

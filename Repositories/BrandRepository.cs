@@ -1,56 +1,55 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs.VehicleBrandDTOs;
+using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ecomove_back.Repositories
 {
-    public class VehicleBrandRepository : IVehicleBrandRepository
+    public class BrandRepository : IBrandRepository
     {
         private EcoMoveDbContext _ecoMoveDbContext;
 
-        public VehicleBrandRepository(EcoMoveDbContext ecoMoveDbContext)
+        public BrandRepository(EcoMoveDbContext ecoMoveDbContext)
         {
             _ecoMoveDbContext = ecoMoveDbContext;
         }
 
 
-        public async Task<Response<VehicleBrandDTO>> CreateBrandVehicleAsync(VehicleBrandDTO vehicleDTO)
+        public async Task<Response<BrandDTO>> CreateBrandAsync(BrandDTO brandDTO)
         {
-            Brand brandVehicle = new Brand
+            Brand brand = new Brand
             {
-                BrandLabel = vehicleDTO.BrandLabel
+                BrandLabel = brandDTO.BrandLabel
             };
 
             try
             {
-                await _ecoMoveDbContext.Brands.AddAsync(brandVehicle);
+                await _ecoMoveDbContext.Brands.AddAsync(brand);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<VehicleBrandDTO>
+                return new Response<BrandDTO>
                 {
-                    Message = $"La marque { brandVehicle.BrandLabel} a bien été créé",
-                    Data = vehicleDTO,
-                    IsSuccess = true
+                    Message = $"La marque { brand.BrandLabel} a bien été créé",
+                    Data = brandDTO,
+                    IsSuccess = true,
+                    CodeStatus = 201
                 };
             }
             catch (Exception e)
             {
-                return new Response<VehicleBrandDTO>
+                return new Response<BrandDTO>
                 {
                     Message = e.Message,
-                    IsSuccess = false
+                    IsSuccess = false,
+                    CodeStatus = 500
                 };
             }
         }
 
-        public async Task<Response<string>> DeleteBrandVehicleAsync(int brandId)
+        public async Task<Response<string>> DeleteBrandAsync(int brandId)
         {
             Brand? brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b  => b.BrandId == brandId);
 
@@ -72,7 +71,8 @@ namespace ecomove_back.Repositories
                 return new Response<string>
                 {
                     Message = $"La marque {brand.BrandLabel} a bien été suprimée",
-                    IsSuccess = true
+                    IsSuccess = true,
+                    CodeStatus = 201
                 };
             }
             catch (Exception e)
@@ -80,12 +80,13 @@ namespace ecomove_back.Repositories
                 return new Response<string>
                 {
                     Message = e.Message,
-                    IsSuccess = false
+                    IsSuccess = false,
+                    CodeStatus = 500
                 };
             }
         }
 
-        public async Task<Response<List<VehicleBrandDTO>>> GetAllBrandAysnc()
+        public async Task<Response<List<BrandDTO>>> GetAllBrandAysnc()
         {
             try
             {
@@ -93,7 +94,7 @@ namespace ecomove_back.Repositories
 
                 if (brands.Count == 0)
                 {
-                    return new Response<List<VehicleBrandDTO>>
+                    return new Response<List<BrandDTO>>
                     {
                         Message = "Aucune marque trouvé",
                         IsSuccess = false,
@@ -101,33 +102,35 @@ namespace ecomove_back.Repositories
                     };
                 }
 
-                List<VehicleBrandDTO> brandsDTO = new List<VehicleBrandDTO>();
+                List<BrandDTO> brandsDTO = new List<BrandDTO>();
 
                 foreach (var brand in brands)
                 {
-                    brandsDTO.Add(new VehicleBrandDTO
+                    brandsDTO.Add(new BrandDTO
                     {
                         BrandLabel = brand.BrandLabel
                     });
                 }
 
-                return new Response<List<VehicleBrandDTO>>
+                return new Response<List<BrandDTO>>
                 {
                     Data = brandsDTO,
-                    IsSuccess = true
-                };
+                    IsSuccess = true,
+                    CodeStatus = 200
+            };
             }
             catch (Exception e)
             {
-                return new Response<List<VehicleBrandDTO>>
+                return new Response<List<BrandDTO>>
                 {
                     Message = e.Message,
-                    IsSuccess = false
+                    IsSuccess = false,
+                    CodeStatus = 500
                 };
             }
         }
 
-        public async Task<Response<VehicleBrandDTO>> GetBrandByIdAysnc(int brandId)
+        public async Task<Response<BrandDTO>> GetBrandByIdAysnc(int brandId)
         {
             try
             {
@@ -135,7 +138,7 @@ namespace ecomove_back.Repositories
 
                 if (brand == null)
                 {
-                    return new Response<VehicleBrandDTO>
+                    return new Response<BrandDTO>
                     {
                         Message = "La Marque que vous voulez n'existe pas",
                         IsSuccess = false,
@@ -143,20 +146,21 @@ namespace ecomove_back.Repositories
                     };
                 }
 
-                VehicleBrandDTO brandDTO = new VehicleBrandDTO
+                BrandDTO brandDTO = new BrandDTO
                 {
                     BrandLabel = brand.BrandLabel
                 };
 
-                return new Response<VehicleBrandDTO>
+                return new Response<BrandDTO>
                 {
                     Data = brandDTO,
-                    IsSuccess = true
+                    IsSuccess = true,
+                    CodeStatus = 200
                 };
             }
             catch (Exception e)
             {
-                return new Response<VehicleBrandDTO>
+                return new Response<BrandDTO>
                 {
                     Message = e.Message,
                     IsSuccess = false
@@ -164,7 +168,7 @@ namespace ecomove_back.Repositories
             }
         }
 
-        public async Task<Response<VehicleBrandDTO>> UpdateBrandAysnc(int brandId, VehicleBrandDTO brandDTO)
+        public async Task<Response<BrandDTO>> UpdateBrandAysnc(int brandId, BrandDTO brandDTO)
         {
             try
             {
@@ -172,7 +176,7 @@ namespace ecomove_back.Repositories
 
                 if (brand == null)
                 {
-                    return new Response<VehicleBrandDTO>
+                    return new Response<BrandDTO>
                     {
                         Message = "La Marque que vous voulez modifier n'existe pas",
                         IsSuccess = false,
@@ -184,20 +188,21 @@ namespace ecomove_back.Repositories
 
                 await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<VehicleBrandDTO>
+                return new Response<BrandDTO>
                 {
                     Message = "La Marque a bien été modifiée",
                     Data = brandDTO,
-                    IsSuccess = true
+                    IsSuccess = true,
+                    CodeStatus = 200
                 };
-
             }
             catch (Exception e)
             {
-                return new Response<VehicleBrandDTO>
+                return new Response<BrandDTO>
                 {
                     Message = e.Message,
-                    IsSuccess = false
+                    IsSuccess = false,
+                    CodeStatus = 500
                 };
             }
 
