@@ -11,5 +11,6 @@ namespace ecomove_back.Interfaces.IRepositories
     public interface IVehicleStatusRepository
     {
         public Task<Response<VehicleStatusForCreationDTO>> CreateVehicleStatusAsync(VehicleStatusForCreationDTO StatusDTO);
+        public Task<Response<string>> DeleteVehicleStatusAsync(int StatusId);
     }
 }

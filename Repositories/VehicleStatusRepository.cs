@@ -16,11 +16,11 @@ namespace ecomove_back.Repositories
 {
     public class VehicleStatusRepository : IVehicleStatusRepository
     {
-        private EcoMoveDbContext _dbContext;
+        private EcoMoveDbContext _ecoMoveDbContext;
 
         public VehicleStatusRepository(EcoMoveDbContext ecoMoveDbContext)
         {
-            _dbContext = ecoMoveDbContext;
+            _ecoMoveDbContext = ecoMoveDbContext;
         }
 
         public async Task<Response<VehicleStatusForCreationDTO>> CreateVehicleStatusAsync(VehicleStatusForCreationDTO statusDTO)
@@ -33,8 +33,8 @@ namespace ecomove_back.Repositories
 
             try
             {
-                await _dbContext.Status.AddAsync(statusVehicle);
-                await _dbContext.SaveChangesAsync();
+                await _ecoMoveDbContext.Status.AddAsync(statusVehicle);
+                await _ecoMoveDbContext.SaveChangesAsync();
 
                 return new Response<VehicleStatusForCreationDTO>
                 {
@@ -56,6 +56,42 @@ namespace ecomove_back.Repositories
 
         }
 
+        public async Task<Response<string>> DeleteVehicleStatusAsync(int statusId)
+        {
+            Status? status = await _ecoMoveDbContext
+            .Status.FirstOrDefaultAsync(status => status.StatusId == statusId);
+
+            if (status is null)
+            {
+                return new Response<string>
+                {
+                    Message = "Le status que vous voulez supprimer n'existe pas.",
+                    IsSuccess = false,
+                    CodeStatus = 404,
+                };
+            }
+
+            try
+            {
+                _ecoMoveDbContext.Status.Remove(status);
+                await _ecoMoveDbContext.SaveChangesAsync();
+
+                return new Response<string>
+                {
+                    Message = $"Le status {status.StatusLabel} a été supprimée avec succés.",
+                    IsSuccess = true
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<string>
+                {
+                    Message = e.Message,
+                    IsSuccess = false
+                };
+            }
+
+        }
 
     }
 }
