@@ -1,15 +1,15 @@
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs.VehicleCategoryDTOs;
+using ecomove_back.DTOs.VehicleVehicleCategoryDTOs;
 using ecomove_back.Helpers;
 
 namespace ecomove_back.Interfaces.IRepositories
 {
     public interface IVehicleCategoryRepository
     {
-        Task<Response<VehicleCategoryForCreationDTO>> CreateVehicleCategoryAsync(VehicleCategoryForCreationDTO category);
-        Task<Response<Category>> UpdateVehicleCategoryAsync(int categoryId, VehicleCategoryForCreationDTO category);
+        Task<Response<VehicleCategoryDTO>> CreateVehicleCategoryAsync(VehicleCategoryDTO category);
+        Task<Response<VehicleCategoryDTO>> UpdateVehicleCategoryAsync(int categoryId, VehicleCategoryDTO category);
         Task<Response<string>> DeleteVehicleCategoryAsync(int cateogoryId);
-        Task<Response<Category>> GetVehicleCategoryByIdAsync(int cateogoryId);
-        Task<Response<List<VehicleCategoryForCreationDTO>>> GetAllVehiclesCategoriesAsync();
+        Task<Response<VehicleCategoryDTO>> GetVehicleCategoryByIdAsync(int cateogoryId);
+        Task<Response<List<VehicleCategoryDTO>>> GetAllVehiclesCategoriesAsync();
     }
 }

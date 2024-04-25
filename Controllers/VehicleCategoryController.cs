@@ -1,5 +1,5 @@
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs.VehicleCategoryDTOs;
+using ecomove_back.DTOs.VehicleVehicleCategoryDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +17,15 @@ namespace ecomove_back.Controllers
             _vehicleCategoryRepository = vehicleCategoryRepository;
         }
 
+
+        /// <summary>
+        /// Permet de créer une catégorie de véhicule
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> CreateVehicleCategory(VehicleCategoryForCreationDTO vehicleCategory)
+        public async Task<IActionResult> CreateVehicleCategory(VehicleCategoryDTO vehicleCategory)
         {
-            Response<VehicleCategoryForCreationDTO> response = await _vehicleCategoryRepository.CreateVehicleCategoryAsync(vehicleCategory);
+            Response<VehicleCategoryDTO> response = await _vehicleCategoryRepository.CreateVehicleCategoryAsync(vehicleCategory);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -28,10 +33,15 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
         }
 
+
+        /// <summary>
+        /// Permet de supprimer une catégorie de véhicule
+        /// </summary>
+        /// <returns></returns>
         [HttpDelete]
-        public async Task<IActionResult> DeleteVehicleCategory(int vehicleCategoryId)
+        public async Task<IActionResult> DeleteVehicleCategory(int categoryId)
         {
-            Response<string> response = await _vehicleCategoryRepository.DeleteVehicleCategoryAsync(vehicleCategoryId);
+            Response<string> response = await _vehicleCategoryRepository.DeleteVehicleCategoryAsync(categoryId);
 
             if (response.IsSuccess)
             {
@@ -47,10 +57,33 @@ namespace ecomove_back.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Permet de mettre à jour une catégorie de véhicule
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> UpdateVehicleById(int categoryId, VehicleCategoryDTO VehicleCategoryDTO)
+        {
+            Response<VehicleCategoryDTO>? respone = await _vehicleCategoryRepository.UpdateVehicleCategoryAsync(categoryId, VehicleCategoryDTO);
+
+            if (respone.IsSuccess)
+                return Ok(respone);
+            else if (respone.CodeStatus == 404)
+                return NotFound();
+            else
+                return Problem();
+        }
+
+
+        /// <summary>
+        /// Permet de récupérer toutes les catégories de véhicule
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllVehicleCategories()
         {
-            Response<List<VehicleCategoryForCreationDTO>> response = await _vehicleCategoryRepository.GetAllVehiclesCategoriesAsync();
+            Response<List<VehicleCategoryDTO>> response = await _vehicleCategoryRepository.GetAllVehiclesCategoriesAsync();
 
             if (response.IsSuccess)
                 return Ok(response.Data);
@@ -59,5 +92,25 @@ namespace ecomove_back.Controllers
             else
                 return Problem(response.Message);
         }
+
+
+        /// <summary>
+        /// Permet de récupérer une catégories de véhicule en utilisant son Id
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetVehicleCategoryById(int categoryId)
+        {
+            Response<VehicleCategoryDTO> response = await _vehicleCategoryRepository.GetVehicleCategoryByIdAsync(categoryId);
+
+            if (response.IsSuccess)
+                return Ok(response.Data);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+
+        }
+
     }
 }
