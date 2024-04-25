@@ -47,8 +47,7 @@ namespace ecomove_back.Repositories
 
         public async Task<Response<string>> DeleteVehicleCategoryAsync(int cateogoryId)
         {
-            Category? category = await _ecoMoveDbContext
-            .Categories.FirstOrDefaultAsync(category => category.CategoryId == cateogoryId);
+            Category? category = await _ecoMoveDbContext.Categories.FirstOrDefaultAsync(category => category.CategoryId == cateogoryId);
 
             if (category is null)
             {
@@ -56,6 +55,7 @@ namespace ecomove_back.Repositories
                 {
                     Message = "La catégorie que vous voulez supprimer n'existe pas.",
                     IsSuccess = false,
+                    CodeStatus = 404,
                 };
             }
 
@@ -80,9 +80,36 @@ namespace ecomove_back.Repositories
             }
         }
 
-        public Task<Response<List<Category>>> GetAllVehiclesCategoryAsync()
+        public async Task<Response<List<Category>>> GetAllVehiclesCategoryAsync()
         {
-            throw new NotImplementedException();
+            List<Category> categories = await _ecoMoveDbContext.Categories.ToListAsync();
+
+            if (categories.Count > 0)
+            {
+                return new Response<List<Category>>
+                {
+                    IsSuccess = true,
+                    Data = categories,
+                    Message = null,
+                    CodeStatus = 200,
+                };
+            }
+            else if (categories.Count == 0)
+            {
+                return new Response<List<Category>>
+                {
+                    IsSuccess = false,
+                    Message = "La liste des catégories est vide",
+                    CodeStatus = 404
+                };
+            }
+            else
+            {
+                return new Response<List<Category>>
+                {
+                    IsSuccess = false,
+                };
+            }
         }
 
         public Task<Response<Category>> GetVehicleCategoryByIdAsync(int cateogoryId)
