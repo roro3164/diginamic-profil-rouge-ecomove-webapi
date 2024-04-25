@@ -22,8 +22,14 @@ namespace ecomove_back.Controllers
             _vehicleBrandRepository = vehicleBrandRepository;
         }
 
-
+        /// <summary>
+        /// Permet de créer une marque
+        /// </summary>
+        /// <param name="vehicleBrandDTO"></param>
+        /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult> CreateVehicleBrand(VehicleBrandForCreationDTO vehicleBrandDTO)
         {
             Response<VehicleBrandForCreationDTO> response = await _vehicleBrandRepository.CreateBrandVehicleAsync(vehicleBrandDTO);
@@ -38,9 +44,25 @@ namespace ecomove_back.Controllers
             }
         }
 
+        /// <summary>
+        /// Permet de supprimer une marque
+        /// </summary>
+        /// <param name="brandId"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult> DeleteVehicleBrand(int id)
+        {
+            Response<string> response = await _vehicleBrandRepository.DeleteBrandVehicleAsync(id);
 
-
-
-
+            if (response.IsSuccess)
+                return Ok(response.Message);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
     }
 }
