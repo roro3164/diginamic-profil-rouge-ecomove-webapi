@@ -11,6 +11,7 @@ using ecomove_back.DTOs.VehicleStatusDTOs;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using ecomove_back.Helpers;
+using ecomove_back.DTOs.VehicleCategoryDTOs;
 
 namespace ecomove_back.Repositories
 {
@@ -23,7 +24,7 @@ namespace ecomove_back.Repositories
             _ecoMoveDbContext = ecoMoveDbContext;
         }
 
-        public async Task<Response<VehicleStatusForCreationDTO>> CreateVehicleStatusAsync(VehicleStatusForCreationDTO statusDTO)
+        public async Task<Response<VehicleStatusDTO>> CreateVehicleStatusAsync(VehicleStatusDTO statusDTO)
         {
 
             Status statusVehicle = new Status
@@ -36,7 +37,7 @@ namespace ecomove_back.Repositories
                 await _ecoMoveDbContext.Status.AddAsync(statusVehicle);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<VehicleStatusForCreationDTO>
+                return new Response<VehicleStatusDTO>
                 {
                     Message = $"Le statut {statusVehicle.StatusLabel} a bien �t� cr��",
                     Data = statusDTO,
@@ -46,7 +47,7 @@ namespace ecomove_back.Repositories
             }
             catch (Exception e)
             {
-                return new Response<VehicleStatusForCreationDTO>
+                return new Response<VehicleStatusDTO>
                 {
                     Message = e.Message,
                     IsSuccess = false
@@ -93,5 +94,94 @@ namespace ecomove_back.Repositories
 
         }
 
+        public async Task<Response<List<VehicleStatusDTO>>> GetAllVehicleStatusAsync()
+        {
+            try
+            {
+                List<Status> listStatus = await _ecoMoveDbContext.Status.ToListAsync();
+
+
+                if (listStatus.Count > 0)
+                {
+
+
+                    List<VehicleStatusDTO> vehicleStatusDTO = new();
+
+                    foreach (var status in listStatus)
+                    {
+                        vehicleStatusDTO.Add(new VehicleStatusDTO { StatusLabel = status.StatusLabel });
+                    }
+
+                    return new Response<List<VehicleStatusDTO>>
+                    {
+                        IsSuccess = true,
+                        Data = vehicleStatusDTO,
+                        Message = null,
+                        CodeStatus = 200,
+                    };
+                }
+                else
+                {
+                    return new Response<List<VehicleStatusDTO>>
+                    {
+                        IsSuccess = false,
+                        Message = "La liste des status est vide",
+                        CodeStatus = 404
+                    };
+                }
+
+            }
+            catch (Exception e)
+            {
+                return new Response<List<VehicleStatusDTO>>
+                {
+                    IsSuccess = false,
+                    Message = e.Message
+                };
+            }
+
+        }
+
+        public async Task<Response<VehicleStatusDTO>> GetByIdVehicleStatusAsync(int id)
+        {
+            try
+            {
+                Status? status = await _ecoMoveDbContext.Status.FirstOrDefaultAsync(s => s.StatusId == id);
+
+                if (status == null)
+                {
+                    return new Response<VehicleStatusDTO>
+                    {
+                        Message = "Le status que vous chercher n'existe pas.",
+                        IsSuccess = false,
+                        CodeStatus = 404,
+                    };
+                }
+
+                VehicleStatusDTO vehicleStatusDTO = new VehicleStatusDTO
+                {
+                    StatusLabel = status.StatusLabel,
+                };
+
+                return new Response<VehicleStatusDTO>
+                {
+                    IsSuccess = true,
+                    Data = vehicleStatusDTO,
+                    Message = null,
+                    CodeStatus = 200,
+                };
+
+            }
+
+            catch (Exception e)
+            {
+                return new Response<VehicleStatusDTO>
+                {
+                    IsSuccess = false,
+                    Message = e.Message
+                };
+            }
+
+        }
     }
 }
