@@ -47,7 +47,7 @@ namespace ecomove_back.Controllers
         /// <summary>
         /// Permet de supprimer une marque
         /// </summary>
-        /// <param name="brandId"></param>
+        /// <param name="id">int : identifiant de la marque</param>
         /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(200)]
