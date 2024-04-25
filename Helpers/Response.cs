@@ -8,3 +8,4 @@
         public int CodeStatus { get; set; } = 200;
     }
 }
+
