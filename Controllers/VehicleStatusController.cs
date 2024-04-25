@@ -37,7 +37,7 @@ namespace ecomove_back.Controllers
         }
 
 
-        [HttpDelete]
+        [HttpDelete("{vehicleStatusId}")]
         public async Task<IActionResult> DeleteVehicleStatus(int vehicleStatusId)
         {
             Response<string> response = await _vehicleStatusRepository.DeleteVehicleStatusAsync(vehicleStatusId);
