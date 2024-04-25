@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
 using ecomove_back.DTOs.VehicleStatusDTOs;
@@ -38,7 +31,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<VehicleStatusDTO>
                 {
-                    Message = $"Le statut {statusVehicle.StatusLabel} a bien �t� cr��",
+                    Message = $"Le statut {statusVehicle.StatusLabel} a bien ét� cr��",
                     Data = statusDTO,
                     IsSuccess = true
                 };
