@@ -23,13 +23,9 @@ namespace ecomove_back.Controllers
             Response<VehicleCategoryForCreationDTO> response = await _vehicleCategoryRepository.CreateVehicleCategoryAsync(vehicleCategory);
 
             if (response.IsSuccess)
-            {
                 return Ok(response);
-            }
             else
-            {
                 return Problem(response.Message);
-            }
         }
 
         [HttpDelete]
@@ -39,12 +35,29 @@ namespace ecomove_back.Controllers
 
             if (response.IsSuccess)
             {
-                return Ok(response);
+                return Ok(response.Message);
+            }
+            else if (response.CodeStatus == 404)
+            {
+                return NotFound(response.Message);
             }
             else
             {
                 return Problem(response.Message);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllVehicleCategories()
+        {
+            Response<List<VehicleCategoryForCreationDTO>> response = await _vehicleCategoryRepository.GetAllVehiclesCategoriesAsync();
+
+            if (response.IsSuccess)
+                return Ok(response.Data);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
         }
     }
 }

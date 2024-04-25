@@ -10,6 +10,6 @@ namespace ecomove_back.Interfaces.IRepositories
         Task<Response<Category>> UpdateVehicleCategoryAsync(int categoryId, VehicleCategoryForCreationDTO category);
         Task<Response<string>> DeleteVehicleCategoryAsync(int cateogoryId);
         Task<Response<Category>> GetVehicleCategoryByIdAsync(int cateogoryId);
-        Task<Response<List<Category>>> GetAllVehiclesCategoryAsync();
+        Task<Response<List<VehicleCategoryForCreationDTO>>> GetAllVehiclesCategoriesAsync();
     }
 }
