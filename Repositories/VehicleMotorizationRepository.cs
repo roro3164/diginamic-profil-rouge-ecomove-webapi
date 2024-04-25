@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
 using ecomove_back.DTOs.VehicleMotorizationDTOs;
+using ecomove_back.DTOs.VehicleVehicleCategoryDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -146,6 +147,42 @@ namespace ecomove_back.Repositories
                 {
                     Message = e.Message,
                     IsSuccess = false
+                };
+            }
+        }
+        public async Task<Response<VehicleMotorizationDTO>> UpdateVehicleMotorizationByIdAsync(int motorizationId, VehicleMotorizationDTO VehicleMotorizationDTO)
+        {
+            try
+            {
+                Motorization? motorization = await _ecoMoveDbContext.Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == motorizationId);
+
+                if (motorization is null)
+                {
+                    return new Response<VehicleMotorizationDTO>
+                    {
+                        CodeStatus = 404,
+                        Message = "La motorisation que vous recherez n'existe pas",
+                        IsSuccess = false,
+                    };
+                }
+
+                motorization.MotorizationLabel = VehicleMotorizationDTO.MotorizationLabel;
+                await _ecoMoveDbContext.SaveChangesAsync();
+
+                return new Response<VehicleMotorizationDTO>
+                {
+                    Message = $"La motorisation a été bien modifiéée",
+                    IsSuccess = true,
+                    CodeStatus = 201,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<VehicleMotorizationDTO>
+                {
+                    Message = ex.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500,
                 };
             }
         }

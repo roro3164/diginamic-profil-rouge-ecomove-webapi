@@ -14,5 +14,6 @@ namespace ecomove_back.Interfaces.IRepositories
         Task<Response<string>> DeleteVehicleMotorizationAsync(int vehicleMotorizationId);
         Task<Response<List<Motorization>>> GetAllVehicleMotorizationsAsync();
         Task<Response<int>> GetVehicleMotorizationByIdAsync(int motorizationId);
+        Task<Response<VehicleMotorizationDTO>?> UpdateVehicleMotorizationByIdAsync(int motorizationId, VehicleMotorizationDTO vehicleMotorizationDTO);
     }
 }
