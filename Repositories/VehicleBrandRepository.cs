@@ -21,7 +21,7 @@ namespace ecomove_back.Repositories
         }
 
 
-        public async Task<Response<VehicleBrandForCreationDTO>> CreateBrandVehicleAsync(VehicleBrandForCreationDTO vehicleDTO)
+        public async Task<Response<VehicleBrandDTO>> CreateBrandVehicleAsync(VehicleBrandDTO vehicleDTO)
         {
             Brand brandVehicle = new Brand
             {
@@ -33,7 +33,7 @@ namespace ecomove_back.Repositories
                 await _ecoMoveDbContext.Brands.AddAsync(brandVehicle);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<VehicleBrandForCreationDTO>
+                return new Response<VehicleBrandDTO>
                 {
                     Message = $"La marque { brandVehicle.BrandLabel} a bien été créé",
                     Data = vehicleDTO,
@@ -42,7 +42,7 @@ namespace ecomove_back.Repositories
             }
             catch (Exception e)
             {
-                return new Response<VehicleBrandForCreationDTO>
+                return new Response<VehicleBrandDTO>
                 {
                     Message = e.Message,
                     IsSuccess = false
@@ -83,11 +83,90 @@ namespace ecomove_back.Repositories
                     IsSuccess = false
                 };
             }
-
-
-
-
-
         }
+
+        public async Task<Response<List<VehicleBrandDTO>>> GetAllBrandAysnc()
+        {
+            try
+            {
+                List<Brand> brands = await _ecoMoveDbContext.Brands.ToListAsync();
+
+                if (brands.Count == 0)
+                {
+                    return new Response<List<VehicleBrandDTO>>
+                    {
+                        Message = "Aucune marque trouvé",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
+
+                List<VehicleBrandDTO> brandsDTO = new List<VehicleBrandDTO>();
+
+                foreach (var brand in brands)
+                {
+                    brandsDTO.Add(new VehicleBrandDTO
+                    {
+                        BrandLabel = brand.BrandLabel
+                    });
+                }
+
+                return new Response<List<VehicleBrandDTO>>
+                {
+                    Data = brandsDTO,
+                    IsSuccess = true
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<List<VehicleBrandDTO>>
+                {
+                    Message = e.Message,
+                    IsSuccess = false
+                };
+            }
+        }
+
+        public async Task<Response<VehicleBrandDTO>> GetBrandByIdAysnc(int brandId)
+        {
+            try
+            {
+                Brand? brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == brandId);
+
+                if (brand == null)
+                {
+                    return new Response<VehicleBrandDTO>
+                    {
+                        Message = "La Marque que vous voulez n'existe pas",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
+
+                VehicleBrandDTO brandDTO = new VehicleBrandDTO
+                {
+                    BrandLabel = brand.BrandLabel
+                };
+
+                return new Response<VehicleBrandDTO>
+                {
+                    Data = brandDTO,
+                    IsSuccess = true
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<VehicleBrandDTO>
+                {
+                    Message = e.Message,
+                    IsSuccess = false
+                };
+            }
+        }
+
+
+
+
+
     }
 }

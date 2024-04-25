@@ -30,9 +30,9 @@ namespace ecomove_back.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult> CreateVehicleBrand(VehicleBrandForCreationDTO vehicleBrandDTO)
+        public async Task<ActionResult> CreateVehicleBrand(VehicleBrandDTO vehicleBrandDTO)
         {
-            Response<VehicleBrandForCreationDTO> response = await _vehicleBrandRepository.CreateBrandVehicleAsync(vehicleBrandDTO);
+            Response<VehicleBrandDTO> response = await _vehicleBrandRepository.CreateBrandVehicleAsync(vehicleBrandDTO);
 
             if (response.IsSuccess)
             {
@@ -64,5 +64,49 @@ namespace ecomove_back.Controllers
             else
                 return Problem(response.Message);
         }
+
+        /// <summary>
+        /// Permet de récupérer la liste des marques de véhicule
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult> GetAllVehiclesBrand()
+        {
+            Response<List<VehicleBrandDTO>> response = await _vehicleBrandRepository.GetAllBrandAysnc();
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+
+        /// <summary>
+        /// Permet de récuperer une marque avec son id
+        /// </summary>
+        /// <param name="id">int : identifiant de la marque</param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetVehiclesBrandById(int id)
+        {
+            Response<VehicleBrandDTO> response = await _vehicleBrandRepository.GetBrandByIdAysnc(id);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+
+
+
+
     }
 }
