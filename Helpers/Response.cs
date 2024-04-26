@@ -1,4 +1,6 @@
-﻿namespace ecomove_back.Helpers
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ecomove_back.Helpers
 {
     public class Response<T>
     {

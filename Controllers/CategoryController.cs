@@ -7,9 +7,8 @@ namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class CategoryController : ControllerBase { 
-    
-
+    public class CategoryController : ControllerBase
+    {
         private readonly ICategoryRepository _categoryRepository;
 
         public CategoryController(ICategoryRepository categoryRepository)
@@ -19,7 +18,7 @@ namespace ecomove_back.Controllers
 
 
         /// <summary>
-        /// Permet de créer une catégorie de véhicule
+        /// Permet de créer une catégorie de véhicules
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -48,9 +47,7 @@ namespace ecomove_back.Controllers
                 return NotFound(response.Message);
             else
                 return Problem(response.Message);
-
         }
-
 
         /// <summary>
         /// Permet de récupérer toutes les catégories de véhicule

@@ -18,20 +18,19 @@ namespace ecomove_back.Repositories
 
         public async Task<Response<MotorizationDTO>> CreateMotorizationAsync(MotorizationDTO motorizationDTO)
         {
-            Motorization motorizationVehicle = new Motorization
+            Motorization motorization = new Motorization
             {
                 MotorizationLabel = motorizationDTO.MotorizationLabel,
             };
 
             try
             {
-
-                await _ecoMoveDbContext.Motorizations.AddAsync(motorizationVehicle);
+                await _ecoMoveDbContext.Motorizations.AddAsync(motorization);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
                 return new Response<MotorizationDTO>
                 {
-                    Message = $"La motorisation {motorizationVehicle.MotorizationLabel} a bien été créée",
+                    Message = $"La motorisation {motorization.MotorizationLabel} a bien Ã¯Â¿Â½tÃ¯Â¿Â½ crÃ¯Â¿Â½Ã¯Â¿Â½e",
                     Data = motorizationDTO,
                     IsSuccess = true,
                     CodeStatus = 201
@@ -46,6 +45,7 @@ namespace ecomove_back.Repositories
                 };
             }
         }
+
         public async Task<Response<string>> DeleteMotorizationAsync(int motorizationId)
         {
             Motorization? motorization = await _ecoMoveDbContext
@@ -68,36 +68,43 @@ namespace ecomove_back.Repositories
 
                 return new Response<string>
                 {
-                    Message = $"La motorisation {motorization.MotorizationLabel} a été supprimée avec succés.",
+                    Message = $"La motorisation {motorization.MotorizationLabel} a ÃƒÂ©tÃƒÂ© supprimÃƒÂ©e avec succÃƒÂ©s.",
                     IsSuccess = true
                 };
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 return new Response<string>
                 {
-                    Message = e.Message,
+                    Message = ex.Message,
                     IsSuccess = false
                 };
             }
         }
-        public async Task<Response<List<Motorization>>> GetAllMotorizationsAsync()
+        public async Task<Response<List<MotorizationDTO>>> GetAllMotorizationsAsync()
         {
             List<Motorization> motorizations = await _ecoMoveDbContext.Motorizations.ToListAsync();
 
-            if (motorizations.Count > 0)
+            List<MotorizationDTO> motorizationDTOs = new();
+
+            if (motorizationDTOs.Count > 0)
             {
-                return new Response<List<Motorization>>
+                foreach (Motorization motorization in motorizations)
+                {
+                    motorizationDTOs.Add(new MotorizationDTO { MotorizationLabel = motorization.MotorizationLabel });
+                }
+
+                return new Response<List<MotorizationDTO>>
                 {
                     IsSuccess = true,
-                    Data = motorizations,
+                    Data = motorizationDTOs,
                     Message = null,
                     CodeStatus = 201,
                 };
             }
-            else if (motorizations.Count == 0)
+            else if (motorizationDTOs.Count == 0)
             {
-                return new Response<List<Motorization>>
+                return new Response<List<MotorizationDTO>>
                 {
                     IsSuccess = false,
                     Message = "La liste des motorisations est vide",
@@ -106,7 +113,7 @@ namespace ecomove_back.Repositories
             }
             else
             {
-                return new Response<List<Motorization>>
+                return new Response<List<MotorizationDTO>>
                 {
                     IsSuccess = false,
                 };
@@ -117,8 +124,7 @@ namespace ecomove_back.Repositories
         {
             try
             {
-                Motorization? motorization = await _ecoMoveDbContext
-.Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == id);
+                Motorization? motorization = await _ecoMoveDbContext.Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == id);
 
                 if (motorization is null)
                 {
@@ -138,7 +144,7 @@ namespace ecomove_back.Repositories
                 return new Response<MotorizationDTO>
                 {
                     Data = MotorizationDTO,
-                    Message = $"La motorisation {motorization.MotorizationLabel} a été trouvée avec succés.",
+                    Message = $"La motorisation {motorization.MotorizationLabel} a Ã©tÃ© trouvÃ©e avec succÃ©s.",
                     IsSuccess = true,
                     CodeStatus = 200
                 };
@@ -175,16 +181,16 @@ namespace ecomove_back.Repositories
 
                 return new Response<MotorizationDTO>
                 {
-                    Message = $"La motorisation a été bien modifiéée",
+                    Message = $"La motorisation a ÃƒÂ©tÃƒÂ© bien modifiÃƒÂ©e",
                     IsSuccess = true,
                     CodeStatus = 201,
                 };
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 return new Response<MotorizationDTO>
                 {
-                    Message = e.Message,
+                    Message = ex.Message,
                     IsSuccess = false,
                     CodeStatus = 500,
                 };
