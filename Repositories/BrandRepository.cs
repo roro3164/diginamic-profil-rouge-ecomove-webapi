@@ -16,7 +16,6 @@ namespace ecomove_back.Repositories
             _ecoMoveDbContext = ecoMoveDbContext;
         }
 
-
         public async Task<Response<BrandDTO>> CreateBrandAsync(BrandDTO brandDTO)
         {
             Brand brand = new Brand
@@ -31,7 +30,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<BrandDTO>
                 {
-                    Message = $"La marque { brand.BrandLabel} a bien été créé",
+                    Message = $"La marque {brand.BrandLabel} a bien ï¿½tï¿½ crï¿½ï¿½",
                     Data = brandDTO,
                     IsSuccess = true,
                     CodeStatus = 201
@@ -50,15 +49,15 @@ namespace ecomove_back.Repositories
 
         public async Task<Response<string>> DeleteBrandAsync(int brandId)
         {
-            Brand? brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b  => b.BrandId == brandId);
+            Brand? brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == brandId);
 
             if (brand == null)
             {
                 return new Response<string>
                 {
                     Message = "La Marque que vous voulez supprimer n'existe pas",
-                    IsSuccess = false, 
-                    CodeStatus = 404    
+                    IsSuccess = false,
+                    CodeStatus = 404
                 };
             }
 
@@ -69,7 +68,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<string>
                 {
-                    Message = $"La marque {brand.BrandLabel} a bien été suprimée",
+                    Message = $"La marque {brand.BrandLabel} a bien ï¿½tï¿½ suprimï¿½e",
                     IsSuccess = true,
                     CodeStatus = 201
                 };
@@ -95,7 +94,7 @@ namespace ecomove_back.Repositories
                 {
                     return new Response<List<BrandDTO>>
                     {
-                        Message = "Aucune marque trouvé",
+                        Message = "Aucune marque trouvï¿½",
                         IsSuccess = false,
                         CodeStatus = 404
                     };
@@ -116,7 +115,7 @@ namespace ecomove_back.Repositories
                     Data = brandsDTO,
                     IsSuccess = true,
                     CodeStatus = 200
-            };
+                };
             }
             catch (Exception e)
             {
@@ -189,7 +188,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<BrandDTO>
                 {
-                    Message = "La Marque a bien été modifiée",
+                    Message = "La Marque a bien ï¿½tï¿½ modifiï¿½e",
                     Data = brandDTO,
                     IsSuccess = true,
                     CodeStatus = 200
@@ -206,5 +205,5 @@ namespace ecomove_back.Repositories
             }
 
         }
-     }
+    }
 }

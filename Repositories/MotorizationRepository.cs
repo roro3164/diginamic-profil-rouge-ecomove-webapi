@@ -30,7 +30,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<MotorizationDTO>
                 {
-                    Message = $"La motorisation {motorizationVehicle.MotorizationLabel} a bien été créée",
+                    Message = $"La motorisation {motorizationVehicle.MotorizationLabel} a bien ï¿½tï¿½ crï¿½ï¿½e",
                     Data = motorizationDTO,
                     IsSuccess = true,
                     CodeStatus = 201
@@ -67,7 +67,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<string>
                 {
-                    Message = $"La motorisation {motorization.MotorizationLabel} a été supprimée avec succés.",
+                    Message = $"La motorisation {motorization.MotorizationLabel} a ï¿½tï¿½ supprimï¿½e avec succï¿½s.",
                     IsSuccess = true
                 };
             }
@@ -133,7 +133,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<int>
                 {
-                    Message = $"La motorisation {motorization.MotorizationLabel} a été trouvée avec succés.",
+                    Message = $"La motorisation {motorization.MotorizationLabel} a ï¿½tï¿½ trouvï¿½e avec succï¿½s.",
                     IsSuccess = true
                 };
             }
@@ -167,7 +167,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<MotorizationDTO>
                 {
-                    Message = $"La motorisation a été bien modifiéée",
+                    Message = $"La motorisation a ï¿½tï¿½ bien modifiï¿½ï¿½e",
                     IsSuccess = true,
                     CodeStatus = 201,
                 };
