@@ -162,7 +162,8 @@ namespace ecomove_back.Repositories
                 return new Response<BrandDTO>
                 {
                     Message = e.Message,
-                    IsSuccess = false
+                    IsSuccess = false,
+                    CodeStatus = 500
                 };
             }
         }
