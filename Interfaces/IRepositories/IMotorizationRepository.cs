@@ -1,18 +1,16 @@
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs.VehicleMotorizationDTOs;
+using ecomove_back.DTOs.MotorizationDTOs;
 using ecomove_back.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace ecomove_back.Interfaces.IRepositories
 {
     public interface IMotorizationRepository
     {
-        public Task<Response<VehicleMotorizationDTO>> CreateVehicleMotorizationAsync(VehicleMotorizationDTO MotorizationDTO);
-        Task<Response<string>> DeleteVehicleMotorizationAsync(int vehicleMotorizationId);
-        Task<Response<List<Motorization>>> GetAllVehicleMotorizationsAsync();
-        Task<Response<int>> GetVehicleMotorizationByIdAsync(int motorizationId);
+        public Task<Response<MotorizationDTO>> CreateMotorizationAsync(MotorizationDTO motorizationDTO);
+        Task<Response<string>> DeleteMotorizationAsync(int motorizationId);
+        Task<Response<List<Motorization>>> GetAllMotorizationsAsync();
+        Task<Response<int>> GetMotorizationByIdAsync(int motorizationId);
+        Task<Response<MotorizationDTO>> UpdateMotorizationByIdAsync(int motorizationId, MotorizationDTO MotorizationDTO);
     }
 }

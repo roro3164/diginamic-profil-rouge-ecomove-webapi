@@ -5,7 +5,6 @@ using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using ecomove_back.Helpers;
 
-
 namespace ecomove_back.Repositories
 {
     public class StatusRepository : IStatusRepository

@@ -1,38 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.VehicleBrandDTOs;
+using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
-using ecomove_back.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class VehicleBrandController : ControllerBase
+    public class BrandController : ControllerBase
     {
-        private readonly IBrandRepository _vehicleBrandRepository;
+        private readonly IBrandRepository _brandRepository;
 
-        public VehicleBrandController(IBrandRepository vehicleBrandRepository)
+        public BrandController(IBrandRepository brandRepository)
+
         {
-            _vehicleBrandRepository = vehicleBrandRepository;
+            _brandRepository = brandRepository;
         }
 
         /// <summary>
         /// Permet de créer une marque
         /// </summary>
-        /// <param name="vehicleBrandDTO"></param>
+        /// <param name="brandDTO"></param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult> CreateVehicleBrand(VehicleBrandDTO vehicleBrandDTO)
+        public async Task<IActionResult> Createbrand(BrandDTO brandDTO)
         {
-            Response<VehicleBrandDTO> response = await _vehicleBrandRepository.CreateBrandVehicleAsync(vehicleBrandDTO);
+            Response<BrandDTO> response = await _brandRepository.CreateBrandAsync(brandDTO);
 
             if (response.IsSuccess)
             {
@@ -53,9 +48,9 @@ namespace ecomove_back.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult> DeleteVehicleBrand(int id)
+        public async Task<IActionResult> DeleteBrand(int id)
         {
-            Response<string> response = await _vehicleBrandRepository.DeleteBrandVehicleAsync(id);
+            Response<string> response = await _brandRepository.DeleteBrandAsync(id);
 
             if (response.IsSuccess)
                 return Ok(response.Message);
@@ -73,9 +68,9 @@ namespace ecomove_back.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult> GetAllVehiclesBrand()
+        public async Task<IActionResult> GetAllBrands()
         {
-            Response<List<VehicleBrandDTO>> response = await _vehicleBrandRepository.GetAllBrandAysnc();
+            Response<List<BrandDTO>> response = await _brandRepository.GetAllBrandAysnc();
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -92,9 +87,9 @@ namespace ecomove_back.Controllers
         /// <param name="id">int : identifiant de la marque</param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetVehiclesBrandById(int id)
+        public async Task<IActionResult> GetBrandById(int id)
         {
-            Response<VehicleBrandDTO> response = await _vehicleBrandRepository.GetBrandByIdAysnc(id);
+            Response<BrandDTO> response = await _brandRepository.GetBrandByIdAysnc(id);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -104,6 +99,24 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
         }
 
+        /// <summary>
+        /// Permet de modifier une Marque
+        /// </summary>
+        /// <param name="id">int : identifiant de la marque</param>
+        /// <param name="brandDto"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBrandById(int id, BrandDTO brandDto)
+        {
+            Response<BrandDTO> response = await _brandRepository.UpdateBrandAysnc(id, brandDto);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
 
 
 

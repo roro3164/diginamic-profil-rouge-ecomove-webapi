@@ -1,20 +1,14 @@
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.VehicleBrandDTOs;
+using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace ecomove_back.Interfaces.IRepositories
 {
     public interface IBrandRepository
     {
-        public Task<Response<VehicleBrandDTO>> CreateBrandVehicleAsync(VehicleBrandDTO vehicleBrandForCreationDTO);
-        public Task<Response<string>> DeleteBrandVehicleAsync(int brandId);
-        public Task<Response<List<VehicleBrandDTO>>> GetAllBrandAysnc();
-        public Task<Response<VehicleBrandDTO>> GetBrandByIdAysnc(int brandId);
-
-
+        public Task<Response<BrandDTO>> CreateBrandAsync(BrandDTO vehicleBrandForCreationDTO);
+        public Task<Response<string>> DeleteBrandAsync(int brandId);
+        public Task<Response<List<BrandDTO>>> GetAllBrandAysnc();
+        public Task<Response<BrandDTO>> GetBrandByIdAysnc(int brandId);
     }
 }
