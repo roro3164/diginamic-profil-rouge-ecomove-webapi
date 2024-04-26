@@ -12,6 +12,7 @@ namespace ecomove_back.Controllers
         private readonly IBrandRepository _brandRepository;
 
         public BrandController(IBrandRepository brandRepository)
+
         {
             _brandRepository = brandRepository;
         }

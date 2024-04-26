@@ -1,45 +1,46 @@
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs.VehicleStatusDTOs;
+using ecomove_back.DTOs.StatusDTOs;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using ecomove_back.Helpers;
 
 namespace ecomove_back.Repositories
 {
-    public class VehicleStatusRepository : IVehicleStatusRepository
+    public class StatusRepository : IStatusRepository
     {
         private EcoMoveDbContext _ecoMoveDbContext;
 
-        public VehicleStatusRepository(EcoMoveDbContext ecoMoveDbContext)
+        public StatusRepository(EcoMoveDbContext ecoMoveDbContext)
         {
             _ecoMoveDbContext = ecoMoveDbContext;
         }
 
-        public async Task<Response<VehicleStatusDTO>> CreateVehicleStatusAsync(VehicleStatusDTO statusDTO)
+        public async Task<Response<StatusDTO>> CreateStatusAsync(StatusDTO statusDTO)
         {
 
-            Status statusVehicle = new Status
+            Status status = new Status
             {
                 StatusLabel = statusDTO.StatusLabel,
             };
 
             try
             {
-                await _ecoMoveDbContext.Status.AddAsync(statusVehicle);
+                await _ecoMoveDbContext.Status.AddAsync(status);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<VehicleStatusDTO>
+                return new Response<StatusDTO>
                 {
-                    Message = $"Le statut {statusVehicle.StatusLabel} a bien ét� cr��",
+                    Message = $"Le statut {status.StatusLabel} a bien �t� cr��",
                     Data = statusDTO,
-                    IsSuccess = true
+                    IsSuccess = true,
+                    CodeStatus = 201
                 };
 
             }
             catch (Exception e)
             {
-                return new Response<VehicleStatusDTO>
+                return new Response<StatusDTO>
                 {
                     Message = e.Message,
                     IsSuccess = false
@@ -49,7 +50,7 @@ namespace ecomove_back.Repositories
 
         }
 
-        public async Task<Response<string>> DeleteVehicleStatusAsync(int statusId)
+        public async Task<Response<string>> DeleteStatusAsync(int statusId)
         {
             Status? status = await _ecoMoveDbContext
             .Status.FirstOrDefaultAsync(status => status.StatusId == statusId);
@@ -86,7 +87,7 @@ namespace ecomove_back.Repositories
 
         }
 
-        public async Task<Response<List<VehicleStatusDTO>>> GetAllVehicleStatusAsync()
+        public async Task<Response<List<StatusDTO>>> GetAllStatusAsync()
         {
             try
             {
@@ -97,27 +98,27 @@ namespace ecomove_back.Repositories
                 {
 
 
-                    List<VehicleStatusDTO> vehicleStatusDTO = new();
+                    List<StatusDTO> StatusDTO = new();
 
                     foreach (var status in listStatus)
                     {
-                        vehicleStatusDTO.Add(new VehicleStatusDTO { StatusLabel = status.StatusLabel });
+                        StatusDTO.Add(new StatusDTO { StatusLabel = status.StatusLabel });
                     }
 
-                    return new Response<List<VehicleStatusDTO>>
+                    return new Response<List<StatusDTO>>
                     {
                         IsSuccess = true,
-                        Data = vehicleStatusDTO,
+                        Data = StatusDTO,
                         Message = null,
                         CodeStatus = 200,
                     };
                 }
                 else
                 {
-                    return new Response<List<VehicleStatusDTO>>
+                    return new Response<List<StatusDTO>>
                     {
                         IsSuccess = false,
-                        Message = "La liste des status est vide",
+                        Message = "La liste des statuts est vide",
                         CodeStatus = 404
                     };
                 }
@@ -125,7 +126,7 @@ namespace ecomove_back.Repositories
             }
             catch (Exception e)
             {
-                return new Response<List<VehicleStatusDTO>>
+                return new Response<List<StatusDTO>>
                 {
                     IsSuccess = false,
                     Message = e.Message
@@ -134,7 +135,7 @@ namespace ecomove_back.Repositories
 
         }
 
-        public async Task<Response<VehicleStatusDTO>> GetByIdVehicleStatusAsync(int id)
+        public async Task<Response<StatusDTO>> GetStatusByIdAsync(int id)
         {
             try
             {
@@ -142,23 +143,23 @@ namespace ecomove_back.Repositories
 
                 if (status == null)
                 {
-                    return new Response<VehicleStatusDTO>
+                    return new Response<StatusDTO>
                     {
-                        Message = "Le status que vous chercher n'existe pas.",
+                        Message = "Le statut que vous chercher n'existe pas.",
                         IsSuccess = false,
                         CodeStatus = 404,
                     };
                 }
 
-                VehicleStatusDTO vehicleStatusDTO = new VehicleStatusDTO
+                StatusDTO StatusDTO = new StatusDTO
                 {
                     StatusLabel = status.StatusLabel,
                 };
 
-                return new Response<VehicleStatusDTO>
+                return new Response<StatusDTO>
                 {
                     IsSuccess = true,
-                    Data = vehicleStatusDTO,
+                    Data = StatusDTO,
                     Message = null,
                     CodeStatus = 200,
                 };
@@ -167,13 +168,50 @@ namespace ecomove_back.Repositories
 
             catch (Exception e)
             {
-                return new Response<VehicleStatusDTO>
+                return new Response<StatusDTO>
                 {
                     IsSuccess = false,
                     Message = e.Message
                 };
             }
 
+        }
+
+        public async Task<Response<StatusDTO>> UpdateStatusAsync(int StatusId, StatusDTO StatusDTO)
+        {
+            try
+            {
+                Status? status = await _ecoMoveDbContext.Status.FirstOrDefaultAsync(c => c.StatusId == StatusId);
+
+                if (status is null)
+                {
+                    return new Response<StatusDTO>
+                    {
+                        CodeStatus = 404,
+                        Message = "Le statut que vous recherchez n'existe pas",
+                        IsSuccess = false,
+                    };
+                }
+
+                status.StatusLabel = StatusDTO.StatusLabel;
+                await _ecoMoveDbContext.SaveChangesAsync();
+
+                return new Response<StatusDTO>
+                {
+                    Message = $"Le statut bien été modifiée",
+                    IsSuccess = true,
+                    CodeStatus = 201,
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<StatusDTO>
+                {
+                    Message = e.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500,
+                };
+            }
         }
     }
 }

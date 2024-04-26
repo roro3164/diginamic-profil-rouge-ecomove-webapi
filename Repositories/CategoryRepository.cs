@@ -174,9 +174,9 @@ namespace ecomove_back.Repositories
                 {
                     return new Response<CategoryDTO>
                     {
-                        Message = "La catégorie que vous recherez n'existe pas",
-                        IsSuccess = false,
                         CodeStatus = 404,
+                        Message = "La catégorie que vous recherchez n'existe pas",
+                        IsSuccess = false,
                     };
                 }
 

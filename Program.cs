@@ -7,12 +7,11 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Services 
-builder.Services.AddScoped<IVehicleStatusRepository, VehicleStatusRepository>();
-builder.Services.AddScoped<IVehicleBrandRepository, VehicleBrandRepository>();
-builder.Services.AddScoped<IMotorizationRepository, MotorizationRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IMotorizationRepository, MotorizationRepository>();
 
 builder.Services.AddControllers();
 

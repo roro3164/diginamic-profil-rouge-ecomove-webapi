@@ -4,7 +4,6 @@ using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace ecomove_back.Repositories
 {

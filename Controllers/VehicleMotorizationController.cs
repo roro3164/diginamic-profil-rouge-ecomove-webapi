@@ -8,24 +8,19 @@ namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class MotorizationController : ControllerBase
+    public class VehicleMotorizationController : ControllerBase
     {
         private readonly IMotorizationRepository _motorizationRepository;
 
-        public MotorizationController(IMotorizationRepository motorizationRepository)
+        public VehicleMotorizationController(IMotorizationRepository vehiculeMotorizationRepository)
         {
-            _motorizationRepository = motorizationRepository;
+            _motorizationRepository = vehiculeMotorizationRepository;
         }
 
-        /// <summary>
-        /// Permet de créer une motorisation de véhicule
-        /// </summary>
-        /// <returns></returns>
-
         [HttpPost]
-        public async Task<IActionResult> CreateVehicleMotorization(MotorizationDTO motorizationDTO)
+        public async Task<IActionResult> CreateVehicleMotorization(MotorizationDTO vehicleMotorizationDTO)
         {
-            Response<MotorizationDTO> response = await _motorizationRepository.CreateMotorizationAsync(motorizationDTO);
+            Response<MotorizationDTO> response = await _motorizationRepository.CreateMotorizationAsync(vehicleMotorizationDTO);
 
             if (response.IsSuccess)
             {
@@ -39,13 +34,8 @@ namespace ecomove_back.Controllers
 
         }
 
-        /// <summary>
-        /// Permet de supprimer une motorisation de véhicule
-        /// </summary>
-        /// <returns></returns>
-
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMotorization(int id)
+        public async Task<IActionResult> DeleteVehicleMotorization(int id)
         {
             Response<string> response = await _motorizationRepository.DeleteMotorizationAsync(id);
 
@@ -57,12 +47,8 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
         }
 
-        /// <summary>
-        /// Permet de récupérer toutes les motorisations de véhicule
-        /// </summary>
-        /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetAllMotorizations()
+        public async Task<IActionResult> GetAllVehicleMotorizations()
         {
             Response<List<Motorization>> response = await _motorizationRepository.GetAllMotorizationsAsync();
 
@@ -80,12 +66,8 @@ namespace ecomove_back.Controllers
             }
         }
 
-        /// <summary>
-        /// Permet de récupérer une motorisation de véhicule en utilisant son Id
-        /// </summary>
-        /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetMotorizationById(int id)
+        public async Task<IActionResult> GetVehicleMotorizationById(int id)
         {
             Response<int> response = await _motorizationRepository.GetMotorizationByIdAsync(id);
             
@@ -102,27 +84,5 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
             }
         }
-
-        /// <summary>
-        /// Permet de modifier une Motorisation
-        /// </summary>
-        /// <param name="id">int : identifiant de la motorisation</param>
-        /// <param name="motorizationDTO"></param>
-        /// <returns></returns>
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMotorizationById(int id, MotorizationDTO motorizationDTO)
-        {
-            Response<MotorizationDTO> response = await _motorizationRepository.UpdateMotorizationByIdAsync(id, motorizationDTO);
-
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
-        }
     }      
 }
-
-
-

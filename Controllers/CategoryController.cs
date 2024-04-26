@@ -7,13 +7,14 @@ namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class CategoryController : ControllerBase
-    {
+    public class CategoryController : ControllerBase { 
+    
+
         private readonly ICategoryRepository _categoryRepository;
 
-        public CategoryController(ICategoryRepository vehicleCategoryRepository)
+        public CategoryController(ICategoryRepository categoryRepository)
         {
-            _categoryRepository = vehicleCategoryRepository;
+            _categoryRepository = categoryRepository;
         }
 
 
