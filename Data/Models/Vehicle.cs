@@ -17,7 +17,7 @@ namespace ecomove_back.Data.Models
 
         [DataType(DataType.Url)]
         public string Photo { get; set; } = string.Empty;
-        public string C02emission { get; set; } = string.Empty;
+        public string CO2emission { get; set; } = string.Empty;
 
         public int StatusId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
