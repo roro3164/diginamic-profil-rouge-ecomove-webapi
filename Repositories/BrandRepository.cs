@@ -192,7 +192,7 @@ namespace ecomove_back.Repositories
                     Message = "La Marque a bien �t� modifi�e",
                     Data = brandDTO,
                     IsSuccess = true,
-                    CodeStatus = 200
+                    CodeStatus = 201
                 };
             }
             catch (Exception e)
