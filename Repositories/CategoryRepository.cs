@@ -185,7 +185,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<CategoryDTO>
                 {
-                    Message = $"La catégorie a été bien modifiéée",
+                    Message = $"La catégorie a été bien modifiée",
                     IsSuccess = true,
                     CodeStatus = 201,
                 };
