@@ -1,5 +1,6 @@
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
+using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.DTOs.MotorizationDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
@@ -111,41 +112,48 @@ namespace ecomove_back.Repositories
                 };
             }
         }
-        public async Task<Response<int>> GetMotorizationByIdAsync(int id)
+
+        public async Task<Response<MotorizationDTO>> GetMotorizationByIdAsync(int id)
         {
-            Motorization? motorization = await _ecoMoveDbContext
-            .Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == id);
-
-            if (motorization is null)
-            {
-                return new Response<int>
-                {
-                    Message = "La motorisation que vous voulez trouver n'existe pas.",
-                    IsSuccess = false,
-                    CodeStatus = 404
-                };
-            }
-
             try
             {
-                _ecoMoveDbContext.Motorizations.Remove(motorization);
-                await _ecoMoveDbContext.SaveChangesAsync();
+                Motorization? motorization = await _ecoMoveDbContext
+.Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == id);
 
-                return new Response<int>
+                if (motorization is null)
                 {
+                    return new Response<MotorizationDTO>
+                    {
+                        Message = "La motorisation que vous voulez trouver n'existe pas.",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
+
+                MotorizationDTO MotorizationDTO = new MotorizationDTO
+                {
+                    MotorizationLabel = motorization.MotorizationLabel
+                };
+
+                return new Response<MotorizationDTO>
+                {
+                    Data = MotorizationDTO,
                     Message = $"La motorisation {motorization.MotorizationLabel} a été trouvée avec succés.",
-                    IsSuccess = true
+                    IsSuccess = true,
+                    CodeStatus = 200
                 };
             }
             catch (Exception e)
             {
-                return new Response<int>
+                return new Response<MotorizationDTO>
                 {
                     Message = e.Message,
-                    IsSuccess = false
+                    IsSuccess = false,
+                    CodeStatus = 500
                 };
             }
         }
+
         public async Task<Response<MotorizationDTO>> UpdateMotorizationByIdAsync(int motorizationId, MotorizationDTO MotorizationDTO)
         {
             try

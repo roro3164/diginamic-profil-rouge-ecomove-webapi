@@ -68,7 +68,7 @@ namespace ecomove_back.Controllers
 
             if (response.IsSuccess)
             {
-                return Ok(response.Data);
+                return Ok(response);
             }
             else if (response.CodeStatus == 404)
             {
@@ -87,7 +87,7 @@ namespace ecomove_back.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMotorizationById(int id)
         {
-            Response<int> response = await _motorizationRepository.GetMotorizationByIdAsync(id);
+            Response<MotorizationDTO> response = await _motorizationRepository.GetMotorizationByIdAsync(id);
             
             if (response.IsSuccess)
             {

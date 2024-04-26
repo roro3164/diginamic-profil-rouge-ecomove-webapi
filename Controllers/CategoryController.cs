@@ -43,7 +43,7 @@ namespace ecomove_back.Controllers
             Response<CategoryDTO> response = await _categoryRepository.GetCategoryByIdAsync(id);
 
             if (response.IsSuccess)
-                return Ok(response.Data);
+                return Ok(response);
             else if (response.CodeStatus == 404)
                 return NotFound(response.Message);
             else
@@ -62,7 +62,7 @@ namespace ecomove_back.Controllers
             Response<List<CategoryDTO>> response = await _categoryRepository.GetAllCategoriesAsync();
 
             if (response.IsSuccess)
-                return Ok(response.Data);
+                return Ok(response);
             else if (response.CodeStatus == 404)
                 return NotFound(response.Message);
             else
