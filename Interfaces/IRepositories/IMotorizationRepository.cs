@@ -6,10 +6,10 @@ namespace ecomove_back.Interfaces.IRepositories
 {
     public interface IMotorizationRepository
     {
-        public Task<Response<MotorizationDTO>> CreateMotorizationAsync(MotorizationDTO motorizationDTO);
+        Task<Response<MotorizationDTO>> CreateMotorizationAsync(MotorizationDTO motorizationDTO);
         Task<Response<string>> DeleteMotorizationAsync(int motorizationId);
         Task<Response<List<MotorizationDTO>>> GetAllMotorizationsAsync();
-        Task<Response<int>> GetMotorizationByIdAsync(int motorizationId);
+        Task<Response<MotorizationDTO>> GetMotorizationByIdAsync(int motorizationId);
         Task<Response<MotorizationDTO>> UpdateMotorizationByIdAsync(int motorizationId, MotorizationDTO MotorizationDTO);
     }
 }

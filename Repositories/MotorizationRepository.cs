@@ -1,5 +1,6 @@
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
+using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.DTOs.MotorizationDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
@@ -29,7 +30,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<MotorizationDTO>
                 {
-                    Message = $"La motorisation {motorization.MotorizationLabel} a bien �t� cr��e",
+                    Message = $"La motorisation {motorization.MotorizationLabel} a bien ï¿½tï¿½ crï¿½ï¿½e",
                     Data = motorizationDTO,
                     IsSuccess = true,
                     CodeStatus = 201
@@ -67,7 +68,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<string>
                 {
-                    Message = $"La motorisation {motorization.MotorizationLabel} a été supprimée avec succés.",
+                    Message = $"La motorisation {motorization.MotorizationLabel} a Ã©tÃ© supprimÃ©e avec succÃ©s.",
                     IsSuccess = true
                 };
             }
@@ -118,41 +119,47 @@ namespace ecomove_back.Repositories
                 };
             }
         }
-        public async Task<Response<int>> GetMotorizationByIdAsync(int id)
+
+        public async Task<Response<MotorizationDTO>> GetMotorizationByIdAsync(int id)
         {
-            Motorization? motorization = await _ecoMoveDbContext
-            .Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == id);
-
-            if (motorization is null)
-            {
-                return new Response<int>
-                {
-                    Message = "La motorisation que vous voulez trouver n'existe pas.",
-                    IsSuccess = false,
-                    CodeStatus = 404
-                };
-            }
-
             try
             {
-                _ecoMoveDbContext.Motorizations.Remove(motorization);
-                await _ecoMoveDbContext.SaveChangesAsync();
+                Motorization? motorization = await _ecoMoveDbContext.Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == id);
 
-                return new Response<int>
+                if (motorization is null)
                 {
-                    Message = $"La motorisation {motorization.MotorizationLabel} a �t� trouv�e avec succ�s.",
-                    IsSuccess = true
+                    return new Response<MotorizationDTO>
+                    {
+                        Message = "La motorisation que vous voulez trouver n'existe pas.",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
+
+                MotorizationDTO MotorizationDTO = new MotorizationDTO
+                {
+                    MotorizationLabel = motorization.MotorizationLabel
+                };
+
+                return new Response<MotorizationDTO>
+                {
+                    Data = MotorizationDTO,
+                    Message = $"La motorisation {motorization.MotorizationLabel} a été trouvée avec succés.",
+                    IsSuccess = true,
+                    CodeStatus = 200
                 };
             }
             catch (Exception e)
             {
-                return new Response<int>
+                return new Response<MotorizationDTO>
                 {
                     Message = e.Message,
-                    IsSuccess = false
+                    IsSuccess = false,
+                    CodeStatus = 500
                 };
             }
         }
+
         public async Task<Response<MotorizationDTO>> UpdateMotorizationByIdAsync(int motorizationId, MotorizationDTO MotorizationDTO)
         {
             try
@@ -174,7 +181,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<MotorizationDTO>
                 {
-                    Message = $"La motorisation a été bien modifiée",
+                    Message = $"La motorisation a Ã©tÃ© bien modifiÃ©e",
                     IsSuccess = true,
                     CodeStatus = 201,
                 };

@@ -10,7 +10,7 @@ namespace ecomove_back.Interfaces.IRepositories
         public Task<Response<string>> DeleteBrandAsync(int brandId);
         public Task<Response<List<BrandDTO>>> GetAllBrandAysnc();
         public Task<Response<BrandDTO>> GetBrandByIdAysnc(int brandId);
-        public Task<Response<BrandDTO>> UpdateBrandAysnc(int id, BrandDTO brandDto);
+        public Task<Response<BrandDTO>> UpdateBrandAysnc(int brandId, BrandDTO brandDTO);
 
     }
 }

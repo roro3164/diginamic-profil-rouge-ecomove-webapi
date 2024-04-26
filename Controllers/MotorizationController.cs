@@ -28,15 +28,9 @@ namespace ecomove_back.Controllers
             Response<MotorizationDTO> response = await _motorizationRepository.CreateMotorizationAsync(motorizationDTO);
 
             if (response.IsSuccess)
-            {
                 return Ok(response);
-            }
-
             else
-            {
                 return Problem(response.Message);
-            }
-
         }
 
         /// <summary>
@@ -67,17 +61,11 @@ namespace ecomove_back.Controllers
             Response<List<MotorizationDTO>> response = await _motorizationRepository.GetAllMotorizationsAsync();
 
             if (response.IsSuccess)
-            {
-                return Ok(response.Data);
-            }
+                return Ok(response);
             else if (response.CodeStatus == 404)
-            {
                 return NotFound(response.Message);
-            }
             else
-            {
                 return Problem(response.Message);
-            }
         }
 
         /// <summary>
@@ -87,20 +75,15 @@ namespace ecomove_back.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMotorizationById(int id)
         {
-            Response<int> response = await _motorizationRepository.GetMotorizationByIdAsync(id);
+
+           Response<MotorizationDTO> response = await _motorizationRepository.GetMotorizationByIdAsync(id);
 
             if (response.IsSuccess)
-            {
-                return Ok(response);
-            }
+               return Ok(response);
             else if (response.CodeStatus == 404)
-            {
-                return NotFound(response.Message);
-            }
+               return NotFound(response.Message);
             else
-            {
                 return Problem(response.Message);
-            }
         }
 
         /// <summary>
