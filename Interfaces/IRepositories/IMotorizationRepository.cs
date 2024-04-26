@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ecomove_back.Interfaces.IRepositories
 {
-    public interface IVehicleMotorizationRepository
+    public interface IMotorizationRepository
     {
         public Task<Response<VehicleMotorizationDTO>> CreateVehicleMotorizationAsync(VehicleMotorizationDTO MotorizationDTO);
         Task<Response<string>> DeleteVehicleMotorizationAsync(int vehicleMotorizationId);

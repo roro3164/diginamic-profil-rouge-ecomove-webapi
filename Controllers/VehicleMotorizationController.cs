@@ -17,9 +17,9 @@ namespace ecomove_back.Controllers
     [Route("api/[controller]/[action]")]
     public class VehicleMotorizationController : ControllerBase
     {
-        private readonly IVehicleMotorizationRepository _vehicleMotorizationRepository;
+        private readonly IMotorizationRepository _vehicleMotorizationRepository;
 
-        public VehicleMotorizationController(IVehicleMotorizationRepository vehiculeMotorizationRepository)
+        public VehicleMotorizationController(IMotorizationRepository vehiculeMotorizationRepository)
         {
             _vehicleMotorizationRepository = vehiculeMotorizationRepository;
         }

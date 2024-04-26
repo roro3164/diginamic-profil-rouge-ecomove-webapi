@@ -10,9 +10,9 @@ namespace ecomove_back.Controllers
     [Route("api/[controller]/[action]")]
     public class VehicleCategoryController : ControllerBase
     {
-        private readonly IVehicleCategoryRepository _vehicleCategoryRepository;
+        private readonly ICategoryRepository _vehicleCategoryRepository;
 
-        public VehicleCategoryController(IVehicleCategoryRepository vehicleCategoryRepository)
+        public VehicleCategoryController(ICategoryRepository vehicleCategoryRepository)
         {
             _vehicleCategoryRepository = vehicleCategoryRepository;
         }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ecomove_back.Interfaces.IRepositories
 {
-    public interface IVehicleBrandRepository
+    public interface IBrandRepository
     {
         public Task<Response<VehicleBrandDTO>> CreateBrandVehicleAsync(VehicleBrandDTO vehicleBrandForCreationDTO);
         public Task<Response<string>> DeleteBrandVehicleAsync(int brandId);

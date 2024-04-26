@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ecomove_back.Repositories
 {
-    public class VehicleBrandRepository : IBrandRepository
+    public class BrandRepository : IBrandRepository
     {
         private EcoMoveDbContext _ecoMoveDbContext;
 
-        public VehicleBrandRepository(EcoMoveDbContext ecoMoveDbContext)
+        public BrandRepository(EcoMoveDbContext ecoMoveDbContext)
         {
             _ecoMoveDbContext = ecoMoveDbContext;
         }

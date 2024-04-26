@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ecomove_back.Repositories
 {
-    public class VehicleMotorizationRepository : IVehicleMotorizationRepository
+    public class MotorizationRepository : IMotorizationRepository
     {
         private EcoMoveDbContext _ecoMoveDbContext;
-        public VehicleMotorizationRepository(EcoMoveDbContext ecoMoveDbContext)
+        public MotorizationRepository(EcoMoveDbContext ecoMoveDbContext)
         {
             _ecoMoveDbContext = ecoMoveDbContext;
         }
