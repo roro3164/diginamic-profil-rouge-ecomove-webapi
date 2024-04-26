@@ -87,7 +87,7 @@ namespace ecomove_back.Repositories
 
             List<MotorizationDTO> motorizationDTOs = new();
 
-            if (motorizationDTOs.Count > 0)
+            if (motorizations.Count > 0)
             {
                 foreach (Motorization motorization in motorizations)
                 {
@@ -144,7 +144,6 @@ namespace ecomove_back.Repositories
                 return new Response<MotorizationDTO>
                 {
                     Data = MotorizationDTO,
-                    Message = $"La motorisation {motorization.MotorizationLabel} a été trouvée avec succés.",
                     IsSuccess = true,
                     CodeStatus = 200
                 };
