@@ -38,12 +38,12 @@ namespace ecomove_back.Controllers
         /// <summary>
         /// Permet de supprimer un statut de véhicule
         /// </summary>
-        /// <param name="statusId">int: identifiant du statuts</param>
+        /// <param name="id">int: identifiant du statuts</param>
         /// <returns></returns>
-        [HttpDelete("{statusId}")]
-        public async Task<IActionResult> DeleteStatus(int statusId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteStatus(int id)
         {
-            Response<string> response = await _StatusRepository.DeleteStatusAsync(statusId);
+            Response<string> response = await _StatusRepository.DeleteStatusAsync(id);
 
             if (response.IsSuccess)
                 return Ok(response.Message);
@@ -60,7 +60,7 @@ namespace ecomove_back.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllStatusAsync()
         {
-            
+
             Response<List<StatusDTO>> response = await _StatusRepository.GetAllStatusAsync();
 
             if (response.IsSuccess)
@@ -75,13 +75,13 @@ namespace ecomove_back.Controllers
         /// <summary>
         /// Permet de récupérer un de véhicule en utilisant son Id
         /// </summary>
-        /// <param name="statusId">int: identifiant du statuts</param>
+        /// <param name="id">int: identifiant du statuts</param>
         /// <returns></returns>
-        [HttpGet("{statusId}")]
-        public async Task<IActionResult> GetStatusByIdAsync(int statusId)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetStatusByIdAsync(int id)
         {
 
-            Response<StatusDTO> response = await _StatusRepository.GetStatusByIdAsync(statusId);
+            Response<StatusDTO> response = await _StatusRepository.GetStatusByIdAsync(id);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -95,13 +95,13 @@ namespace ecomove_back.Controllers
         /// <summary>
         /// Permet de mettre à jour un statut de véhicule
         /// </summary>
-        /// <param name="statusId">int: identifiant du statuts</param>
+        /// <param name="id">int: identifiant du statuts</param>
         /// <param name="statusDTO"></param>
         /// <returns></returns>    
-        [HttpPut("{statusId}")]
-        public async Task<IActionResult> UpdateStatusAsync(int statusId, StatusDTO statusDTO)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStatusAsync(int id, StatusDTO statusDTO)
         {
-            Response<StatusDTO>? response = await _StatusRepository.UpdateStatusAsync(statusId, statusDTO);
+            Response<StatusDTO>? response = await _StatusRepository.UpdateStatusAsync(id, statusDTO);
 
             if (response.IsSuccess)
                 return Ok(response);

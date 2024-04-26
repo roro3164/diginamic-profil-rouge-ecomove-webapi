@@ -19,19 +19,33 @@ namespace ecomove_back.Repositories
         public async Task<Response<StatusDTO>> CreateStatusAsync(StatusDTO statusDTO)
         {
 
-            Status status = new Status
-            {
-                StatusLabel = statusDTO.StatusLabel,
-            };
+            bool existingStatus = await _ecoMoveDbContext.Status
+            .AnyAsync(s => s.StatusLabel == statusDTO.StatusLabel);
 
             try
             {
+                Status status = new Status
+                {
+                    StatusLabel = statusDTO.StatusLabel,
+                };
+
+                if (existingStatus || (int)statusDTO.StatusLabel < 1 || (int)statusDTO.StatusLabel > 3)
+                {
+                    return new Response<StatusDTO>
+                    {
+                        IsSuccess = false,
+                        Message = "Impossible d'enregistrer le status",
+                        CodeStatus = 403,
+                    };
+                }
+
+
                 await _ecoMoveDbContext.Status.AddAsync(status);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
                 return new Response<StatusDTO>
                 {
-                    Message = $"Le statut {status.StatusLabel} a bien été créé",
+                    Message = $"Le statut a bien été créé",
                     Data = statusDTO,
                     IsSuccess = true,
                     CodeStatus = 201
@@ -72,7 +86,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<string>
                 {
-                    Message = $"Le status {status.StatusLabel} a été supprimée avec succés.",
+                    Message = $"Le status a été supprimée avec succés.",
                     IsSuccess = true
                 };
             }
@@ -188,7 +202,7 @@ namespace ecomove_back.Repositories
                     return new Response<StatusDTO>
                     {
                         CodeStatus = 404,
-                        Message = "Le statut que vous recherchez n'existe pas",
+                        Message = "Le statut que vous recherchez n'existe pas.",
                         IsSuccess = false,
                     };
                 }
@@ -198,7 +212,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<StatusDTO>
                 {
-                    Message = $"Le statut bien été modifiée",
+                    Message = $"Le statut a bien été modifié.",
                     IsSuccess = true,
                     CodeStatus = 201,
                 };
