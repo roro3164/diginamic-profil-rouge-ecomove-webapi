@@ -18,7 +18,7 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de cr�er une marque
+        /// Permet de créer une marque
         /// </summary>
         /// <param name="brandDTO"></param>
         /// <returns></returns>
@@ -61,7 +61,7 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de r�cup�rer la liste des marques de v�hicule
+        /// Permet de récupérer la liste des marques de véhicule
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -82,7 +82,7 @@ namespace ecomove_back.Controllers
 
 
         /// <summary>
-        /// Permet de r�cuperer une marque avec son id
+        /// Permet de récuperer une marque avec son id
         /// </summary>
         /// <param name="id">int : identifiant de la marque</param>
         /// <returns></returns>

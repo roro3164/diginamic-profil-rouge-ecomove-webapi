@@ -18,7 +18,7 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de cr�er une motorisation de v�hicule
+        /// Permet de créer une motorisation de véhicule
         /// </summary>
         /// <returns></returns>
 
@@ -34,7 +34,7 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de supprimer une motorisation de v�hicule
+        /// Permet de supprimer une motorisation de véhicule
         /// </summary>
         /// <returns></returns>
 
@@ -52,7 +52,7 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de r�cup�rer toutes les motorisations de v�hicule
+        /// Permet de récupérer toutes les motorisations de véhicule
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -69,19 +69,19 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de r�cup�rer une motorisation de v�hicule en utilisant son Id
+        /// Permet de récupérer une motorisation de véhicule en utilisant son Id
         /// </summary>
         /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMotorizationById(int id)
         {
 
-           Response<MotorizationDTO> response = await _motorizationRepository.GetMotorizationByIdAsync(id);
+            Response<MotorizationDTO> response = await _motorizationRepository.GetMotorizationByIdAsync(id);
 
             if (response.IsSuccess)
-               return Ok(response);
+                return Ok(response);
             else if (response.CodeStatus == 404)
-               return NotFound(response.Message);
+                return NotFound(response.Message);
             else
                 return Problem(response.Message);
         }

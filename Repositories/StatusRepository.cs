@@ -31,7 +31,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<StatusDTO>
                 {
-                    Message = $"Le statut {status.StatusLabel} a bien �t� cr��",
+                    Message = $"Le statut {status.StatusLabel} a bien été créé",
                     Data = statusDTO,
                     IsSuccess = true,
                     CodeStatus = 201

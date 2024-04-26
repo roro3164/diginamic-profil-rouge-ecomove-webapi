@@ -30,7 +30,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<BrandDTO>
                 {
-                    Message = $"La marque {brand.BrandLabel} a bien �t� cr��",
+                    Message = $"La marque {brand.BrandLabel} a bien été créé",
                     Data = brandDTO,
                     IsSuccess = true,
                     CodeStatus = 201
@@ -68,7 +68,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<string>
                 {
-                    Message = $"La marque {brand.BrandLabel} a bien �t� suprim�e",
+                    Message = $"La marque {brand.BrandLabel} a bien été suprimée",
                     IsSuccess = true,
                     CodeStatus = 201
                 };
@@ -94,7 +94,7 @@ namespace ecomove_back.Repositories
                 {
                     return new Response<List<BrandDTO>>
                     {
-                        Message = "Aucune marque trouv�",
+                        Message = "Aucune marque trouvé",
                         IsSuccess = false,
                         CodeStatus = 404
                     };
@@ -189,7 +189,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<BrandDTO>
                 {
-                    Message = "La Marque a bien �t� modifi�e",
+                    Message = "La Marque a bien été modifiée",
                     Data = brandDTO,
                     IsSuccess = true,
                     CodeStatus = 201
