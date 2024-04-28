@@ -80,7 +80,6 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
         }
 
-
         /// <summary>
         /// Permet de récuperer une marque avec son id
         /// </summary>
