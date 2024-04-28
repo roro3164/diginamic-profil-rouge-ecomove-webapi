@@ -23,7 +23,7 @@ namespace ecomove_back.Controllers
         /// <param name="brandDTO"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Createbrand(BrandDTO brandDTO)
         {

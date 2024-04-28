@@ -10,13 +10,11 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IMotorizationRepository, MotorizationRepository>();
 builder.Services.AddScoped<IAppUserRepository, AppUserRepository>();
-
 
 builder.Services.AddControllers();
 
@@ -36,8 +34,6 @@ builder.Services.AddSwaggerGen(option =>
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     option.IncludeXmlComments(xmlPath);
-
-
 
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -61,7 +57,7 @@ builder.Services.AddDbContext<EcoMoveDbContext>(dbContextOptionsBuilder =>
     dbContextOptionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DbString"));
 });
 
-// Identity
+// Identity Framework
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityApiEndpoints<AppUser>(c =>
@@ -88,5 +84,3 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
-
-

@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
-
 
 namespace ecomove_back.Data;
 
@@ -47,13 +45,11 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
              .WithMany()           // Un rôle peut être lié à plusieurs utilisateurs
              .HasForeignKey(e => e.RoleId);  // Clé étrangère dans AppUser
 
+        // Permet de créer les deux rôles en BDD
         IdentityRole roleAdmin = new IdentityRole { Name = "ADMIN", NormalizedName = "ADMIN" };
         IdentityRole roleUser = new IdentityRole { Name = "USER", NormalizedName = "USER" };
-
         builder.Entity<IdentityRole>().HasData(new List<IdentityRole> { roleAdmin, roleUser });
 
         base.OnModelCreating(builder);
     }
-
-
 }

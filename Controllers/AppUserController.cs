@@ -1,9 +1,7 @@
 ﻿using ecomove_back.Data.Models;
 using ecomove_back.DTOs.AppUserDTOs;
-using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,28 +30,44 @@ namespace ecomove_back.Controllers
         }
 
 
-
-
+        /// <summary>
+        /// Permet de créer un utilisateur avec le rôle USER
+        /// </summary>
+        /// <param name="userDTO"></param>
+        /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> CreateAppUser(AppUserDTO appUserDTO)
+        public async Task<IActionResult> CreateUser(AppUserDTO userDTO)
         {
-            Response<AppUserDTO> response = await _appUserRepository.CreateUserAsync(appUserDTO);
+            Response<string> response = await _appUserRepository.CreateUserAsync(userDTO);
 
-            return Ok(response);
+            if (response.IsSuccess)
+                return Ok(response);
+            else
+                return Problem(response.Message);
         }
 
 
 
-        [HttpPost]
-        public IActionResult TestDate(int newStartDate, int newEndDate)
-        {
-            string response = _appUserRepository.TestDate(newStartDate, newEndDate);
 
-            return Ok(response);
-        }
 
+
+
+
+
+
+
+
+        // NE PAS SUPPRIMER !!!
+        //[HttpPost]
+        //public IActionResult TestDate(int newStartDate, int newEndDate)
+        //{
+        //    string response = _appUserRepository.TestDate(newStartDate, newEndDate);
+
+        //    return Ok(response);
+        //}
 
     }
 }

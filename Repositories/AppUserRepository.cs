@@ -1,11 +1,9 @@
 ﻿using ecomove_back.Data;
 using ecomove_back.Data.Models;
 using ecomove_back.DTOs.AppUserDTOs;
-using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Identity.Client;
 
 namespace ecomove_back.Repositories
 {
@@ -30,51 +28,55 @@ namespace ecomove_back.Repositories
         }
 
 
-        public async Task<Response<AppUserDTO>> CreateUserAsync(AppUserDTO userDTO)
+        public async Task<Response<string>> CreateUserAsync(AppUserDTO userDTO)
         {
+            IdentityRole? roleUser = await _roleManager.FindByNameAsync("USER");
+
+            if (roleUser == null)
+            {
+                return new Response<string>
+                {
+                    Message = "Le rôle n'existe pas",
+                    IsSuccess = false,
+                    CodeStatus = 404
+                };
+            }
+
             AppUser appUser = new AppUser
             {
+                UserName = userDTO.Email,
+                Email = userDTO.Email,
+                NormalizedEmail = userDTO.Email.ToUpperInvariant(),
                 FirstName = Tools.FirstLetterToUpper(userDTO.FirstName),
                 LastName = Tools.FirstLetterToUpper(userDTO.LastName),
-                PictureProfil = userDTO.PictureProfil,
+                PictureProfil = userDTO?.PictureProfil?.ToLower(),
+                RoleId = roleUser.Id,
+                Role = roleUser
             };
 
-            await _userManager.SetUserNameAsync(appUser, userDTO.Email.ToLower());
-            await _userManager.SetEmailAsync(appUser, userDTO.Email.ToLower());
-            await _userManager.AddPasswordAsync(appUser, userDTO.PasswordHash);
-            await _userManager.AddToRoleAsync(appUser, "USER");
+            IdentityResult result = await _userManager.CreateAsync(appUser, userDTO.Password);
 
-                await _ecoMoveDbContext.Users.AddAsync(appUser);
-                await _ecoMoveDbContext.SaveChangesAsync();
-
-            try
+            if (result.Succeeded)
             {
+                // Voir si on se sert de la table intermediaire [AspNetUserRoles], sinon supprimer cette ligne
+                await _userManager.AddToRoleAsync(appUser, "USER");
 
-                return new Response<AppUserDTO>
+                return new Response<string>
                 {
-                    Message = $"L'utilisateur {appUser.UserName} a bien été créé",
-                    Data = userDTO,
+                    Message = $"L'utilisateur {appUser.Email} a bien été crée",
                     IsSuccess = true,
                     CodeStatus = 201
                 };
             }
-            catch (Exception e)
+            else
             {
-                return new Response<AppUserDTO>
+                return new Response<string>
                 {
-                    Message = e.Message,
+                    Message = (string.Join(" | ", result.Errors.Select(e => e.Description))),
                     IsSuccess = false,
                     CodeStatus = 500
                 };
             }
-
-
-
-
-
-
-
-
         }
 
 
@@ -82,44 +84,6 @@ namespace ecomove_back.Repositories
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public string TestDate(int newStartDate, int newEndDate)
-        {
-
-
-            // Recuperation de toutes les locations dont la startdate est >= à la nouvelle startdate 
-
-            //RentalVehicle re = new RentalVehicle();
-
-            ////List<RentalVehicle> rentals = _ecoMoveDbContext.RentalVehicles.Where(r => r.VehicleId == re.VehicleId && r.StartDate >= re.StartDate && r.StartDate <= r.EndDate).ToList();
-            //List<RentalVehicle> rentals = _ecoMoveDbContext.RentalVehicles.Where(r => r.StartDate >= re.StartDate && r.StartDate <= r.EndDate).ToList();
-            int[][] rentalDates = [[2, 5], [8, 10], [20, 23]];
-
-            foreach (var rentalDate in rentalDates)
-            {
-                if (rentalDate[0] >= newStartDate && rentalDate[0] <= newEndDate && newStartDate > rentalDate[1])
-                {
-                    return "Pas possible";
-                }
-            }
-
-            return "Possible";
-        }
 
 
     }
