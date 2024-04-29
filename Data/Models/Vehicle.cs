@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ecomove_back.Data.Models
 {
@@ -17,7 +16,9 @@ namespace ecomove_back.Data.Models
 
         [DataType(DataType.Url)]
         public string Photo { get; set; } = string.Empty;
-        public string C02emission { get; set; } = string.Empty;
+        public int CO2emission { get; set; } 
+
+        public double Consumption { get; set; } 
 
         public int StatusId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]

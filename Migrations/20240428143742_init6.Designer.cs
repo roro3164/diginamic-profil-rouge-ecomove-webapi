@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ecomove_back.Data;
 
@@ -11,9 +12,11 @@ using ecomove_back.Data;
 namespace ecomove_back.Migrations
 {
     [DbContext(typeof(EcoMoveDbContext))]
-    partial class EcoMoveDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240428143742_init6")]
+    partial class init6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
