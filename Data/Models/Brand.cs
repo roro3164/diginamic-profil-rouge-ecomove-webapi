@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ecomove_back.Data.Models
 {
-
     [Index("BrandLabel", IsUnique = true)]
     public class Brand
     {
