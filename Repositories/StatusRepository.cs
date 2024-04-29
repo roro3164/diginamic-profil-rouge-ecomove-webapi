@@ -191,7 +191,7 @@ namespace ecomove_back.Repositories
 
         }
 
-        public async Task<Response<StatusDTO>> UpdateStatusAsync(int StatusId, StatusDTO StatusDTO)
+        public async Task<Response<StatusDTO>> UpdateStatusAsync(int StatusId, StatusDTO statusDTO)
         {
             try
             {
@@ -207,7 +207,18 @@ namespace ecomove_back.Repositories
                     };
                 }
 
-                status.StatusLabel = StatusDTO.StatusLabel;
+                if ((int)statusDTO.StatusLabel < 1 || (int)statusDTO.StatusLabel > 3)
+                {
+                    return new Response<StatusDTO>
+                    {
+                        IsSuccess = false,
+                        Message = "Impossible d'enregistrer le status",
+                        CodeStatus = 403,
+                    };
+                }
+
+                status.StatusLabel = statusDTO.StatusLabel;
+
                 await _ecoMoveDbContext.SaveChangesAsync();
 
                 return new Response<StatusDTO>

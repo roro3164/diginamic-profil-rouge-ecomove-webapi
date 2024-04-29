@@ -108,7 +108,7 @@ namespace ecomove_back.Controllers
             else if (response.CodeStatus == 404)
                 return NotFound();
             else
-                return Problem();
+                return Problem(response.Message);
         }
     }
 
