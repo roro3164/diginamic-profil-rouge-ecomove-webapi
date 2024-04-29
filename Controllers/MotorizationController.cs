@@ -23,7 +23,7 @@ namespace ecomove_back.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        public async Task<IActionResult> CreateVehicleMotorization(MotorizationDTO motorizationDTO)
+        public async Task<IActionResult> CreateMotorization(MotorizationDTO motorizationDTO)
         {
             Response<MotorizationDTO> response = await _motorizationRepository.CreateMotorizationAsync(motorizationDTO);
 

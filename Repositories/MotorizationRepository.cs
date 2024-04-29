@@ -1,6 +1,5 @@
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.DTOs.MotorizationDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
@@ -87,7 +86,7 @@ namespace ecomove_back.Repositories
 
             List<MotorizationDTO> motorizationDTOs = new();
 
-            if (motorizationDTOs.Count > 0)
+            if (motorizations.Count > 0)
             {
                 foreach (Motorization motorization in motorizations)
                 {
@@ -144,7 +143,6 @@ namespace ecomove_back.Repositories
                 return new Response<MotorizationDTO>
                 {
                     Data = MotorizationDTO,
-                    Message = $"La motorisation {motorization.MotorizationLabel} a été trouvée avec succés.",
                     IsSuccess = true,
                     CodeStatus = 200
                 };
