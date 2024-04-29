@@ -12,8 +12,8 @@ using ecomove_back.Data;
 namespace ecomove_back.Migrations
 {
     [DbContext(typeof(EcoMoveDbContext))]
-    [Migration("20240428162524_add-migration innit")]
-    partial class addmigrationinnit
+    [Migration("20240429085425_5")]
+    partial class _5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -373,8 +373,7 @@ namespace ecomove_back.Migrations
 
                     b.HasKey("ModelId");
 
-                    b.HasIndex("BrandId")
-                        .IsUnique();
+                    b.HasIndex("BrandId");
 
                     b.ToTable("Models");
                 });
