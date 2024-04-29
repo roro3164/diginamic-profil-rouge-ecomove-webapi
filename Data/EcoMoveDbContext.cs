@@ -1,6 +1,7 @@
 ﻿using ecomove_back.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 
 namespace ecomove_back.Data;
@@ -45,7 +46,7 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
              .HasOne(e => e.Role)  // Un utilisateur a un seul rôle
              .WithMany()           // Un rôle peut être lié à plusieurs utilisateurs
              .HasForeignKey(e => e.RoleId);  // Clé étrangère dans AppUser
-
+             
         base.OnModelCreating(builder);
     }
 }
