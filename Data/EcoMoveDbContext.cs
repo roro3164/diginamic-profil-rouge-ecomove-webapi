@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace ecomove_back.Data;
 
@@ -50,7 +49,6 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
         IdentityRole roleAdmin = new IdentityRole { Name = "ADMIN", NormalizedName = "ADMIN" };
         IdentityRole roleUser = new IdentityRole { Name = "USER", NormalizedName = "USER" };
         builder.Entity<IdentityRole>().HasData(new List<IdentityRole> { roleAdmin, roleUser });
-
 
         base.OnModelCreating(builder);
     }

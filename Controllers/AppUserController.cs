@@ -39,7 +39,7 @@ namespace ecomove_back.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> CreateUser(AppUserDTO userDTO)
+        public async Task<IActionResult> CreateUser(CreateAppUserDTO userDTO)
         {
             Response<string> response = await _appUserRepository.CreateUserAsync(userDTO);
 
@@ -48,6 +48,93 @@ namespace ecomove_back.Controllers
             else
                 return Problem(response.Message);
         }
+
+        /// <summary>
+        /// Permet de récupérer la liste de tous les utilisateurs
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            Response<List<AllUsersDTO>> response = await _appUserRepository.GetAllUsersAysnc();
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+        /// <summary>
+        /// Permet de récuperer un utilisateur avec son id
+        /// </summary>
+        /// <param name="id">string : identifiant de l'utilisateur (Guid)</param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            Response<UserDTO> response = await _appUserRepository.GetUserByIdAysnc(id);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+        /// <summary>
+        /// Permet de modifier les infos d'un utilisateur
+        /// </summary>
+        /// <param name="id">string : identifiant de l'utilisateur (Guid)</param>
+        /// <param name="userDTO"></param>
+        /// <returns></returns>
+        [HttpPatch("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UpdateBrandById(string id, UpdateUserDTO userDTO)
+        {
+            Response<UpdateUserDTO> response = await _appUserRepository.UpdateUserAysnc(id, userDTO);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+        /// <summary>
+        /// Permet de supprimer un utilisateur
+        /// </summary>
+        /// <param name="id">string : identifiant de l'utilisateur (Guid)</param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            Response<string> response = await _appUserRepository.DeleteUserAsync(id);
+
+            if (response.IsSuccess)
+                return Ok(response.Message);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+
+
 
 
 

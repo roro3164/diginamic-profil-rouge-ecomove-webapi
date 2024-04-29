@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ecomove_back.Data.Models
 {
+    [Index("Email", IsUnique = true)]
     public class AppUser : IdentityUser
     {
         [ForeignKey("RoleId")]
@@ -31,5 +33,7 @@ namespace ecomove_back.Data.Models
         public List<CarpoolBooking>? CarpoolsBooking { get; set; }
 
         public List<CarpoolAnnouncement>? CarpoolsAnnouncements { get; set; }
+
+        public override string Email { get => base.Email; set => base.Email = value; } 
     }
 }
