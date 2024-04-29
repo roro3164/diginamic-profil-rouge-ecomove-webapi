@@ -370,8 +370,7 @@ namespace ecomove_back.Migrations
 
                     b.HasKey("ModelId");
 
-                    b.HasIndex("BrandId")
-                        .IsUnique();
+                    b.HasIndex("BrandId");
 
                     b.ToTable("Models");
                 });
