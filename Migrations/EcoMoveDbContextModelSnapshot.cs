@@ -255,19 +255,17 @@ namespace ecomove_back.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Latitude")
-                        .HasColumnType("float");
+                    b.Property<string>("Latitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Longitude")
-                        .HasColumnType("float");
+                    b.Property<string>("Longitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CarpoolAddressId");
-
-                    b.HasIndex("Address")
-                        .IsUnique();
 
                     b.ToTable("CarpoolAddresses");
                 });
@@ -445,7 +443,7 @@ namespace ecomove_back.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("C02emission")
+                    b.Property<string>("CO2emission")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

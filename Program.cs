@@ -5,8 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
+// Serivce to call external api (Nominatim open street map)
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<OpenStreetMapHttpRequest>();
 
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
