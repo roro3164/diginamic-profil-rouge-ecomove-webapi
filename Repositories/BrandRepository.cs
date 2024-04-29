@@ -18,6 +18,18 @@ namespace ecomove_back.Repositories
 
         public async Task<Response<BrandDTO>> CreateBrandAsync(BrandDTO brandDTO)
         {
+            var existingBrand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandLabel == brandDTO.BrandLabel);
+
+            if (existingBrand != null)
+            {
+                return new Response<BrandDTO>
+                {
+                    Message = $"La marque {brandDTO.BrandLabel} existe déjà en base de données.",
+                    IsSuccess = false,
+                    CodeStatus = 400
+                };
+            }
+
             Brand brand = new Brand
             {
                 BrandLabel = brandDTO.BrandLabel
@@ -30,7 +42,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<BrandDTO>
                 {
-                    Message = $"La marque {brand.BrandLabel} a bien été créé",
+                    Message = $"La marque {brand.BrandLabel} a bien été créée",
                     Data = brandDTO,
                     IsSuccess = true,
                     CodeStatus = 201

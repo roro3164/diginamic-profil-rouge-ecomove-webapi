@@ -12,6 +12,6 @@ namespace ecomove_back.Data.Models
         [MaxLength(50)]
         public string BrandLabel { get; set; } = string.Empty;
 
-        public List<Model>? Models { get; set; }
+        public List<Model> Models { get; set; }
     }
 }

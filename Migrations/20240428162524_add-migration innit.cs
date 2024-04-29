@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ecomove_back.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class addmigrationinnit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -466,7 +466,8 @@ namespace ecomove_back.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Models_BrandId",
                 table: "Models",
-                column: "BrandId");
+                column: "BrandId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Motorizations_MotorizationLabel",

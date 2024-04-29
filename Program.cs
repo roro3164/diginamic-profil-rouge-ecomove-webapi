@@ -12,6 +12,7 @@ builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IMotorizationRepository, MotorizationRepository>();
+builder.Services.AddScoped<IModelRepository, ModelRepository>();    
 
 builder.Services.AddControllers();
 
