@@ -23,7 +23,7 @@ namespace ecomove_back.Controllers
         /// <param name="brandDTO"></param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Createbrand(BrandDTO brandDTO)
         {
@@ -80,13 +80,15 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
         }
 
-
         /// <summary>
         /// Permet de récuperer une marque avec son id
         /// </summary>
         /// <param name="id">int : identifiant de la marque</param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetBrandById(int id)
         {
             Response<BrandDTO> response = await _brandRepository.GetBrandByIdAysnc(id);
@@ -106,6 +108,9 @@ namespace ecomove_back.Controllers
         /// <param name="brandDto"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> UpdateBrandById(int id, BrandDTO brandDto)
         {
             Response<BrandDTO> response = await _brandRepository.UpdateBrandAysnc(id, brandDto);
