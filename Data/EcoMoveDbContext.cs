@@ -46,7 +46,7 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
              .HasOne(e => e.Role)  // Un utilisateur a un seul rôle
              .WithMany()           // Un rôle peut être lié à plusieurs utilisateurs
              .HasForeignKey(e => e.RoleId);  // Clé étrangère dans AppUser
-
+             
         base.OnModelCreating(builder);
     }
 }

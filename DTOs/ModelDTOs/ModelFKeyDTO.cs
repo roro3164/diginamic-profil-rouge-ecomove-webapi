@@ -9,8 +9,7 @@ namespace ecomove_back.DTOs.ModelDTOs
     {
         [MaxLength(50)]
         public string ModelLabel { get; set; } = string.Empty;
-
-        [ForeignKey("BrandId")]
+        
         public int BrandId { get; set; }
     }
 }
