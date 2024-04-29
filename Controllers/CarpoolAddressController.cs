@@ -1,4 +1,5 @@
 using ecomove_back.DTOs.AdressDTOs;
+using ecomove_back.DTOs.CarpoolAddressDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ namespace ecomove_back.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCarpoolAddress(CarpoolAddressDTO carpoolAddressDTO)
         {
-            Response<CarpoolAddressDTO> response = await _carpoolAddressRepository.CreateCarpoolAddressAsync(carpoolAddressDTO);
+            Response<CarpoolAddressOutGoingDTO> response = await _carpoolAddressRepository.CreateCarpoolAddressAsync(carpoolAddressDTO);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -57,7 +58,7 @@ namespace ecomove_back.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCarpoolAddresses()
         {
-            Response<List<CarpoolAddressDTO>> response = await _carpoolAddressRepository.GetAllCarpoolAddressAsync();
+            Response<List<CarpoolAddressOutGoingDTO>> response = await _carpoolAddressRepository.GetAllCarpoolAddressesAsync();
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -102,13 +103,5 @@ namespace ecomove_back.Controllers
             else
                 return Problem(response.Message);
         }
-
-
-
-
-
-
-
-
     }
 }
