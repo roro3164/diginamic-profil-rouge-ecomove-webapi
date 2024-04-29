@@ -5,6 +5,7 @@ using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace ecomove_back.Repositories
 {
     public class VehicleRepository : IVehicleRepository
@@ -55,15 +56,26 @@ namespace ecomove_back.Repositories
             }
         }
 
-        public async Task<List<VehicleForGetDTO>> GetAllVehiclesAsync()
+        public async Task<Response<List<VehicleForGetDTO>>> GetAllVehiclesAsync()
         {
-            var vehicles = await _ecoMoveDbContext.Vehicles
+            List<Vehicle> vehicles = await _ecoMoveDbContext.Vehicles
+
                 .Include(v => v.Model)
                     //.ThenInclude(m => m.Brand)
                 .Include(v => v.Category)
                 .ToListAsync();
 
-            return vehicles.Select(v => new VehicleForGetDTO
+            if (vehicles.Count == 0)
+            {
+                return new Response<List<VehicleForGetDTO>>
+                {
+                    Message = "Le véhicule que vous cherchez n'existe pas.",
+                    IsSuccess = false,
+                    CodeStatus = 404,
+                };
+            }
+
+            var vehicleDTO= vehicles.Select(v => new VehicleForGetDTO
             {
                 VehicleId = v.VehicleId,
                 BrandLabel = v.Model.Brand.BrandLabel,
@@ -75,6 +87,13 @@ namespace ecomove_back.Repositories
                 CO2emission = v.CO2emission,
                 Consumption = v.Consumption
             }).ToList();
+
+            return new Response<List<VehicleForGetDTO>>
+            {
+                Data = vehicleDTO,
+                IsSuccess = true,
+                CodeStatus = 200,
+            };
         }
         public async Task<Response<VehicleForGetDTO>> GetVehicleByIdAsync(Guid id)  
         {
@@ -221,7 +240,6 @@ namespace ecomove_back.Repositories
             }
 
         }
-
         public async Task<Response<VehicleForUpdateDTO>> UpdateVehicleAsync(Guid vehicleId, VehicleForUpdateDTO vehicleUpdate)
         {
             try
@@ -269,32 +287,39 @@ namespace ecomove_back.Repositories
         }
 
         //verification avec une méthode
-        public async Task<Response<bool>> ChangeVehicleStatusAsync(Guid vehicleId, VehicleForChangeStatusDTO statusDto)
+        public async Task<Response<VehicleForChangeStatusDTO>> ChangeVehicleStatusAsync(Guid vehicleId, VehicleForChangeStatusDTO statusDto)
         {
             try
             {
-                Vehicle? vehicle = await _ecoMoveDbContext.Vehicles.Include(v => v.Status).FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
+                var vehicle = await _ecoMoveDbContext.Vehicles.Include(v => v.Status).FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
                 if (vehicle == null)
                 {
-                    return new Response<bool> { IsSuccess = false, Message = "Véhicule non trouvé." };
+                    return new Response<VehicleForChangeStatusDTO>
+                    {
+                        IsSuccess = false,
+                        Message = "Véhicule non trouvé.",
+                        CodeStatus = 404
+                    };
                 }
 
-                // Supposition que vous souhaitez mettre à jour le statut du véhicule.
-                // Cette approche suppose que Status est un objet complexe lié au véhicule.
-                var status = await _ecoMoveDbContext.Status.FirstOrDefaultAsync(s => s.StatusLabel == statusDto.StatusLabel);
-                if (status == null)
-                {
-                    return new Response<bool> { IsSuccess = false, Message = "Étiquette de statut non trouvée." };
-                }
-
-                vehicle.Status = status; // Assigner le statut récupéré au véhicule
+                vehicle.Status.StatusLabel = statusDto.StatusLabel;
                 await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<bool> { IsSuccess = true, Message = "Statut du véhicule mis à jour avec succès." };
+                return new Response<VehicleForChangeStatusDTO>
+                {
+                    IsSuccess = true,
+                    Message = "Statut du véhicule mis à jour avec succès.",
+                    CodeStatus = 200
+                };
             }
             catch (Exception e)
             {
-                return new Response<bool> { IsSuccess = false, Message = $"Erreur lors de la mise à jour du statut du véhicule : {e.Message}" };
+                return new Response<VehicleForChangeStatusDTO>
+                {
+                    IsSuccess = false,
+                    Message = $"Erreur lors de la mise à jour du statut du véhicule: {e.Message}",
+                    CodeStatus = 500
+                };
             }
         }
     }

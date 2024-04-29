@@ -22,7 +22,7 @@ namespace ecomove_back.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateVehicleAsync(VehicleForCreateDTO vehicleForCreationDTO)
         {
-            var response = await _vehicleRepository.CreateVehicleAsync(vehicleForCreationDTO);
+            Response<VehicleForCreateDTO> response = await _vehicleRepository.CreateVehicleAsync(vehicleForCreationDTO);
 
             if (response.IsSuccess)
             {
@@ -40,13 +40,15 @@ namespace ecomove_back.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllVehiclesAsync()
         {
-            var vehicles = await _vehicleRepository.GetAllVehiclesAsync();
-            if (vehicles.Count == 0)
+            var response = await _vehicleRepository.GetAllVehiclesAsync();
+            if (response.IsSuccess)
             {
-                return NotFound("Aucun véhicule trouvé.");
+                return Ok(response.Data);
             }
-
-            return Ok(vehicles);
+            else
+            {
+                return Problem(response.Message);
+            }
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace ecomove_back.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetVehicleById(Guid id)
         {
-            var response = await _vehicleRepository.GetVehicleByIdAsync(id);
+            Response<VehicleForGetDTO> response = await _vehicleRepository.GetVehicleByIdAsync(id);
             if (response.IsSuccess)
             {
                 return Ok(response.Data);
@@ -72,7 +74,7 @@ namespace ecomove_back.Controllers
         [HttpGet("{id}/admin")]
         public async Task<IActionResult> GetVehicleByIdForAdmin(Guid id)
         {
-            var response = await _vehicleRepository.GetVehicleByIdForAdminAsync(id);
+            Response<VehicleForGetByIdForAdminDTO> response = await _vehicleRepository.GetVehicleByIdForAdminAsync(id);
             if (response.IsSuccess)
             {
                 return Ok(response.Data);
@@ -89,7 +91,7 @@ namespace ecomove_back.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehicle(Guid id)
         {
-            var response = await _vehicleRepository.DeleteVehicleAsync(id);
+            Response<bool> response = await _vehicleRepository.DeleteVehicleAsync(id);
             if (response.IsSuccess)
             {
                 return Ok(response.Data);
@@ -106,7 +108,7 @@ namespace ecomove_back.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVehicle(Guid id, VehicleForUpdateDTO vehicleDto)
         {
-            var response = await _vehicleRepository.UpdateVehicleAsync(id, vehicleDto);
+            Response<VehicleForUpdateDTO> response = await _vehicleRepository.UpdateVehicleAsync(id, vehicleDto);
             if (response.IsSuccess)
             {
                 return Ok(response);
@@ -120,15 +122,10 @@ namespace ecomove_back.Controllers
         /// <summary>
         /// Permet de changer le statut d'un véhicule
         /// </summary>
-        [HttpPut("{id}/status")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> ChangeVehicleStatus(Guid id, VehicleForChangeStatusDTO statusDto)
         {
-            if (statusDto == null)
-            {
-                return BadRequest("Invalid status data provided.");
-            }
-
-            var response = await _vehicleRepository.ChangeVehicleStatusAsync(id, statusDto);
+            Response<VehicleForChangeStatusDTO> response = await _vehicleRepository.ChangeVehicleStatusAsync(id, statusDto);
             if (response.IsSuccess)
             {
                 return Ok(response);
