@@ -8,7 +8,7 @@ namespace ecomove_back.Interfaces.IRepositories
     {
         Task<Response<CarpoolAnnouncement>> CreateCarpoolAnnouncement(CarpoolAnnouncementDTO carpoolAnnouncement);
         Task<Response<List<CarpoolAnnouncement>>> GetAllCarpoolAnnouncements();
-        Task<Response<CarpoolAnnouncement>> GetCarpoolAnnouncementById();
+        Task<Response<CarpoolAnnouncement>> GetCarpoolAnnouncementById(Guid id);
         Task<Response<CarpoolAnnouncement>> UpdateCarpoolAnnouncement(Guid id, CarpoolAnnouncementDTO carpoolAnnouncement);
         Task<Response<CarpoolAnnouncement>> DeleteCarpoolAnnouncement(Guid id);
     }

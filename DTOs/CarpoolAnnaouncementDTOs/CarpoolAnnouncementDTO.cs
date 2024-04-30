@@ -9,7 +9,7 @@ namespace ecomove_back.DTOs
         public Guid PickupAddressId { get; set; }
         public Guid DropOffAddressId { get; set; }
 
-        public string AppUserId { get; set; } = string.Empty;
+        public string AppUserId { get; set; }
         public Guid VehicleId { get; set; }
     }
 }
