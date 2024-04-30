@@ -51,13 +51,13 @@ namespace ecomove_back.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "20b15c04-e3d7-4d55-ac77-04f099f378d3",
+                            Id = "a2e634f0-af70-473d-b1ab-092d58e1128d",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f68036ca-e3d8-4888-ad6c-4c2be30d9854",
+                            Id = "7877c884-30ed-4ddb-a746-efc6fab9363c",
                             Name = "USER",
                             NormalizedName = "USER"
                         });

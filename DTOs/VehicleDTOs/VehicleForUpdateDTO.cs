@@ -4,6 +4,6 @@ namespace ecomove_back.DTOs.VehicleDTOs
 {
     public class VehicleForUpdateDTO : VehicleForCreateDTO
     {
-        public StatusEnum StatusLabel { get; set; }
+        public int StatusId { get; set; }
     }
 }

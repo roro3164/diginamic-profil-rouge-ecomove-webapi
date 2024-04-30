@@ -40,15 +40,12 @@ namespace ecomove_back.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllVehiclesAsync()
         {
-            var response = await _vehicleRepository.GetAllVehiclesAsync();
+            Response<List<VehicleForGetDTO>> response = await _vehicleRepository.GetAllVehiclesAsync();
+
             if (response.IsSuccess)
-            {
                 return Ok(response.Data);
-            }
             else
-            {
                 return Problem(response.Message);
-            }
         }
 
         /// <summary>
@@ -76,13 +73,9 @@ namespace ecomove_back.Controllers
         {
             Response<VehicleForGetByIdForAdminDTO> response = await _vehicleRepository.GetVehicleByIdForAdminAsync(id);
             if (response.IsSuccess)
-            {
                 return Ok(response.Data);
-            }
             else
-            {
                 return StatusCode(response.CodeStatus, response.Message);
-            }
         }
 
         /// <summary>
@@ -93,13 +86,9 @@ namespace ecomove_back.Controllers
         {
             Response<bool> response = await _vehicleRepository.DeleteVehicleAsync(id);
             if (response.IsSuccess)
-            {
-                return Ok(response.Data);
-            }
+                return Ok(response);
             else
-            {
                 return Problem(response.Message);
-            }
         }
 
         /// <summary>
