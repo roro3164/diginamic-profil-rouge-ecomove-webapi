@@ -21,7 +21,6 @@ namespace ecomove_back.Repositories
         {
             try
             {
-
                 Vehicle vehicle = new Vehicle
                 {
                     CarSeatNumber = vehicleCreate.CarSeatNumber,
@@ -31,10 +30,11 @@ namespace ecomove_back.Repositories
                     Consumption = vehicleCreate.Consumption,
                     ModelId = vehicleCreate.ModelId,
                     MotorizationId = vehicleCreate.MotorizationId,
-                    CategoryId = vehicleCreate.CategoryId
+                    CategoryId = vehicleCreate.CategoryId,
+                    StatusId = 1
                 };
 
-                _ecoMoveDbContext.Vehicles.Add(vehicle);
+                await _ecoMoveDbContext.Vehicles.AddAsync(vehicle);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
                 return new Response<VehicleForCreateDTO>
@@ -50,8 +50,7 @@ namespace ecomove_back.Repositories
                 return new Response<VehicleForCreateDTO>
                 {
                     IsSuccess = false,
-                    Message = $"Error creating vehicle: {e.Message}",
-                    CodeStatus = 500  
+ 
                 };
             }
         }
@@ -59,9 +58,8 @@ namespace ecomove_back.Repositories
         public async Task<Response<List<VehicleForGetDTO>>> GetAllVehiclesAsync()
         {
             List<Vehicle> vehicles = await _ecoMoveDbContext.Vehicles
-
                 .Include(v => v.Model)
-                    //.ThenInclude(m => m.Brand)
+                .Include(b => b.Model.Brand)
                 .Include(v => v.Category)
                 .ToListAsync();
 
@@ -69,38 +67,46 @@ namespace ecomove_back.Repositories
             {
                 return new Response<List<VehicleForGetDTO>>
                 {
-                    Message = "Le véhicule que vous cherchez n'existe pas.",
+                    Message = "Aucun véhicule trouvé.",
                     IsSuccess = false,
                     CodeStatus = 404,
                 };
             }
 
-            var vehicleDTO= vehicles.Select(v => new VehicleForGetDTO
+            List<VehicleForGetDTO> vehiclesDTO = new List<VehicleForGetDTO>();
+
+            foreach (var v in vehicles)
             {
-                VehicleId = v.VehicleId,
-                BrandLabel = v.Model.Brand.BrandLabel,
-                ModelLabel = v.Model.ModelLabel,
-                CategoryLabel = v.Category.CategoryLabel,
-                CarSeatNumber = v.CarSeatNumber,
-                Registration = v.Registration,
-                Photo = v.Photo,
-                CO2emission = v.CO2emission,
-                Consumption = v.Consumption
-            }).ToList();
+                vehiclesDTO.Add(new VehicleForGetDTO
+                {
+                    VehicleId = v.VehicleId,
+                    BrandLabel = v.Model.Brand.BrandLabel,
+                    ModelLabel = v.Model.ModelLabel,
+                    CategoryLabel = v.Category.CategoryLabel,
+                    CarSeatNumber = v.CarSeatNumber,
+                    Registration = v.Registration,
+                    Photo = v.Photo,
+                    CO2emission = v.CO2emission,
+                    Consumption = v.Consumption
+                });
+            }
 
             return new Response<List<VehicleForGetDTO>>
             {
-                Data = vehicleDTO,
+                Data = vehiclesDTO,
                 IsSuccess = true,
                 CodeStatus = 200,
             };
         }
+
+
         public async Task<Response<VehicleForGetDTO>> GetVehicleByIdAsync(Guid id)  
         {
             try
             {
                 Vehicle? vehicle = await _ecoMoveDbContext.Vehicles
-                    .Include(v => v.Model) 
+                    .Include(v => v.Model)
+                    .Include(b => b.Model.Brand)
                     .Include(v => v.Status)
                     .Include(v => v.Category)
                     .Include(v => v.Motorization)
@@ -155,7 +161,7 @@ namespace ecomove_back.Repositories
                 var vehicle = await _ecoMoveDbContext.Vehicles
                     .Include(v => v.Status)
                     .Include(v => v.Model)
-                        //.ThenInclude(m => m.Brand)
+                    .ThenInclude(b => b.Brand)
                     .Include(v => v.Category)
                     .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
 
@@ -255,15 +261,14 @@ namespace ecomove_back.Repositories
                     };
                 }
 
-                vehicle.Model.ModelId = vehicleUpdate.ModelId;  
-                //vehicle.Model.Brand.BrandId = vehicleUpdate.BrandId;  
-                vehicle.Category.CategoryId = vehicleUpdate.CategoryId;
+                vehicle.ModelId = vehicleUpdate.ModelId;  
+                vehicle.CategoryId = vehicleUpdate.CategoryId;
                 vehicle.CarSeatNumber = vehicleUpdate.CarSeatNumber;
                 vehicle.Registration = vehicleUpdate.Registration;
                 vehicle.Photo = vehicleUpdate.Photo;
                 vehicle.CO2emission = vehicleUpdate.CO2emission;
                 vehicle.Consumption = vehicleUpdate.Consumption;
-                vehicle.Status.StatusLabel = vehicleUpdate.StatusLabel;
+                vehicle.StatusId = vehicleUpdate.StatusId;
 
                 await _ecoMoveDbContext.SaveChangesAsync();
 
@@ -291,7 +296,7 @@ namespace ecomove_back.Repositories
         {
             try
             {
-                var vehicle = await _ecoMoveDbContext.Vehicles.Include(v => v.Status).FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
+                var vehicle = await _ecoMoveDbContext.Vehicles.FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
                 if (vehicle == null)
                 {
                     return new Response<VehicleForChangeStatusDTO>
@@ -302,7 +307,7 @@ namespace ecomove_back.Repositories
                     };
                 }
 
-                vehicle.Status.StatusLabel = statusDto.StatusLabel;
+                vehicle.StatusId = statusDto.StatusId;
                 await _ecoMoveDbContext.SaveChangesAsync();
 
                 return new Response<VehicleForChangeStatusDTO>
