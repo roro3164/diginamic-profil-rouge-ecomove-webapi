@@ -51,13 +51,13 @@ namespace ecomove_back.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a2e634f0-af70-473d-b1ab-092d58e1128d",
+                            Id = "f9e6c7bb-a343-489d-a30d-d4a5bb6879ab",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7877c884-30ed-4ddb-a746-efc6fab9363c",
+                            Id = "167770af-1c36-42e4-b1e2-3ccc80e4f7d7",
                             Name = "USER",
                             NormalizedName = "USER"
                         });
@@ -427,10 +427,14 @@ namespace ecomove_back.Migrations
 
             modelBuilder.Entity("ecomove_back.Data.Models.RentalVehicle", b =>
                 {
-                    b.Property<Guid>("VehicleId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("RentalVehicleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RentalVehicleId"));
 
                     b.Property<string>("AppUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("Confirmed")
@@ -442,9 +446,14 @@ namespace ecomove_back.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("VehicleId", "AppUserId");
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("RentalVehicleId");
 
                     b.HasIndex("AppUserId");
+
+                    b.HasIndex("VehicleId");
 
                     b.ToTable("RentalVehicles");
                 });
