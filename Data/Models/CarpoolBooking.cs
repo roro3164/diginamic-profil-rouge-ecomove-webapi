@@ -6,10 +6,10 @@
         public bool Confirmed { get; set; }
 
         public Guid CarpoolAnnouncementId { get; set; }
-        public CarpoolAnnouncement CarpoolAnnouncement { get; set; } = new();
+        public CarpoolAnnouncement CarpoolAnnouncement { get; set; };
 
         public string AppUserId { get; set; } = string.Empty;
-        public AppUser AppUser { get; set; } = new();
+        public AppUser AppUser { get; set; };
     }
 
 }
