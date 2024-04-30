@@ -19,22 +19,23 @@ namespace ecomove_back.Data.Models
       
         public int CO2emission { get; set; } 
 
-        public double Consumption { get; set; } 
-      
+        public double Consumption { get; set; }
+
         public int StatusId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Status Status { get; set; } = new();
+
+        public Status Status { get; set; }
         public int CategoryId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Category Category { get; set; } = new();
+        public Category Category { get; set; }
 
         public int MotorizationId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Motorization Motorization { get; set; } = new();
+        public Motorization Motorization { get; set; }
 
         public int ModelId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Model Model { get; set; } = new();
+        public Model Model { get; set; }
 
         public List<RentalVehicle>? RentalVehicles { get; set; }
 
