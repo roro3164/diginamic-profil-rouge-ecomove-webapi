@@ -1,7 +1,4 @@
-﻿using ecomove_back.Data.Models;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ecomove_back.DTOs.ModelDTOs
 {
