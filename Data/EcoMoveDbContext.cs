@@ -34,9 +34,6 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
             .WithMany(p => p.DropOffAddressCarpool)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<RentalVehicle>()
-            .HasKey(rv => new { rv.VehicleId, rv.AppUserId });
-
         builder.Entity<CarpoolBooking>()
             .HasKey(rv => new { rv.CarpoolAnnouncementId, rv.AppUserId });
 
