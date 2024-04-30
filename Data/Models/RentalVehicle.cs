@@ -2,6 +2,7 @@
 {
     public class RentalVehicle
     {
+        public int RentalVehicleId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool Confirmed { get; set; }

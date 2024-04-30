@@ -24,7 +24,11 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IAppUserRepository, AppUserRepository>();
 builder.Services.AddScoped<IModelRepository, ModelRepository>();
 builder.Services.AddScoped<ICarpoolAddressRepository, CarpoolAddressRepository>();
+<<<<<<< HEAD
 builder.Services.AddScoped<ICarpoolAnnouncementRepository, CarpoolAnnouncementRepository>();
+=======
+builder.Services.AddScoped<IRentalVehicleRepository, RentalVehicleRepository>();
+>>>>>>> develop
 
 builder.Services.AddControllers().AddJsonOptions(x =>
 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

@@ -11,7 +11,7 @@ namespace ecomove_back.Controllers
     [ApiController]
     public class AppUserController : ControllerBase
     {
-        private readonly IAppUserRepository _appUserRepository;
+        private IAppUserRepository _appUserRepository;
         private UserManager<AppUser> _userManager;
         private SignInManager<AppUser> _signInManager;
         private RoleManager<IdentityRole> _roleManager;
