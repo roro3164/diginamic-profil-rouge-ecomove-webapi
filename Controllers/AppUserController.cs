@@ -100,7 +100,7 @@ namespace ecomove_back.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> UpdateBrandById(string id, UpdateUserDTO userDTO)
+        public async Task<IActionResult> UpdateUserById(string id, UpdateUserDTO userDTO)
         {
             Response<UpdateUserDTO> response = await _appUserRepository.UpdateUserAysnc(id, userDTO);
 

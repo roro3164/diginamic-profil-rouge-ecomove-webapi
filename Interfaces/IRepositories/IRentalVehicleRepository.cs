@@ -11,6 +11,9 @@ namespace ecomove_back.Interfaces.IRepositories
 {
     public interface IRentalVehicleRepository
     {
-        public Task<Response<string>> CreateRentalVehicleAsync(string userId, Guid vehicleId, CreateRentalVehicleDTO rentalVehicleDTO);
+        public Task<Response<string>> CreateRentalVehicleAsync(string userId, Guid vehicleId, RentalVehicleDTO rentalVehicleDTO);
+        public Task<Response<RentalVehicleDTO>> UpdateRentalVehicleAsync(int rentalId, RentalVehicleDTO userDTO);
+
+
     }
 }
