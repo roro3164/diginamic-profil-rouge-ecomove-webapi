@@ -25,7 +25,7 @@ namespace ecomove_back.Repositories
 
 
         // Manque verification sur les reservations futures changer userID dans le controller par le user connecte
-        public async Task<Response<string>> CreateRentalVehicleAsync(string userId, Guid vehicleId, CreateRentalVehicleDTO rentalVehicleDTO)
+        public async Task<Response<string>> CreateRentalVehicleAsync(string userId, Guid vehicleId, RentalVehicleDTO rentalVehicleDTO)
         {
             // Vérification que le vehicule existe bien en BDD
             Vehicle? vehicle = await _ecoMoveDbContext.Vehicles.FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
@@ -40,6 +40,7 @@ namespace ecomove_back.Repositories
                 };
             }
 
+            // À refactorer
             if (rentalVehicleDTO.EndDate < rentalVehicleDTO.StartDate)
             {
                 return new Response<string>
@@ -49,7 +50,7 @@ namespace ecomove_back.Repositories
                     CodeStatus = 400
                 };
             } 
-            else if (rentalVehicleDTO.StartDate.ToString("d") == DateTime.Now.ToString("d"))
+            else if (rentalVehicleDTO.EndDate.ToString("d") == DateTime.Now.ToString("d"))
             {
                 return new Response<string>
                 {
@@ -98,19 +99,75 @@ namespace ecomove_back.Repositories
                     CodeStatus = 500
                 };
             }
+        }
 
+        // Manque verification sur les reservations presentes en BDD et verifier aussi que le user est bien celui qui a fait la reservation
+        public async Task<Response<RentalVehicleDTO>> UpdateRentalVehicleAsync(int rentalId, RentalVehicleDTO rentalVehicleDTO)
+        {
+            try
+            {
+                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);   
 
+                if (rentalVehicle == null)
+                {
+                    return new Response<RentalVehicleDTO>
+                    {
+                        Message = "Aucune location ne correspond à cette ID",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
 
+                // À refactorer
+                if (rentalVehicleDTO.EndDate < rentalVehicleDTO.StartDate)
+                {
+                    return new Response<RentalVehicleDTO>
+                    {
+                        Message = "La date de fin ne peut pas être inférieur à la date de début",
+                        IsSuccess = false,
+                        CodeStatus = 400
+                    };
+                }
+                else if (rentalVehicleDTO.EndDate.ToString("d") == DateTime.Now.ToString("d"))
+                {
+                    return new Response<RentalVehicleDTO>
+                    {
+                        Message = "La date minimale d'une réservation est de 1 jour",
+                        IsSuccess = false,
+                        CodeStatus = 400
+                    };
+                }
+                else if (rentalVehicleDTO.StartDate.Date < DateTime.Now.Date)
+                {
+                    return new Response<RentalVehicleDTO>
+                    {
+                        Message = "La date de début ne peut pas être antérieur à la date du jour",
+                        IsSuccess = false,
+                        CodeStatus = 400
+                    };
+                }
 
+                rentalVehicle.StartDate = rentalVehicleDTO.StartDate;
+                rentalVehicle.EndDate = rentalVehicleDTO.EndDate;
+                await _ecoMoveDbContext.SaveChangesAsync();
 
+                return new Response<RentalVehicleDTO>
+                {
+                    Message = "Votre réservatiopn a bien été modifiée",
+                    IsSuccess = true,
+                    CodeStatus = 201
+                };
 
-
-
-
-
-
-
-
+            }
+            catch (Exception e)
+            {
+                return new Response<RentalVehicleDTO>
+                {
+                    Message = e.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500
+                };
+            }
         }
     }
 }

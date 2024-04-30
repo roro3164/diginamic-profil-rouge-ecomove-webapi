@@ -2,7 +2,7 @@
 
 namespace ecomove_back.DTOs.RentalVehicleDTO
 {
-    public class CreateRentalVehicleDTO
+    public class RentalVehicleDTO
     {
         [Required(ErrorMessage = "Vous devez entrer une date de départ")]
         public DateTime StartDate { get; set; }

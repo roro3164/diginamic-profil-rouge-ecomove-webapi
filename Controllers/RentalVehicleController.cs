@@ -1,7 +1,9 @@
 using ecomove_back.Data.Models;
+using ecomove_back.DTOs.AppUserDTOs;
 using ecomove_back.DTOs.RentalVehicleDTO;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using ecomove_back.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,7 +38,7 @@ namespace ecomove_back.Controllers
         [ProducesResponseType(201)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> CreateRentalVehicle(Guid vehicleId, CreateRentalVehicleDTO userDTO)
+        public async Task<IActionResult> CreateRentalVehicle(Guid vehicleId, RentalVehicleDTO userDTO)
         {
             string userId = "26554434-3066-443c-ac97-0119cccd215f";
 
@@ -49,7 +51,27 @@ namespace ecomove_back.Controllers
         }
 
 
+        /// <summary>
+        /// Permet de modifier les dates d'une réservation
+        /// </summary>
+        /// <param name="rentalId">int ; identifiant de la réservation</param>
+        /// <param name="rentalVehicleDTO"></param>
+        /// <returns></returns>
+        [HttpPut("{rentalId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UpdateRentalVehicle(int rentalId, RentalVehicleDTO rentalVehicleDTO)
+        {
+            Response<RentalVehicleDTO> response = await _rentalVehicleRepository.UpdateRentalVehicleAsync(rentalId, rentalVehicleDTO);
 
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
 
     }
 }
