@@ -9,5 +9,4 @@
                 public AppUser AppUser { get; set; }
                 public bool Confirmed { get; set; }
         }
-
 }
