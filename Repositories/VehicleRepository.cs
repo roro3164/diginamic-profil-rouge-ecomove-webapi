@@ -39,10 +39,10 @@ namespace ecomove_back.Repositories
 
                 return new Response<VehicleForCreateDTO>
                 {
-                    Data = vehicleCreate,  
+                    Data = vehicleCreate,
                     IsSuccess = true,
                     Message = "Vehicle crée avec succés",
-                    CodeStatus = 201  
+                    CodeStatus = 201
                 };
             }
             catch (Exception e)
@@ -50,7 +50,7 @@ namespace ecomove_back.Repositories
                 return new Response<VehicleForCreateDTO>
                 {
                     IsSuccess = false,
- 
+
                 };
             }
         }
@@ -100,7 +100,7 @@ namespace ecomove_back.Repositories
         }
 
 
-        public async Task<Response<VehicleForGetDTO>> GetVehicleByIdAsync(Guid id)  
+        public async Task<Response<VehicleForGetDTO>> GetVehicleByIdAsync(Guid id)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace ecomove_back.Repositories
                 VehicleForGetDTO vehicleDTO = new VehicleForGetDTO
                 {
                     VehicleId = vehicle.VehicleId,
-                    BrandLabel = vehicle.Model.Brand.BrandLabel, 
+                    BrandLabel = vehicle.Model.Brand.BrandLabel,
                     ModelLabel = vehicle.Model.ModelLabel,
                     CategoryLabel = vehicle.Category.CategoryLabel,
                     CarSeatNumber = vehicle.CarSeatNumber,
@@ -133,7 +133,7 @@ namespace ecomove_back.Repositories
                     Photo = vehicle.Photo,
                     CO2emission = vehicle.CO2emission,
                     Consumption = vehicle.Consumption,
-                    
+
                 };
 
                 return new Response<VehicleForGetDTO>
@@ -186,7 +186,7 @@ namespace ecomove_back.Repositories
                     Photo = vehicle.Photo,
                     CO2emission = vehicle.CO2emission,
                     Consumption = vehicle.Consumption,
-                    StatusLabel = vehicle.Status.StatusLabel 
+                    StatusLabel = vehicle.Status.StatusLabel
                 };
 
                 return new Response<VehicleForGetByIdForAdminDTO>
@@ -261,7 +261,7 @@ namespace ecomove_back.Repositories
                     };
                 }
 
-                vehicle.ModelId = vehicleUpdate.ModelId;  
+                vehicle.ModelId = vehicleUpdate.ModelId;
                 vehicle.CategoryId = vehicleUpdate.CategoryId;
                 vehicle.CarSeatNumber = vehicleUpdate.CarSeatNumber;
                 vehicle.Registration = vehicleUpdate.Registration;
