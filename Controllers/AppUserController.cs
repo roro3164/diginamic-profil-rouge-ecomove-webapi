@@ -158,11 +158,9 @@ namespace ecomove_back.Controllers
 
             foreach (var rentalDate in rentalDates)
             {
-                //if (rentalDate[0] >= newStartDate && rentalDate[0] <= newEndDate && newStartDate >= rentalDate[1])
-                if (
-                    (newStartDate >= rentalDate[0] && newStartDate <= rentalDate[1]) ||
-                    (newEndDate <= rentalDate[1] && newEndDate >= rentalDate[0])
-                )
+                if ((newStartDate >= rentalDate[0] && newStartDate <= rentalDate[1]) ||
+                    (newEndDate >= rentalDate[0] && newEndDate <= rentalDate[1]) ||
+                    (newStartDate <= rentalDate[0] && newEndDate >= rentalDate[1]))
                 {
                     return Ok("Pas possible");
                 }
@@ -170,6 +168,10 @@ namespace ecomove_back.Controllers
 
             return Ok("SUPER");
         }
+
+
+
+
 
     }
 }
