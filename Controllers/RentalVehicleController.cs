@@ -61,7 +61,7 @@ namespace ecomove_back.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> UpdateRentalVehicle(int rentalId, RentalVehicleDTO rentalVehicleDTO)
+        public async Task<IActionResult> UpdateRentalVehicle(Guid rentalId, RentalVehicleDTO rentalVehicleDTO)
         {
             Response<RentalVehicleDTO> response = await _rentalVehicleRepository.UpdateRentalVehicleAsync(rentalId, rentalVehicleDTO);
 

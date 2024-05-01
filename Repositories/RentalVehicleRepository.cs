@@ -49,7 +49,7 @@ namespace ecomove_back.Repositories
                     IsSuccess = false,
                     CodeStatus = 400
                 };
-            } 
+            }
             else if (rentalVehicleDTO.EndDate.ToString("d") == DateTime.Now.ToString("d"))
             {
                 return new Response<string>
@@ -58,7 +58,7 @@ namespace ecomove_back.Repositories
                     IsSuccess = false,
                     CodeStatus = 400
                 };
-            } 
+            }
             else if (rentalVehicleDTO.StartDate < DateTime.Now)
             {
                 return new Response<string>
@@ -102,11 +102,11 @@ namespace ecomove_back.Repositories
         }
 
         // Manque verification sur les reservations presentes en BDD et verifier aussi que le user est bien celui qui a fait la reservation
-        public async Task<Response<RentalVehicleDTO>> UpdateRentalVehicleAsync(int rentalId, RentalVehicleDTO rentalVehicleDTO)
+        public async Task<Response<RentalVehicleDTO>> UpdateRentalVehicleAsync(Guid rentalId, RentalVehicleDTO rentalVehicleDTO)
         {
             try
             {
-                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);   
+                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
 
                 if (rentalVehicle == null)
                 {

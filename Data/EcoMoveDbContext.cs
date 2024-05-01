@@ -26,12 +26,12 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
     {
         builder.Entity<CarpoolAnnouncement>()
                      .HasOne(m => m.PickupAddress)
-                     .WithMany(p => p.PickupAddressCarpool)
+                     .WithMany(p => p.CarpoolAnnouncementsPickUp)
                      .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<CarpoolAnnouncement>()
             .HasOne(m => m.DropOffAddress)
-            .WithMany(p => p.DropOffAddressCarpool)
+            .WithMany(p => p.CarpoolAnnouncementsDropOff)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<CarpoolBooking>()

@@ -13,13 +13,8 @@ namespace ecomove_back.Data.Models
         public CarpoolAddress PickupAddress { get; set; }
         public Guid DropOffAddressId { get; set; }
         public CarpoolAddress DropOffAddress { get; set; }
-
-        public string AppUserId { get; set; }
-        [DeleteBehavior(DeleteBehavior.NoAction)]
-        public AppUser AppUser { get; set; }
-        public Guid VehicleId { get; set; }
-        [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Vehicle Vehicle { get; set; }
+        public Guid RentalVehicleId { get; set; }
+        public RentalVehicle RentalVehicle { get; set; }
     }
 
 }

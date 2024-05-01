@@ -31,9 +31,6 @@ namespace ecomove_back.Data.Models
 
         [InverseProperty(nameof(AppUser))]
         public List<CarpoolBooking>? CarpoolsBooking { get; set; }
-
-        public List<CarpoolAnnouncement>? CarpoolsAnnouncements { get; set; }
-
-        public override string Email { get => base.Email; set => base.Email = value; } 
+        public override string Email { get => base.Email; set => base.Email = value; }
     }
 }
