@@ -24,6 +24,7 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IAppUserRepository, AppUserRepository>();
 builder.Services.AddScoped<IModelRepository, ModelRepository>();
 builder.Services.AddScoped<ICarpoolAddressRepository, CarpoolAddressRepository>();
+builder.Services.AddScoped<ICarpoolBookingRepository, CarpoolBookingRepository>();
 builder.Services.AddScoped<ICarpoolAnnouncementRepository, CarpoolAnnouncementRepository>();
 builder.Services.AddScoped<IRentalVehicleRepository, RentalVehicleRepository>();
 

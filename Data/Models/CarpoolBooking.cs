@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace ecomove_back.Data.Models
+﻿namespace ecomove_back.Data.Models
 {
-
         public class CarpoolBooking
         {
                 public Guid CarpoolAnnouncementId { get; set; }
