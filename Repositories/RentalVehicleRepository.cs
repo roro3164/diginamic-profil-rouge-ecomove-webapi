@@ -24,7 +24,9 @@ namespace ecomove_back.Repositories
         public async Task<Response<string>> CreateRentalVehicleAsync(string userId, Guid vehicleId, RentalVehicleDTO rentalVehicleDTO)
         {
             // Vérification que le vehicule existe bien en BDD
-            Vehicle? vehicle = await _ecoMoveDbContext.Vehicles.FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
+            Vehicle? vehicle = await _ecoMoveDbContext.Vehicles
+                .Include( v => v.RentalVehicles)
+                .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
 
             if (vehicle == null)
             {
@@ -35,8 +37,17 @@ namespace ecomove_back.Repositories
                     CodeStatus = 404
                 };
             }
+            else if (vehicle.StatusId != 1) 
+            {
+                return new Response<string>
+                {
+                    Message = "Le véhicle n'est que vous voules n'est pas en service",
+                    IsSuccess = false,
+                    CodeStatus = 404
+                };
+            }
 
-            // À refactorer
+            // À refactorer car utilisé dans d'autres méthodes
             if (rentalVehicleDTO.EndDate < rentalVehicleDTO.StartDate)
             {
                 return new Response<string>
@@ -64,6 +75,66 @@ namespace ecomove_back.Repositories
                     CodeStatus = 400
                 };
             }
+
+            // Vérifier que le véhicule n'est pas déjà réserver aux dates voulus
+            // 1 : Récupération des dates futurs concernant le vehicule souhaité
+            // 2 : 
+
+            if (vehicle.RentalVehicles != null)
+            {
+                // Récupération des réservations de véhicule qui sont confirmées et que la date de 
+                //List<RentalVehicle>? rentalVehicleAfter = vehicle.RentalVehicles.Where(d => d.EndDate > rentalVehicleDTO.StartDate && d.Confirmed == true).ToList();
+
+
+
+
+                // Recuperation de toutes les locations dont la startdate est >= à la nouvelle startdate 
+
+                //RentalVehicle re = new RentalVehicle();
+
+                ////List<RentalVehicle> rentals = _ecoMoveDbContext.RentalVehicles.Where(r => r.VehicleId == re.VehicleId && r.StartDate >= re.StartDate && r.StartDate <= r.EndDate).ToList();
+                //List<RentalVehicle> rentals = _ecoMoveDbContext.RentalVehicles.Where(r => r.StartDate >= re.StartDate && r.StartDate <= r.EndDate).ToList();
+                foreach (var rentalVehicle in vehicle.RentalVehicles)
+                {
+                    if  (
+                        rentalVehicleDTO.StartDate > rentalVehicle.StartDate 
+                        && rentalVehicleDTO.StartDate < rentalVehicle.StartDate
+                        && rentalVehicleDTO.EndDate > rentalVehicle.EndDate
+                        && rentalVehicleDTO.EndDate < rentalVehicle.EndDate
+                    ) 
+                    {
+                        return new Response<string>
+                        {
+                            Message = "La date est déjà réservée",
+                            IsSuccess = false,
+                            CodeStatus = 400
+                        };
+
+                    }
+                }
+            }
+
+
+            //1 
+
+
+            //4 > 2 && 4 < 7 && 22 < 7 && 22 <> 7   === deja reserver
+            //public string TestDate(int newStartDate, int newEndDate)
+            //{
+            //    int[][] rentalDates = [[2, 7], [8, 12], [20, 23]];
+
+            //    foreach (var rentalDate in rentalDates)
+            //    {
+            //        if (rentalDate[0] >= newStartDate && rentalDate[0] <= newEndDate && newStartDate >= rentalDate[1])
+            //        {
+            //            return "Pas possible";
+            //        }
+            //    }
+
+            //    return "Possible";
+            //}
+
+
 
             RentalVehicle newRentalVehicle = new RentalVehicle
             {
@@ -166,13 +237,14 @@ namespace ecomove_back.Repositories
             }
         }
 
-
+        //•	On ne peut pas annuler une réservation s’il y a un covoiturage, avec des réservations.
         // Verifier également que la réservation n'a pas de réservation de covoiturage
         public async Task<Response<string>> CancelRentalVehicleAsync(int rentalId)
         {
             try
             {
-                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
+                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles
+                    .FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
 
                 if (rentalVehicle == null)
                 {

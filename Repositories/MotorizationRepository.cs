@@ -47,14 +47,25 @@ namespace ecomove_back.Repositories
 
         public async Task<Response<string>> DeleteMotorizationAsync(int motorizationId)
         {
-            Motorization? motorization = await _ecoMoveDbContext
-            .Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == motorizationId);
+            Motorization? motorization = await _ecoMoveDbContext.Motorizations
+                .Include(m => m.Vehicles)
+                .FirstOrDefaultAsync(motorization => motorization.MotorizationId == motorizationId);
 
             if (motorization is null)
             {
                 return new Response<string>
                 {
                     Message = "La motorisation que vous voulez supprimer n'existe pas.",
+                    IsSuccess = false,
+                    CodeStatus = 404
+                };
+            }
+
+            if (motorization.Vehicles.Count != 0)
+            {
+                return new Response<string>
+                {
+                    Message = "Vous ne pouvez pas supprimer cette motorisation car des véhicules y sont associés",
                     IsSuccess = false,
                     CodeStatus = 404
                 };

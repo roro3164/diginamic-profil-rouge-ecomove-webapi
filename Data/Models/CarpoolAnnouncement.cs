@@ -20,6 +20,9 @@ namespace ecomove_back.Data.Models
         public Guid VehicleId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
         public Vehicle Vehicle { get; set; }
+
+        // Manqué la propriéte de navigation
+        public List<CarpoolBooking>? Bookings { get; set; }
     }
 
 }
