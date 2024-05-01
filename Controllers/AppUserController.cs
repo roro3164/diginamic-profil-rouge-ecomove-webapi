@@ -1,5 +1,6 @@
 ﻿using ecomove_back.Data.Models;
 using ecomove_back.DTOs.AppUserDTOs;
+using ecomove_back.DTOs.RentalVehicleDTO;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Identity;
@@ -148,13 +149,27 @@ namespace ecomove_back.Controllers
 
 
         // NE PAS SUPPRIMER !!!
-        //[HttpPost]
-        //public IActionResult TestDate(int newStartDate, int newEndDate)
-        //{
-        //    string response = _appUserRepository.TestDate(newStartDate, newEndDate);
+        [HttpPost]
+        public IActionResult TestDate(int newStartDate, int newEndDate)
+        {
+            // 1 au 4
+            // 8 au 28
+            int[][] rentalDates = [[2, 7], [9, 12], [20, 23]];
 
-        //    return Ok(response);
-        //}
+            foreach (var rentalDate in rentalDates)
+            {
+                //if (rentalDate[0] >= newStartDate && rentalDate[0] <= newEndDate && newStartDate >= rentalDate[1])
+                if (
+                    (newStartDate >= rentalDate[0] && newStartDate <= rentalDate[1]) ||
+                    (newEndDate <= rentalDate[1] && newEndDate >= rentalDate[0])
+                )
+                {
+                    return Ok("Pas possible");
+                }
+            }
+
+            return Ok("SUPER");
+        }
 
     }
 }

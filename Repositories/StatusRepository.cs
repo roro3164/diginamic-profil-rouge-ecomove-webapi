@@ -66,8 +66,9 @@ namespace ecomove_back.Repositories
 
         public async Task<Response<string>> DeleteStatusAsync(int statusId)
         {
-            Status? status = await _ecoMoveDbContext
-            .Status.FirstOrDefaultAsync(status => status.StatusId == statusId);
+            Status? status = await _ecoMoveDbContext.Status
+                .Include(s => s.Vehicles)
+                .FirstOrDefaultAsync(status => status.StatusId == statusId);
 
             if (status is null)
             {
@@ -76,6 +77,16 @@ namespace ecomove_back.Repositories
                     Message = "Le status que vous voulez supprimer n'existe pas.",
                     IsSuccess = false,
                     CodeStatus = 404,
+                };
+            }
+
+            if (status.Vehicles.Count != 0)
+            {
+                return new Response<string>
+                {
+                    Message = "Vous ne pouvez pas supprimer ce status car des modèles y sont associés",
+                    IsSuccess = false,
+                    CodeStatus = 404
                 };
             }
 
