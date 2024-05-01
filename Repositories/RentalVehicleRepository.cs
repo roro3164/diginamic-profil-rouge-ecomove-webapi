@@ -59,7 +59,7 @@ namespace ecomove_back.Repositories
                     CodeStatus = 400
                 };
             } 
-            else if (rentalVehicleDTO.StartDate < DateTime.Now)
+            else if (rentalVehicleDTO.StartDate.Date < DateTime.Now.Date)
             {
                 return new Response<string>
                 {
@@ -169,5 +169,53 @@ namespace ecomove_back.Repositories
                 };
             }
         }
+
+
+        // Verifier également que la réservation n'a pas de réservation de covoiturage
+        public async Task<Response<string>> CancelRentalVehicleAsync(int rentalId)
+        {
+            try
+            {
+                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
+
+                if (rentalVehicle == null)
+                {
+                    return new Response<string>
+                    {
+                        Message = "Aucune location ne correspond à cette ID",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
+
+                rentalVehicle.Confirmed = false;
+
+                await _ecoMoveDbContext.SaveChangesAsync();
+
+                return new Response<string>
+                {
+                    Message = "Votre réservatiopn a bien été annulée",
+                    IsSuccess = true,
+                    CodeStatus = 200
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<string>
+                {
+                    Message = e.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500
+                };
+            }
+
+
+
+
+        }
+
+
+
+
     }
 }
