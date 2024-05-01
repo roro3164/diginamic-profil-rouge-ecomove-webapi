@@ -6,7 +6,6 @@ using ecomove_back.DTOs.ModelDTOs;
 using ecomove_back.DTOs.MotorizationDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
-using EntityFramework.Exceptions.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace ecomove_back.Repositories
