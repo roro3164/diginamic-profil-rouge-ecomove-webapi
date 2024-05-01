@@ -1,13 +1,9 @@
-
 using ecomove_back.Data.Models;
 using ecomove_back.Data;
 using ecomove_back.DTOs.RentalVehicleDTO;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ecomove_back.DTOs.AppUserDTOs;
-using Microsoft.VisualBasic;
 
 namespace ecomove_back.Repositories
 {
@@ -208,8 +204,97 @@ namespace ecomove_back.Repositories
                     CodeStatus = 500
                 };
             }
+        }
 
 
+        // Ajout plus de vérification
+        public async Task<Response<List<AllRentalVehicles>>> GetAllRentalVehiclesAysnc()
+        {
+            try
+            {
+                List<RentalVehicle> rentalVehicles = await _ecoMoveDbContext.RentalVehicles.ToListAsync();
+
+                if (rentalVehicles.Count == 0)
+                {
+                    return new Response<List<AllRentalVehicles>>
+                    {
+                        Message = "Aucune réservation trouvée",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
+
+                List<AllRentalVehicles> rentalvehiclesDTO = new List<AllRentalVehicles>();
+
+                foreach (RentalVehicle rentalVehicle in rentalVehicles)
+                {
+                    rentalvehiclesDTO.Add(new AllRentalVehicles
+                    {
+                        RentalVehicleId = rentalVehicle.RentalVehicleId,
+                        StartDate = rentalVehicle.StartDate,
+                        EndDate = rentalVehicle.EndDate,
+                    });
+                }
+
+                return new Response<List<AllRentalVehicles>>
+                {
+                    Data = rentalvehiclesDTO,
+                    IsSuccess = true,
+                    CodeStatus = 200
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<List<AllRentalVehicles>>
+                {
+                    Message = e.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500
+                };
+            }
+        }
+
+
+        // Ajouter plus d'éléments à renvoyer
+        public async Task<Response<SingleRentalVehicleDTO>> GetRentalVehicleByIdAysnc(int rentalId)
+        {
+            try
+            {
+                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
+
+                if (rentalVehicle == null)
+                {
+                    return new Response<SingleRentalVehicleDTO>
+                    {
+                        Message = "La réservation que vous voulez n'existe pas",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
+
+                SingleRentalVehicleDTO rentalVehicleDTO = new SingleRentalVehicleDTO
+                {
+                    RentalVehicleId = rentalVehicle.RentalVehicleId,
+                    StartDate = rentalVehicle.StartDate,
+                    EndDate = rentalVehicle.EndDate,
+                };
+
+                return new Response<SingleRentalVehicleDTO>
+                {
+                    Data = rentalVehicleDTO,
+                    IsSuccess = true,
+                    CodeStatus = 200
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<SingleRentalVehicleDTO>
+                {
+                    Message = e.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500
+                };
+            }
 
 
         }

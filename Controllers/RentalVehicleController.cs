@@ -1,9 +1,7 @@
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs.AppUserDTOs;
 using ecomove_back.DTOs.RentalVehicleDTO;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
-using ecomove_back.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -72,7 +70,6 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
         }
 
-
         /// <summary>
         /// Permet d'annuler une réservation de véhicule
         /// </summary>
@@ -85,6 +82,47 @@ namespace ecomove_back.Controllers
         public async Task<IActionResult> CancelRentalVehicle(int rentalId)
         {
             Response<string> response = await _rentalVehicleRepository.CancelRentalVehicleAsync(rentalId);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+        /// <summary>
+        /// Permet de récupérer toutes les réservations de véhicule
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetAllRentalVehicles()
+        {
+            Response<List<AllRentalVehicles>> response = await _rentalVehicleRepository.GetAllRentalVehiclesAysnc();
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+        /// <summary>
+        /// Permet de récupérer une réservation de véhicule avec son id
+        /// </summary>
+        /// <param name="rentalId">int : identifiant de la réservation</param>
+        /// <returns></returns>
+        [HttpGet("{rentalId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetRentalVehicleById(int rentalId)
+        {
+            Response<SingleRentalVehicleDTO> response = await _rentalVehicleRepository.GetRentalVehicleByIdAysnc(rentalId);
 
             if (response.IsSuccess)
                 return Ok(response);
