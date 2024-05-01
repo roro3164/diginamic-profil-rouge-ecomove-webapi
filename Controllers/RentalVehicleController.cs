@@ -73,13 +73,13 @@ namespace ecomove_back.Controllers
         /// <summary>
         /// Permet d'annuler une réservation de véhicule
         /// </summary>
-        /// <param name="rentalId">int : identifiant de la réservation</param>
+        /// <param name="rentalId">Guid : identifiant de la réservation</param>
         /// <returns></returns>
         [HttpPut("{rentalId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> CancelRentalVehicle(int rentalId)
+        public async Task<IActionResult> CancelRentalVehicle(Guid rentalId)
         {
             Response<string> response = await _rentalVehicleRepository.CancelRentalVehicleAsync(rentalId);
 
@@ -114,13 +114,13 @@ namespace ecomove_back.Controllers
         /// <summary>
         /// Permet de récupérer une réservation de véhicule avec son id
         /// </summary>
-        /// <param name="rentalId">int : identifiant de la réservation</param>
+        /// <param name="rentalId">Guid : identifiant de la réservation</param>
         /// <returns></returns>
         [HttpGet("{rentalId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetRentalVehicleById(int rentalId)
+        public async Task<IActionResult> GetRentalVehicleById(Guid rentalId)
         {
             Response<SingleRentalVehicleDTO> response = await _rentalVehicleRepository.GetRentalVehicleByIdAysnc(rentalId);
 

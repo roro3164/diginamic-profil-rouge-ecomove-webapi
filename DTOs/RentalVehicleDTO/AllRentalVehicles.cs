@@ -4,7 +4,7 @@ namespace ecomove_back.DTOs.RentalVehicleDTO
 {
     public class AllRentalVehicles
     {
-        public int RentalVehicleId { get; set; }
+        public Guid RentalVehicleId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 

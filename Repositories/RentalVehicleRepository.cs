@@ -240,7 +240,7 @@ namespace ecomove_back.Repositories
 
         //	On ne peut pas annuler une réservation sil y a un covoiturage, avec des réservations.
         // Verifier également que la réservation n'a pas de réservation de covoiturage
-        public async Task<Response<string>> CancelRentalVehicleAsync(int rentalId)
+        public async Task<Response<string>> CancelRentalVehicleAsync(Guid rentalId)
         {
             try
             {
@@ -329,7 +329,7 @@ namespace ecomove_back.Repositories
 
 
         // Ajouter plus d'éléments à renvoyer
-        public async Task<Response<SingleRentalVehicleDTO>> GetRentalVehicleByIdAysnc(int rentalId)
+        public async Task<Response<SingleRentalVehicleDTO>> GetRentalVehicleByIdAysnc(Guid rentalId)
         {
             try
             {
