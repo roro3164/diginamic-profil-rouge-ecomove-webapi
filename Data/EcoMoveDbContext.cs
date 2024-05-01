@@ -26,16 +26,13 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
     {
         builder.Entity<CarpoolAnnouncement>()
                      .HasOne(m => m.PickupAddress)
-                     .WithMany(p => p.PickupAddressCarpool)
+                     .WithMany(p => p.CarpoolAnnouncementsPickUp)
                      .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<CarpoolAnnouncement>()
             .HasOne(m => m.DropOffAddress)
-            .WithMany(p => p.DropOffAddressCarpool)
+            .WithMany(p => p.CarpoolAnnouncementsDropOff)
             .OnDelete(DeleteBehavior.NoAction);
-
-        builder.Entity<RentalVehicle>()
-            .HasKey(rv => new { rv.VehicleId, rv.AppUserId });
 
         builder.Entity<CarpoolBooking>()
             .HasKey(rv => new { rv.CarpoolAnnouncementId, rv.AppUserId });
@@ -45,7 +42,7 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
              .WithMany()           // Un rôle peut être lié à plusieurs utilisateurs
              .HasForeignKey(e => e.RoleId);  // Clé étrangère dans AppUser
 
-        // Permet de créer les deux rôles en BDD
+        // Création des deux rôles en BDD
         IdentityRole roleAdmin = new IdentityRole { Name = "ADMIN", NormalizedName = "ADMIN" };
         IdentityRole roleUser = new IdentityRole { Name = "USER", NormalizedName = "USER" };
         builder.Entity<IdentityRole>().HasData(new List<IdentityRole> { roleAdmin, roleUser });

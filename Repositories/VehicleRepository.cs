@@ -3,6 +3,7 @@ using ecomove_back.Data.Models;
 using ecomove_back.DTOs.VehicleDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -39,10 +40,10 @@ namespace ecomove_back.Repositories
 
                 return new Response<VehicleForCreateDTO>
                 {
-                    Data = vehicleCreate,  
+                    Data = vehicleCreate,
                     IsSuccess = true,
                     Message = "Vehicle crée avec succés",
-                    CodeStatus = 201  
+                    CodeStatus = 201
                 };
             }
             catch (Exception e)
@@ -50,7 +51,7 @@ namespace ecomove_back.Repositories
                 return new Response<VehicleForCreateDTO>
                 {
                     IsSuccess = false,
- 
+                    Message = "Une erreur s'est produite lors de la création du véhicule: " + e.Message,
                 };
             }
         }
@@ -100,7 +101,7 @@ namespace ecomove_back.Repositories
         }
 
 
-        public async Task<Response<VehicleForGetDTO>> GetVehicleByIdAsync(Guid id)  
+        public async Task<Response<VehicleForGetDTO>> GetVehicleByIdAsync(Guid id)
         {
             try
             {
@@ -125,7 +126,7 @@ namespace ecomove_back.Repositories
                 VehicleForGetDTO vehicleDTO = new VehicleForGetDTO
                 {
                     VehicleId = vehicle.VehicleId,
-                    BrandLabel = vehicle.Model.Brand.BrandLabel, 
+                    BrandLabel = vehicle.Model.Brand.BrandLabel,
                     ModelLabel = vehicle.Model.ModelLabel,
                     CategoryLabel = vehicle.Category.CategoryLabel,
                     CarSeatNumber = vehicle.CarSeatNumber,
@@ -133,7 +134,7 @@ namespace ecomove_back.Repositories
                     Photo = vehicle.Photo,
                     CO2emission = vehicle.CO2emission,
                     Consumption = vehicle.Consumption,
-                    
+
                 };
 
                 return new Response<VehicleForGetDTO>
@@ -186,7 +187,7 @@ namespace ecomove_back.Repositories
                     Photo = vehicle.Photo,
                     CO2emission = vehicle.CO2emission,
                     Consumption = vehicle.Consumption,
-                    StatusLabel = vehicle.Status.StatusLabel 
+                    StatusLabel = vehicle.Status.StatusLabel
                 };
 
                 return new Response<VehicleForGetByIdForAdminDTO>
@@ -213,13 +214,27 @@ namespace ecomove_back.Repositories
         {
             try
             {
-                var vehicle = await _ecoMoveDbContext.Vehicles.FindAsync(vehicleId);
+                Vehicle? vehicle = await _ecoMoveDbContext.Vehicles
+                    .Include(v  => v.RentalVehicles)
+                    .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
+
                 if (vehicle == null)
                 {
                     return new Response<bool>
                     {
                         IsSuccess = false,
                         Message = "Véhicule non trouvé.",
+                        CodeStatus = 404
+                    };
+                }
+
+                // Vérifier que le véhicule n'a pas de réservation
+                if (vehicle.RentalVehicles.Count != 0)
+                {
+                    return new Response<bool>
+                    {
+                        Message = "Vous ne pouvez pas supprimer ce véhicule car des réservations y sont associés",
+                        IsSuccess = false,
                         CodeStatus = 404
                     };
                 }
@@ -246,11 +261,17 @@ namespace ecomove_back.Repositories
             }
 
         }
+
+
+
         public async Task<Response<VehicleForUpdateDTO>> UpdateVehicleAsync(Guid vehicleId, VehicleForUpdateDTO vehicleUpdate)
         {
             try
             {
-                var vehicle = await _ecoMoveDbContext.Vehicles.FindAsync(vehicleId);
+                var vehicle = await _ecoMoveDbContext.Vehicles
+                    .Include(v => v.RentalVehicles)
+                    .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
+
                 if (vehicle == null)
                 {
                     return new Response<VehicleForUpdateDTO>
@@ -261,7 +282,18 @@ namespace ecomove_back.Repositories
                     };
                 }
 
-                vehicle.ModelId = vehicleUpdate.ModelId;  
+                // Vérifier que le véhicule n'a pas de réservation
+                if (vehicle.RentalVehicles.Count != 0)
+                {
+                    return new Response<VehicleForUpdateDTO>
+                    {
+                        Message = "Vous ne pouvez pas modifier ce véhicule car des réservations y sont associés",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
+
+                vehicle.ModelId = vehicleUpdate.ModelId;
                 vehicle.CategoryId = vehicleUpdate.CategoryId;
                 vehicle.CarSeatNumber = vehicleUpdate.CarSeatNumber;
                 vehicle.Registration = vehicleUpdate.Registration;

@@ -3,7 +3,6 @@ using ecomove_back.Data.Models;
 using ecomove_back.DTOs.ModelDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
-using EntityFramework.Exceptions.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace ecomove_back.Repositories
@@ -21,7 +20,7 @@ namespace ecomove_back.Repositories
             {
                 var brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == modelFKeyDTO.BrandId);
 
-                    if (brand != null)
+                if (brand != null)
                 {
                     var newModel = new Model
                     {
@@ -34,7 +33,7 @@ namespace ecomove_back.Repositories
 
                     return new Response<ModelLabelDTO>
                     {
-                        Message = $"Le modèle {newModel.ModelLabel} a bien été créé",
+                        Message = $"Le mod?le {newModel.ModelLabel} a bien ?t? cr?e",
                         IsSuccess = true,
                         Data = new ModelLabelDTO { ModelLabel = newModel.ModelLabel },
                         CodeStatus = 201
@@ -50,15 +49,6 @@ namespace ecomove_back.Repositories
                     };
                 }
 
-            }
-            catch (DbUpdateException ex) when (ex.InnerException is UniqueConstraintException)
-            {
-               return new Response<ModelLabelDTO>
-               {
-                   Message = "Erreur",
-                   IsSuccess = false,
-                   CodeStatus = 400 
-               };
             }
             catch (Exception e)
             {
@@ -206,7 +196,7 @@ namespace ecomove_back.Repositories
                     Message = $"Le modèle a été bien modifié",
                     IsSuccess = true,
                     CodeStatus = 201,
-                    Data = modelLabelDTO 
+                    Data = modelLabelDTO
                 };
             }
             catch (Exception ex)

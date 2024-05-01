@@ -61,13 +61,25 @@ namespace ecomove_back.Repositories
 
         public async Task<Response<string>> DeleteBrandAsync(int brandId)
         {
-            Brand? brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == brandId);
+            Brand? brand = await _ecoMoveDbContext.Brands
+                .Include(b => b.Models)
+                .FirstOrDefaultAsync(b => b.BrandId == brandId);
 
             if (brand == null)
             {
                 return new Response<string>
                 {
                     Message = "La Marque que vous voulez supprimer n'existe pas",
+                    IsSuccess = false,
+                    CodeStatus = 404
+                };
+            }
+
+            if (brand.Models.Count != 0) 
+            {
+                return new Response<string>
+                {
+                    Message = "Vous ne pouvez pas supprimer cette marque car des modèles y sont associés",
                     IsSuccess = false,
                     CodeStatus = 404
                 };

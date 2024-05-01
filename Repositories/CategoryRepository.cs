@@ -51,7 +51,9 @@ namespace ecomove_back.Repositories
         {
             try
             {
-                Category? category = await _ecoMoveDbContext.Categories.FirstOrDefaultAsync(category => category.CategoryId == cateogoryId);
+                Category? category = await _ecoMoveDbContext.Categories
+                    .Include(c => c.Vehicles)
+                    .FirstOrDefaultAsync(category => category.CategoryId == cateogoryId);
 
                 if (category is null)
                 {
@@ -62,6 +64,17 @@ namespace ecomove_back.Repositories
                         CodeStatus = 404,
                     };
                 }
+
+                if (category.Vehicles.Count != 0)
+                {
+                    return new Response<string>
+                    {
+                        Message = "Vous ne pouvez pas supprimer cette catégorie car des véhicules y sont associés",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
+
                 _ecoMoveDbContext.Categories.Remove(category);
                 await _ecoMoveDbContext.SaveChangesAsync();
 

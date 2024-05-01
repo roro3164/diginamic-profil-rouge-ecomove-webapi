@@ -1,7 +1,6 @@
 ﻿using ecomove_back.Data;
 using ecomove_back.Data.Models;
 using ecomove_back.DTOs.AppUserDTOs;
-using ecomove_back.DTOs.BrandDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Identity;
