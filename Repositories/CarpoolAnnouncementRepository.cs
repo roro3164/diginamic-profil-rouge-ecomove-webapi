@@ -23,8 +23,6 @@ namespace ecomove_back.Repositories
             {
                 CarpoolAnnouncement carpoolAnnouncement = new CarpoolAnnouncement
                 {
-                    AppUserId = carpoolAnnouncementDTO.AppUserId,
-                    VehicleId = carpoolAnnouncementDTO.VehicleId,
                     PickupAddressId = carpoolAnnouncementDTO.PickupAddressId,
                     DropOffAddressId = carpoolAnnouncementDTO.DropOffAddressId,
                     StartDate = DateTime.Now,
@@ -102,8 +100,6 @@ namespace ecomove_back.Repositories
                 List<CarpoolAnnouncement> carpoolAnnouncements = await _ecoMoveDbContext.CarpoolAnnouncements
                 .Include(c => c.PickupAddress)
                 .Include(c => c.DropOffAddress)
-                .Include(c => c.AppUser)
-                .Include(c => c.Vehicle)
                 .ToListAsync();
 
                 if (carpoolAnnouncements.Count > 0)
@@ -187,12 +183,12 @@ namespace ecomove_back.Repositories
                     };
 
                 carpoolAnnouncement.StartDate = carpoolAnnouncementDTO.StartDate;
-                carpoolAnnouncement.AppUserId = carpoolAnnouncementDTO.AppUserId;
+
                 carpoolAnnouncement.PickupAddress = carpoolAnnouncement.PickupAddress;
                 carpoolAnnouncement.DropOffAddress = carpoolAnnouncement.DropOffAddress;
                 carpoolAnnouncement.RideDuration = carpoolAnnouncementDTO.RideDuration;
                 carpoolAnnouncement.RideDistance = carpoolAnnouncementDTO.RideDistance;
-                carpoolAnnouncement.VehicleId = carpoolAnnouncementDTO.VehicleId;
+
 
                 await _ecoMoveDbContext.SaveChangesAsync();
 

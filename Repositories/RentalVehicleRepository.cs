@@ -23,7 +23,7 @@ namespace ecomove_back.Repositories
         // Manque verification sur les reservations futures changer userID dans le controller par le user connecte
         public async Task<Response<string>> CreateRentalVehicleAsync(string userId, Guid vehicleId, RentalVehicleDTO rentalVehicleDTO)
         {
-            // Vérification que le vehicule existe bien en BDD
+            // VÃ©rification que le vehicule existe bien en BDD
             Vehicle? vehicle = await _ecoMoveDbContext.Vehicles
                 .Include( v => v.RentalVehicles)
                 .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
@@ -32,7 +32,7 @@ namespace ecomove_back.Repositories
             {
                 return new Response<string>
                 {
-                    Message = "Le véhicle n'existe pas",
+                    Message = "Le vÃ©hicle n'existe pas",
                     IsSuccess = false,
                     CodeStatus = 404
                 };
@@ -41,54 +41,55 @@ namespace ecomove_back.Repositories
             {
                 return new Response<string>
                 {
-                    Message = "Le véhicle n'est que vous voules n'est pas en service",
+                    Message = "Le vÃ©hicle n'est que vous voules n'est pas en service",
                     IsSuccess = false,
                     CodeStatus = 404
                 };
             }
 
-            // À refactorer car utilisé dans d'autres méthodes
+            // Ã€ refactorer car utilisÃ© dans d'autres mÃ©thodes
             if (rentalVehicleDTO.EndDate < rentalVehicleDTO.StartDate)
             {
                 return new Response<string>
                 {
-                    Message = "La date de fin ne peut pas être inférieur à la date de début",
+                    Message = "La date de fin ne peut pas Ãªtre infÃ©rieur Ã  la date de dÃ©but",
                     IsSuccess = false,
                     CodeStatus = 400
                 };
-            } 
+            }
             else if (rentalVehicleDTO.EndDate.ToString("d") == DateTime.Now.ToString("d"))
             {
                 return new Response<string>
                 {
-                    Message = "La date minimale d'une réservation est de 1 jour",
+                    Message = "La date minimale d'une rÃ©servation est de 1 jour",
                     IsSuccess = false,
                     CodeStatus = 400
                 };
-            } 
+            }
             else if (rentalVehicleDTO.StartDate.Date < DateTime.Now.Date)
+
             {
                 return new Response<string>
                 {
-                    Message = "La date de début ne peut pas être antérieur à la date du jour",
+                    Message = "La date de dÃ©but ne peut pas Ãªtre antÃ©rieur Ã  la date du jour",
                     IsSuccess = false,
                     CodeStatus = 400
                 };
             }
 
-            // Vérifier que le véhicule n'est pas déjà réserver aux dates voulus
-            // 1 : Récupération des dates futurs concernant le vehicule souhaité
+            // VÃ©rifier que le vÃ©hicule n'est pas dÃ©jÃ  rÃ©server aux dates voulus
+            // 1 : RÃ©cupÃ©ration des dates futurs concernant le vehicule souhaitÃ©
             // 2 : 
 
             if (vehicle.RentalVehicles != null)
             {
-                // Récupération des réservations de véhicule qui sont confirmées et que la date de 
+                // RÃ©cupÃ©ration des rÃ©servations de vÃ©hicule qui sont confirmÃ©es et que la date de 
                 //List<RentalVehicle>? rentalVehicleAfter = vehicle.RentalVehicles.Where(d => d.EndDate > rentalVehicleDTO.StartDate && d.Confirmed == true).ToList();
 
 
 
 
-                // Recuperation de toutes les locations dont la startdate est >= à la nouvelle startdate 
+                // Recuperation de toutes les locations dont la startdate est >= Ã  la nouvelle startdate 
 
                 //RentalVehicle re = new RentalVehicle();
 
@@ -105,7 +106,7 @@ namespace ecomove_back.Repositories
                     {
                         return new Response<string>
                         {
-                            Message = "La date est déjà réservée",
+                            Message = "La date est dÃ©jÃ  rÃ©servÃ©e",
                             IsSuccess = false,
                             CodeStatus = 400
                         };
@@ -152,7 +153,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<string>
                 {
-                    Message = $"Votre réservation pour le {rentalVehicleDTO.StartDate} au {rentalVehicleDTO.EndDate} a bien été crée",
+                    Message = $"Votre rÃ©servation pour le {rentalVehicleDTO.StartDate} au {rentalVehicleDTO.EndDate} a bien Ã©tÃ© crÃ©e",
                     IsSuccess = true,
                     CodeStatus = 201
                 };
@@ -169,28 +170,28 @@ namespace ecomove_back.Repositories
         }
 
         // Manque verification sur les reservations presentes en BDD et verifier aussi que le user est bien celui qui a fait la reservation
-        public async Task<Response<RentalVehicleDTO>> UpdateRentalVehicleAsync(int rentalId, RentalVehicleDTO rentalVehicleDTO)
+        public async Task<Response<RentalVehicleDTO>> UpdateRentalVehicleAsync(Guid rentalId, RentalVehicleDTO rentalVehicleDTO)
         {
             try
             {
-                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);   
+                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
 
                 if (rentalVehicle == null)
                 {
                     return new Response<RentalVehicleDTO>
                     {
-                        Message = "Aucune location ne correspond à cette ID",
+                        Message = "Aucune location ne correspond Ã  cette ID",
                         IsSuccess = false,
                         CodeStatus = 404
                     };
                 }
 
-                // À refactorer
+                // Ã€ refactorer
                 if (rentalVehicleDTO.EndDate < rentalVehicleDTO.StartDate)
                 {
                     return new Response<RentalVehicleDTO>
                     {
-                        Message = "La date de fin ne peut pas être inférieur à la date de début",
+                        Message = "La date de fin ne peut pas Ãªtre infÃ©rieur Ã  la date de dÃ©but",
                         IsSuccess = false,
                         CodeStatus = 400
                     };
@@ -199,7 +200,7 @@ namespace ecomove_back.Repositories
                 {
                     return new Response<RentalVehicleDTO>
                     {
-                        Message = "La date minimale d'une réservation est de 1 jour",
+                        Message = "La date minimale d'une rÃ©servation est de 1 jour",
                         IsSuccess = false,
                         CodeStatus = 400
                     };
@@ -208,7 +209,7 @@ namespace ecomove_back.Repositories
                 {
                     return new Response<RentalVehicleDTO>
                     {
-                        Message = "La date de début ne peut pas être antérieur à la date du jour",
+                        Message = "La date de dÃ©but ne peut pas Ãªtre antÃ©rieur Ã  la date du jour",
                         IsSuccess = false,
                         CodeStatus = 400
                     };
@@ -220,7 +221,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<RentalVehicleDTO>
                 {
-                    Message = "Votre réservatiopn a bien été modifiée",
+                    Message = "Votre rÃ©servatiopn a bien Ã©tÃ© modifiÃ©e",
                     IsSuccess = true,
                     CodeStatus = 201
                 };
@@ -237,8 +238,8 @@ namespace ecomove_back.Repositories
             }
         }
 
-        //•	On ne peut pas annuler une réservation s’il y a un covoiturage, avec des réservations.
-        // Verifier également que la réservation n'a pas de réservation de covoiturage
+        //Â•	On ne peut pas annuler une rÃ©servation sÂ’il y a un covoiturage, avec des rÃ©servations.
+        // Verifier Ã©galement que la rÃ©servation n'a pas de rÃ©servation de covoiturage
         public async Task<Response<string>> CancelRentalVehicleAsync(int rentalId)
         {
             try
@@ -250,7 +251,7 @@ namespace ecomove_back.Repositories
                 {
                     return new Response<string>
                     {
-                        Message = "Aucune location ne correspond à cette ID",
+                        Message = "Aucune location ne correspond Ã  cette ID",
                         IsSuccess = false,
                         CodeStatus = 404
                     };
@@ -262,7 +263,7 @@ namespace ecomove_back.Repositories
 
                 return new Response<string>
                 {
-                    Message = "Votre réservatiopn a bien été annulée",
+                    Message = "Votre rÃ©servatiopn a bien Ã©tÃ© annulÃ©e",
                     IsSuccess = true,
                     CodeStatus = 200
                 };
@@ -279,7 +280,7 @@ namespace ecomove_back.Repositories
         }
 
 
-        // Ajout plus de vérification
+        // Ajout plus de vÃ©rification
         public async Task<Response<List<AllRentalVehicles>>> GetAllRentalVehiclesAysnc()
         {
             try
@@ -290,7 +291,7 @@ namespace ecomove_back.Repositories
                 {
                     return new Response<List<AllRentalVehicles>>
                     {
-                        Message = "Aucune réservation trouvée",
+                        Message = "Aucune rÃ©servation trouvÃ©e",
                         IsSuccess = false,
                         CodeStatus = 404
                     };
@@ -327,7 +328,7 @@ namespace ecomove_back.Repositories
         }
 
 
-        // Ajouter plus d'éléments à renvoyer
+        // Ajouter plus d'Ã©lÃ©ments Ã  renvoyer
         public async Task<Response<SingleRentalVehicleDTO>> GetRentalVehicleByIdAysnc(int rentalId)
         {
             try
@@ -338,7 +339,7 @@ namespace ecomove_back.Repositories
                 {
                     return new Response<SingleRentalVehicleDTO>
                     {
-                        Message = "La réservation que vous voulez n'existe pas",
+                        Message = "La rÃ©servation que vous voulez n'existe pas",
                         IsSuccess = false,
                         CodeStatus = 404
                     };

@@ -16,8 +16,8 @@ namespace ecomove_back.Data.Models
 
         [DataType(DataType.Url)]
         public string Photo { get; set; } = string.Empty;
-      
-        public int CO2emission { get; set; } 
+
+        public int CO2emission { get; set; }
 
         public double Consumption { get; set; }
 
@@ -38,7 +38,5 @@ namespace ecomove_back.Data.Models
         public Model Model { get; set; }
 
         public List<RentalVehicle>? RentalVehicles { get; set; }
-
-        public List<CarpoolAnnouncement>? CarpoolAnnouncements { get; set; }
     }
 }
