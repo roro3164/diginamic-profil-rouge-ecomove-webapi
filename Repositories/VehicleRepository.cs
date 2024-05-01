@@ -3,6 +3,7 @@ using ecomove_back.Data.Models;
 using ecomove_back.DTOs.VehicleDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -50,7 +51,7 @@ namespace ecomove_back.Repositories
                 return new Response<VehicleForCreateDTO>
                 {
                     IsSuccess = false,
-
+                    Message = "Une erreur s'est produite lors de la création du véhicule: " + e.Message,
                 };
             }
         }
@@ -213,13 +214,27 @@ namespace ecomove_back.Repositories
         {
             try
             {
-                var vehicle = await _ecoMoveDbContext.Vehicles.FindAsync(vehicleId);
+                Vehicle? vehicle = await _ecoMoveDbContext.Vehicles
+                    .Include(v  => v.RentalVehicles)
+                    .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
+
                 if (vehicle == null)
                 {
                     return new Response<bool>
                     {
                         IsSuccess = false,
                         Message = "Véhicule non trouvé.",
+                        CodeStatus = 404
+                    };
+                }
+
+                // Vérifier que le véhicule n'a pas de réservation
+                if (vehicle.RentalVehicles.Count != 0)
+                {
+                    return new Response<bool>
+                    {
+                        Message = "Vous ne pouvez pas supprimer ce véhicule car des réservations y sont associés",
+                        IsSuccess = false,
                         CodeStatus = 404
                     };
                 }
@@ -246,17 +261,34 @@ namespace ecomove_back.Repositories
             }
 
         }
+
+
+
         public async Task<Response<VehicleForUpdateDTO>> UpdateVehicleAsync(Guid vehicleId, VehicleForUpdateDTO vehicleUpdate)
         {
             try
             {
-                var vehicle = await _ecoMoveDbContext.Vehicles.FindAsync(vehicleId);
+                var vehicle = await _ecoMoveDbContext.Vehicles
+                    .Include(v => v.RentalVehicles)
+                    .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
+
                 if (vehicle == null)
                 {
                     return new Response<VehicleForUpdateDTO>
                     {
                         IsSuccess = false,
                         Message = "Véhicule non trouvé.",
+                        CodeStatus = 404
+                    };
+                }
+
+                // Vérifier que le véhicule n'a pas de réservation
+                if (vehicle.RentalVehicles.Count != 0)
+                {
+                    return new Response<VehicleForUpdateDTO>
+                    {
+                        Message = "Vous ne pouvez pas modifier ce véhicule car des réservations y sont associés",
+                        IsSuccess = false,
                         CodeStatus = 404
                     };
                 }
