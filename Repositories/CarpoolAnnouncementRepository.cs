@@ -12,8 +12,6 @@ namespace ecomove_back.Repositories
     public class CarpoolAnnouncementRepository : ICarpoolAnnouncementRepository
     {
         private readonly EcoMoveDbContext _ecoMoveDbContext;
-        private readonly UserManager<AppUser> _userManager;
-
         public CarpoolAnnouncementRepository(EcoMoveDbContext ecoMoveDbContext)
         {
             _ecoMoveDbContext = ecoMoveDbContext;
@@ -23,16 +21,11 @@ namespace ecomove_back.Repositories
         {
             try
             {
-
                 // Récupérer la location véhicule choisie par l'utilisateur pour la création d'une annonce
-
                 RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles
                     .FirstOrDefaultAsync(r => r.RentalVehicleId == carpoolAnnouncementDTO.RentalVehicleId);
 
-
-
                 // Vérifier si le locataire du véhicule est bien celui qui est connecté
-
                 if (rentalVehicle?.AppUserId != userId)
                 {
                     return new Response<CarpoolAnnouncement>
@@ -45,9 +38,7 @@ namespace ecomove_back.Repositories
                 }
 
                 // Chercher si l'utilisateur a bien une location voiture avec des dattes correctes
-
                 RentalVehicle? userRentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.AppUserId == userId);
-
 
                 // Vérifier que la fourchette des dattes de l'annonce de covoiturage est incluse dans la fourchettes des dattes
                 // de la location voitures et que la location véhicule n'est pas annulée
@@ -58,7 +49,17 @@ namespace ecomove_back.Repositories
                         Data = null,
                         IsSuccess = false,
                         CodeStatus = 403,
-                        Message = "La date du début de covoiturage doit être supérieure ou égale à la date de début de location du véhicule"
+                        Message = "La date de début de covoiturage doit être supérieure ou égale à la date de début de location du véhicule"
+                    };
+
+
+                if (carpoolAnnouncementDTO.StartDate < DateTime.Now)
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Message = "La date de début du covoiturage ne doit pas être antérieure à la date d'aujourd'hui",
+                        Data = null,
+                        IsSuccess = false,
+                        CodeStatus = 403,
                     };
 
                 if (carpoolAnnouncementDTO.PickupAddressId == carpoolAnnouncementDTO.DropOffAddressId)
@@ -72,7 +73,7 @@ namespace ecomove_back.Repositories
 
                 CarpoolAnnouncement carpoolAnnouncement = new CarpoolAnnouncement
                 {
-                    StartDate = DateTime.Now,
+                    StartDate = carpoolAnnouncementDTO.StartDate,
                     RentalVehicleId = carpoolAnnouncementDTO.RentalVehicleId,
                     PickupAddressId = carpoolAnnouncementDTO.PickupAddressId,
                     DropOffAddressId = carpoolAnnouncementDTO.DropOffAddressId
@@ -128,7 +129,7 @@ namespace ecomove_back.Repositories
                     return new Response<CarpoolAnnouncement>
                     {
                         Data = null,
-                        Message = "Vous pouvez pas supprimer cette annonce de covoiturage",
+                        Message = "Vous ne pouvez pas supprimer cette annonce de covoiturage",
                         IsSuccess = false,
                         CodeStatus = 403
                     };
@@ -139,7 +140,7 @@ namespace ecomove_back.Repositories
                 return new Response<CarpoolAnnouncement>
                 {
                     Data = null,
-                    Message = "L'annonce du covoiturage a été supprimée avec succès",
+                    Message = "L'annonce du covoiturage a été supprimée avec succés",
                     IsSuccess = true,
                     CodeStatus = 204
                 };
@@ -248,12 +249,13 @@ namespace ecomove_back.Repositories
             };
         }
 
-        public async Task<Response<CarpoolAnnouncement>> UpdateCarpoolAnnouncement(Guid id, string userId, CarpoolAnnouncementInGoingDTO carpoolAnnouncementDTO)
+        public async Task<Response<CarpoolAnnouncement>> UpdateCarpoolAnnouncement(Guid id, string userId, CarpoolAnnouncementDTO carpoolAnnouncementDTO)
         {
             try
             {
 
                 CarpoolAnnouncement? carpoolAnnouncement = await _ecoMoveDbContext.CarpoolAnnouncements.FindAsync(id);
+                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == carpoolAnnouncement.RentalVehicleId);
 
                 if (carpoolAnnouncement is null)
                     return new Response<CarpoolAnnouncement>
@@ -261,14 +263,71 @@ namespace ecomove_back.Repositories
                         Data = null,
                         IsSuccess = false,
                         CodeStatus = 404,
-                        Message = "Aucune annonce covoiturage n'a été trouvée"
+                        Message = "Aucune annonce de covoiturage n'a été trouvée"
+                    };
+
+
+                var carpoolOrganizer = _ecoMoveDbContext.CarpoolAnnouncements
+                                   .Include(c => c.RentalVehicle)
+                                   .Where(c => c.CarpoolAnnouncementId == id)
+                                   .Select(c => new { c.RentalVehicle.AppUserId }).First();
+
+
+                // Impossible de modifier l'annonce de covoiturage que par son créateur
+                if (userId != carpoolOrganizer.AppUserId)
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Data = null,
+                        Message = "Vous ne pouvez pas modifier cette annonce de covoiturage",
+                        IsSuccess = false,
+                        CodeStatus = 403
+                    };
+
+                bool carpoolAnnouncementIsBooked = await _ecoMoveDbContext.CarpoolBookings.AnyAsync(cb => cb.CarpoolAnnouncementId == id);
+
+
+                // Impossible de supprimer un covoiturage déja réservé
+                if (carpoolAnnouncementIsBooked)
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Data = null,
+                        Message = "Vous ne pouvez pas modifier cette annonce, certains passagers on déja réservé des places sur ce covoiturage",
+                        IsSuccess = false,
+                        CodeStatus = 403
+                    };
+
+                if (carpoolAnnouncement.PickupAddress == carpoolAnnouncement.DropOffAddress)
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Message = "L'addresse de départ doit être différente de l'addresse d'arrivée",
+                        Data = null,
+                        IsSuccess = false,
+                        CodeStatus = 403,
+                    };
+
+                if (carpoolAnnouncement.StartDate < DateTime.Now)
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Message = "La date ne doit pas être antérieure à la date d'aujourd'hui",
+                        Data = null,
+                        IsSuccess = false,
+                        CodeStatus = 403,
+                    };
+
+
+                if (carpoolAnnouncement.StartDate < rentalVehicle.StartDate)
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Message = "La date de début du covoiturage ne doit pas être antérieure à la date de départ de la location du véhicule.",
+                        Data = null,
+                        IsSuccess = false,
+                        CodeStatus = 403,
                     };
 
 
                 carpoolAnnouncement.StartDate = carpoolAnnouncementDTO.StartDate;
                 carpoolAnnouncement.PickupAddressId = carpoolAnnouncementDTO.PickupAddressId;
                 carpoolAnnouncement.DropOffAddressId = carpoolAnnouncementDTO.DropOffAddressId;
-                carpoolAnnouncement.RentalVehicleId = carpoolAnnouncementDTO.RentalVehicleId;
 
 
                 await _ecoMoveDbContext.SaveChangesAsync();

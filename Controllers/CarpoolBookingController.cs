@@ -2,6 +2,7 @@ using ecomove_back.Data.Models;
 using ecomove_back.DTOs.CarpoolBookingDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +27,7 @@ namespace ecomove_back.Controllers
         /// <param name="bookingCreateDTO">DTO contenant les informations de la réservation</param>
         /// <returns>ActionResult</returns>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateCarpoolBookingAsync(CarpoolBookingCreateDTO bookingCreateDTO)
         {
             var idUserConnect = _userManager.GetUserId(User);
@@ -33,7 +35,7 @@ namespace ecomove_back.Controllers
             if (bookingCreateDTO == null)
                 return BadRequest("Le DTO de création de réservation ne peut pas être null");
 
-            Response<CarpoolBookingCreateDTO> response = await _carpoolBookingRepository.CreateCarpoolBookingAsync(bookingCreateDTO, idUserConnect) ;
+            Response<CarpoolBookingCreateDTO> response = await _carpoolBookingRepository.CreateCarpoolBookingAsync(bookingCreateDTO, idUserConnect);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -139,4 +141,3 @@ namespace ecomove_back.Controllers
         }
     }
 }
- 
