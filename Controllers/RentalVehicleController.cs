@@ -1,9 +1,12 @@
+using ecomove_back.Data;
 using ecomove_back.Data.Models;
 using ecomove_back.DTOs.RentalVehicleDTO;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace ecomove_back.Controllers
 {
@@ -33,14 +36,15 @@ namespace ecomove_back.Controllers
         /// <param name="userDTO"></param>
         /// <returns></returns>
         [HttpPost("{vehicleId}")]
+        [Authorize(Roles = $"{Roles.USER}")]
         [ProducesResponseType(201)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> CreateRentalVehicle(Guid vehicleId, RentalVehicleDTO userDTO)
         {
-            string userId = "46a0256c-c83b-4896-94dd-d4a8f1755a54";
+            var idUserConnect = _userManager.GetUserId(User);
 
-            Response<string> response = await _rentalVehicleRepository.CreateRentalVehicleAsync(userId, vehicleId, userDTO);
+            Response<string> response = await _rentalVehicleRepository.CreateRentalVehicleAsync(idUserConnect!, vehicleId, userDTO);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -55,11 +59,15 @@ namespace ecomove_back.Controllers
         /// <param name="rentalVehicleDTO"></param>
         /// <returns></returns>
         [HttpPut("{rentalId}")]
+        [Authorize(Roles = $"{Roles.USER}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> UpdateRentalVehicle(Guid rentalId, RentalVehicleDTO rentalVehicleDTO)
         {
+
+
+
             Response<RentalVehicleDTO> response = await _rentalVehicleRepository.UpdateRentalVehicleAsync(rentalId, rentalVehicleDTO);
 
             if (response.IsSuccess)
