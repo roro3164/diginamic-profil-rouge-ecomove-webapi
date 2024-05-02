@@ -108,11 +108,17 @@ namespace ecomove_back.Repositories
             }
         }
 
-        public async Task<Response<List<BrandDTO>>> GetAllBrandAysnc()
+        public async Task<Response<List<BrandDTO>>> GetAllBrandAysnc(string search)
         {
             try
             {
-                List<Brand> brands = await _ecoMoveDbContext.Brands.ToListAsync();
+                List<Brand> brands = await _ecoMoveDbContext.Brands
+                    .ToListAsync();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    brands = brands.Where(s => s.BrandLabel == search).ToList();
+                }
 
                 if (brands.Count == 0)
                 {
