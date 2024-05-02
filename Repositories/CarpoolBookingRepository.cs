@@ -20,7 +20,7 @@ namespace ecomove_back.Repositories
             {
                 var carpoolbooking = new CarpoolBooking
                 {
-                    Confirmed = bookingCreateDTO.Confirmed,
+                    Confirmed = true,
                     CarpoolAnnouncementId = bookingCreateDTO.CarpoolAnnouncementId,
                     AppUserId = bookingCreateDTO.AppUserId
                 };
@@ -31,12 +31,7 @@ namespace ecomove_back.Repositories
                 return new Response<CarpoolBookingCreateDTO>
                 {
                     Message = "Covoiturage réservé avec succès",
-                    Data = new CarpoolBookingCreateDTO
-                    {
-                        Confirmed = carpoolbooking.Confirmed,
-                        CarpoolAnnouncementId = carpoolbooking.CarpoolAnnouncementId,
-                        AppUserId = carpoolbooking.AppUserId
-                    },
+                    Data = bookingCreateDTO,
                     IsSuccess = true,
                     CodeStatus = 201
                 };
