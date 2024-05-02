@@ -39,13 +39,12 @@ namespace ecomove_back.Controllers
         /// <summary>
         /// Permet d'annuler une réservation d'une place dans un covoiturage
         /// </summary>
-        /// <returns>ActionResult</returns>
-
+        /// <param name="id"> Guid: Id d'un annonce de covoiturage </param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> CancelCarpoolBooking(Guid carpoolAnnouncementId, string appUserId)
-
+        public async Task<IActionResult> CancelCarpoolBooking(Guid id, string appUserId)
         {
-            Response<string> response = await _carpoolBookingRepository.CancelCarpoolBookingAsync(carpoolAnnouncementId, appUserId);
+            Response<string> response = await _carpoolBookingRepository.CancelCarpoolBookingAsync(id, appUserId);
 
             if (response.IsSuccess)
                 return Ok(response.Message);
@@ -62,7 +61,6 @@ namespace ecomove_back.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAllCarpoolBookingsByUserIdAsync(string userId)
-
         {
             Response<List<CarpoolBooking>> response = await _carpoolBookingRepository.GetAllCarpoolBookingsByUserIdAsync(userId);
 
@@ -81,7 +79,6 @@ namespace ecomove_back.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetFutureCarpoolBookingsByUserIdAsync(string userId)
-
         {
             Response<List<CarpoolBooking>> response = await _carpoolBookingRepository.GetFutureCarpoolBookingsByUserIdAsync(userId);
 
@@ -100,7 +97,6 @@ namespace ecomove_back.Controllers
         /// 
         [HttpGet]
         public async Task<IActionResult> GetPastCarpoolBookingsByUserIdAsync(string userId)
-   
         {
             Response<List<CarpoolBooking>> response = await _carpoolBookingRepository.GetAllCarpoolBookingsByUserIdAsync(userId);
 
@@ -113,13 +109,14 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de récupérer un covoiturage en utilisant son l'Id de l'annonce et de le collaborateur
+        /// Permet de récupérer un covoiturage en utilisant l'Id de l'annonce 
         /// </summary>
+        /// <param name="id"> Guid: Id d'un annonce de covoiturage </param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCarpoolBookingsByIdAsync(Guid carpoolAnnouncementId, string appUserId)
+        public async Task<IActionResult> GetCarpoolBookingsByIdAsync(Guid id, string appUserId)
         {
-            Response<CarpoolBooking> response = await _carpoolBookingRepository.GetCarpoolBookingsByIdAsync(carpoolAnnouncementId, appUserId);
+            Response<CarpoolBooking> response = await _carpoolBookingRepository.GetCarpoolBookingsByIdAsync(id, appUserId);
 
             if (response.IsSuccess)
                 return Ok(response);
