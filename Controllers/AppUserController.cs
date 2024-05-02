@@ -1,6 +1,6 @@
-﻿using ecomove_back.Data.Models;
+﻿using ecomove_back.Data;
+using ecomove_back.Data.Models;
 using ecomove_back.DTOs.AppUserDTOs;
-using ecomove_back.DTOs.RentalVehicleDTO;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +11,7 @@ namespace ecomove_back.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(Roles = $"{Roles.ADMIN}")]
     public class AppUserController : ControllerBase
     {
         private IAppUserRepository _appUserRepository;
@@ -56,7 +57,6 @@ namespace ecomove_back.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -135,45 +135,5 @@ namespace ecomove_back.Controllers
             else
                 return Problem(response.Message);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // NE PAS SUPPRIMER !!!
-        [HttpPost]
-        public IActionResult TestDate(int newStartDate, int newEndDate)
-        {
-            // 1 au 4
-            // 8 au 28
-            int[][] rentalDates = [[2, 7], [9, 12], [20, 23]];
-
-            foreach (var rentalDate in rentalDates)
-            {
-                if ((newStartDate >= rentalDate[0] && newStartDate <= rentalDate[1]) ||
-                    (newEndDate >= rentalDate[0] && newEndDate <= rentalDate[1]) ||
-                    (newStartDate <= rentalDate[0] && newEndDate >= rentalDate[1]))
-                {
-                    return Ok("Pas possible");
-                }
-            }
-
-            return Ok("SUPER");
-        }
-
-
-
-
-
     }
 }

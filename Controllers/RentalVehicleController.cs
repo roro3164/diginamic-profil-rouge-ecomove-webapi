@@ -63,10 +63,9 @@ namespace ecomove_back.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> UpdateRentalVehicle(Guid rentalId, RentalVehicleDTO rentalVehicleDTO)
         {
+            var idUserConnect = _userManager.GetUserId(User);
 
-
-
-            Response<RentalVehicleDTO> response = await _rentalVehicleRepository.UpdateRentalVehicleAsync(rentalId, rentalVehicleDTO);
+            Response<RentalVehicleDTO> response = await _rentalVehicleRepository.UpdateRentalVehicleAsync(idUserConnect!, rentalId, rentalVehicleDTO);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -82,12 +81,15 @@ namespace ecomove_back.Controllers
         /// <param name="rentalId">Guid : identifiant de la réservation</param>
         /// <returns></returns>
         [HttpPut("{rentalId}")]
+        [Authorize(Roles = $"{Roles.USER}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> CancelRentalVehicle(Guid rentalId)
         {
-            Response<string> response = await _rentalVehicleRepository.CancelRentalVehicleAsync(rentalId);
+            var idUserConnect = _userManager.GetUserId(User);
+
+            Response<string> response = await _rentalVehicleRepository.CancelRentalVehicleAsync(idUserConnect!, rentalId);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -102,12 +104,15 @@ namespace ecomove_back.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = $"{Roles.USER}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetAllRentalVehicles()
         {
-            Response<List<AllRentalVehicles>> response = await _rentalVehicleRepository.GetAllRentalVehiclesAysnc();
+            var idUserConnect = _userManager.GetUserId(User);
+
+            Response<List<AllRentalVehicles>> response = await _rentalVehicleRepository.GetAllRentalVehiclesAysnc(idUserConnect!);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -123,12 +128,15 @@ namespace ecomove_back.Controllers
         /// <param name="rentalId">Guid : identifiant de la réservation</param>
         /// <returns></returns>
         [HttpGet("{rentalId}")]
+        [Authorize(Roles = $"{Roles.USER}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetRentalVehicleById(Guid rentalId)
         {
-            Response<SingleRentalVehicleDTO> response = await _rentalVehicleRepository.GetRentalVehicleByIdAysnc(rentalId);
+            var idUserConnect = _userManager.GetUserId(User);
+
+            Response<SingleRentalVehicleDTO> response = await _rentalVehicleRepository.GetRentalVehicleByIdAysnc(idUserConnect!, rentalId);
 
             if (response.IsSuccess)
                 return Ok(response);
