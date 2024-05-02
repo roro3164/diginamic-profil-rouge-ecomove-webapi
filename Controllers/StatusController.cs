@@ -1,12 +1,15 @@
+using ecomove_back.Data;
 using ecomove_back.DTOs.StatusDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
+    [Authorize(Roles = $"{Roles.ADMIN}")]
     public class StatusController : ControllerBase
     {
         private readonly IStatusRepository _StatusRepository;

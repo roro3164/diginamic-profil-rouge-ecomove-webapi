@@ -1,13 +1,16 @@
+using ecomove_back.Data;
 using ecomove_back.Data.Models;
 using ecomove_back.DTOs.MotorizationDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
+    [Authorize(Roles = $"{Roles.ADMIN}")]
     public class MotorizationController : ControllerBase
     {
         private readonly IMotorizationRepository _motorizationRepository;
