@@ -55,6 +55,7 @@ namespace ecomove_back.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]

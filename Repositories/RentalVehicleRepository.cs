@@ -156,6 +156,8 @@ namespace ecomove_back.Repositories
                     };
                 }
 
+
+
                 if (rentalVehicle.CarpoolAnnouncement.Bookings.Count != 0)
                 {
                     return new Response<RentalVehicleDTO>
