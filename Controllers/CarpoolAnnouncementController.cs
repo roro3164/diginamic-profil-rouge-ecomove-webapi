@@ -29,7 +29,7 @@ namespace ecomove_back.Controllers
         {
             // Get the connected user ID
             string connectedUserId = _userManager.GetUserId(User)!;
-           
+
             Response<CarpoolAnnouncement>? response = await _carpoolAnnouncementRepository.CreateCarpoolAnnouncement(connectedUserId, carpoolAnnouncementDTO);
 
             if (response.IsSuccess)
@@ -68,7 +68,7 @@ namespace ecomove_back.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateCarpoolAnnouncement(Guid id, CarpoolAnnouncementInGoingDTO carpoolAnnouncementDTO)
+        public async Task<IActionResult> UpdateCarpoolAnnouncement(Guid id, CarpoolAnnouncementDTO carpoolAnnouncementDTO)
         {
             // Get the connected user ID
             string connectedUserId = _userManager.GetUserId(User)!;
