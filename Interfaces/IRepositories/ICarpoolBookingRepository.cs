@@ -6,11 +6,11 @@ namespace ecomove_back.Interfaces.IRepositories
 {
     public interface ICarpoolBookingRepository
     {
-        Task<Response<CarpoolBookingCreateDTO>> CreateCarpoolBookingAsync(CarpoolBookingCreateDTO bookingCreateDTO);
-        Task<Response<string>> CancelCarpoolBookingAsync(Guid id,string appUserId);
-        Task<Response<List<CarpoolBooking>>> GetAllCarpoolBookingsByUserIdAsync(string userId);
-        Task<Response<List<CarpoolBooking>>> GetFutureCarpoolBookingsByUserIdAsync(string userId);
-        Task<Response<List<CarpoolBooking>>> GetPastCarpoolBookingsByUserIdAsync(string userId);
-        Task<Response<CarpoolBooking>> GetCarpoolBookingsByIdAsync(Guid carpoolAnnouncementId, string appUserId);
+        Task<Response<CarpoolBookingCreateDTO>> CreateCarpoolBookingAsync(CarpoolBookingCreateDTO bookingCreateDTO, string? idUserConnect);
+        Task<Response<string>> CancelCarpoolBookingAsync(Guid id);
+        Task<Response<List<CarpoolBooking>>> GetAllCarpoolBookingsByUserIdAsync(string idUserConnect);
+        Task<Response<List<CarpoolBooking>>> GetFutureCarpoolBookingsByUserIdAsync(string idUserConnect);
+        Task<Response<List<CarpoolBooking>>> GetPastCarpoolBookingsByUserIdAsync(string idUserConnect);
+        Task<Response<CarpoolBooking>> GetCarpoolBookingsByIdAsync(Guid id);
     }
 }
