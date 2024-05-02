@@ -25,7 +25,7 @@ namespace ecomove_back.Repositories
         {
             // Vérification que le vehicule existe bien en BDD
             Vehicle? vehicle = await _ecoMoveDbContext.Vehicles
-                .Include( v => v.RentalVehicles)
+                .Include(v => v.RentalVehicles)
                 .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
 
             if (vehicle == null)
@@ -37,7 +37,7 @@ namespace ecomove_back.Repositories
                     CodeStatus = 404
                 };
             }
-            else if (vehicle.StatusId != 1) 
+            else if (vehicle.StatusId != 1)
             {
                 return new Response<string>
                 {
@@ -97,12 +97,12 @@ namespace ecomove_back.Repositories
                 //List<RentalVehicle> rentals = _ecoMoveDbContext.RentalVehicles.Where(r => r.StartDate >= re.StartDate && r.StartDate <= r.EndDate).ToList();
                 foreach (var rentalVehicle in vehicle.RentalVehicles)
                 {
-                    if  (
-                        rentalVehicleDTO.StartDate > rentalVehicle.StartDate 
+                    if (
+                        rentalVehicleDTO.StartDate > rentalVehicle.StartDate
                         && rentalVehicleDTO.StartDate < rentalVehicle.StartDate
                         && rentalVehicleDTO.EndDate > rentalVehicle.EndDate
                         && rentalVehicleDTO.EndDate < rentalVehicle.EndDate
-                    ) 
+                    )
                     {
                         return new Response<string>
                         {
@@ -134,8 +134,6 @@ namespace ecomove_back.Repositories
 
             //    return "Possible";
             //}
-
-
 
             RentalVehicle newRentalVehicle = new RentalVehicle
             {

@@ -38,7 +38,7 @@ namespace ecomove_back.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> CreateRentalVehicle(Guid vehicleId, RentalVehicleDTO userDTO)
         {
-            string userId = "203d7613-ab34-4dee-86f0-56eb1ee205bd";
+            var userId = "";
 
             Response<string> response = await _rentalVehicleRepository.CreateRentalVehicleAsync(userId, vehicleId, userDTO);
 

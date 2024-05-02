@@ -1,7 +1,10 @@
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs;
+using ecomove_back.DTOs.CapoolAnnouncementDTOs;
+using ecomove_back.DTOs.CarpoolAnnouncementDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ecomove_back.Controllers
@@ -11,33 +14,26 @@ namespace ecomove_back.Controllers
     public class CarpoolAnnouncementController : ControllerBase
     {
         private readonly ICarpoolAnnouncementRepository _carpoolAnnouncementRepository;
+        private readonly UserManager<AppUser> _userManager;
 
-        public CarpoolAnnouncementController(ICarpoolAnnouncementRepository carpoolAnnouncementRepository)
+        public CarpoolAnnouncementController(ICarpoolAnnouncementRepository carpoolAnnouncementRepository, UserManager<AppUser> userManager)
         {
             _carpoolAnnouncementRepository = carpoolAnnouncementRepository;
+            _userManager = userManager;
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateCarpoolAnnouncement(CarpoolAnnouncementDTO carpoolAnnouncementDTO)
+        [Authorize]
+        public async Task<IActionResult> CreateCarpoolAnnouncement(CarpoolAnnouncementInGoingDTO carpoolAnnouncementDTO)
         {
-            Response<CarpoolAnnouncement> response = await _carpoolAnnouncementRepository.CreateCarpoolAnnouncement(carpoolAnnouncementDTO);
+            // Get the connected user ID
+            string connectedUserId = _userManager.GetUserId(User)!;
+           
+            Response<CarpoolAnnouncement>? response = await _carpoolAnnouncementRepository.CreateCarpoolAnnouncement(connectedUserId, carpoolAnnouncementDTO);
 
             if (response.IsSuccess)
                 return Ok(response);
-            else
-                return Problem(response.Message);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllCarpoolAnnouncements()
-        {
-            Response<List<CarpoolAnnouncement>> response = await _carpoolAnnouncementRepository.GetAllCarpoolAnnouncements();
-
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
             else
                 return Problem(response.Message);
         }
@@ -47,7 +43,37 @@ namespace ecomove_back.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCarpoolAnnouncementById(Guid id)
         {
-            Response<CarpoolAnnouncement> response = await _carpoolAnnouncementRepository.GetCarpoolAnnouncementById(id);
+            Response<CarpoolAnnouncementOutGoingDTO>? response = await _carpoolAnnouncementRepository.GetCarpoolAnnouncementById(id);
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllCarpoolAnnouncements()
+        {
+            Response<List<CarpoolAnnouncementOutGoingDTO>>? response = await _carpoolAnnouncementRepository.GetAllCarpoolAnnouncements();
+
+            if (response.IsSuccess)
+                return Ok(response);
+            else if (response.CodeStatus == 404)
+                return NotFound(response.Message);
+            else
+                return Problem(response.Message);
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> UpdateCarpoolAnnouncement(Guid id, CarpoolAnnouncementInGoingDTO carpoolAnnouncementDTO)
+        {
+            // Get the connected user ID
+            string connectedUserId = _userManager.GetUserId(User)!;
+
+            Response<CarpoolAnnouncement>? response = await _carpoolAnnouncementRepository.UpdateCarpoolAnnouncement(id, connectedUserId, carpoolAnnouncementDTO);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -59,9 +85,13 @@ namespace ecomove_back.Controllers
 
 
         [HttpDelete]
+        //[Authorize]
         public async Task<IActionResult> DeleteCarpoolAnnouncement(Guid id)
         {
-            Response<CarpoolAnnouncement> response = await _carpoolAnnouncementRepository.DeleteCarpoolAnnouncement(id);
+            // Get the connected user ID
+            string connectedUserId = _userManager.GetUserId(User)!;
+
+            Response<CarpoolAnnouncement>? response = await _carpoolAnnouncementRepository.DeleteCarpoolAnnouncement(id, connectedUserId);
 
             if (response.IsSuccess)
                 return Ok(response);
@@ -70,21 +100,5 @@ namespace ecomove_back.Controllers
             else
                 return Problem(response.Message);
         }
-
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateCarpoolAnnouncement(Guid id, CarpoolAnnouncementDTO carpoolAnnouncementDTO)
-        {
-            Response<CarpoolAnnouncement> response = await _carpoolAnnouncementRepository.UpdateCarpoolAnnouncement(id, carpoolAnnouncementDTO);
-
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
-        }
-
-
     }
 }
