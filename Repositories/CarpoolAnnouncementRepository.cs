@@ -1,8 +1,10 @@
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs;
+using ecomove_back.DTOs.CapoolAnnouncementDTOs;
+using ecomove_back.DTOs.CarpoolAnnouncementDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ecomove_back.Repositories
@@ -10,24 +12,70 @@ namespace ecomove_back.Repositories
     public class CarpoolAnnouncementRepository : ICarpoolAnnouncementRepository
     {
         private readonly EcoMoveDbContext _ecoMoveDbContext;
+        private readonly UserManager<AppUser> _userManager;
 
         public CarpoolAnnouncementRepository(EcoMoveDbContext ecoMoveDbContext)
         {
             _ecoMoveDbContext = ecoMoveDbContext;
-
         }
 
-        public async Task<Response<CarpoolAnnouncement>> CreateCarpoolAnnouncement(CarpoolAnnouncementDTO carpoolAnnouncementDTO)
+        public async Task<Response<CarpoolAnnouncement>> CreateCarpoolAnnouncement(string userId, CarpoolAnnouncementInGoingDTO carpoolAnnouncementDTO)
         {
             try
             {
+
+                // Récupérer la location véhicule choisie par l'utilisateur pour la création d'une annonce
+
+                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles
+                    .FirstOrDefaultAsync(r => r.RentalVehicleId == carpoolAnnouncementDTO.RentalVehicleId);
+
+
+
+                // Vérifier si le locataire du véhicule est bien celui qui est connecté
+
+                if (rentalVehicle?.AppUserId != userId)
+                {
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Data = null,
+                        IsSuccess = false,
+                        Message = "Vous devriez louer un véhicule avant de créer une annonce de covoiturage",
+                        CodeStatus = 403,
+                    };
+                }
+
+                // Chercher si l'utilisateur a bien une location voiture avec des dattes correctes
+
+                RentalVehicle? userRentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.AppUserId == userId);
+
+
+                // Vérifier que la fourchette des dattes de l'annonce de covoiturage est incluse dans la fourchettes des dattes
+                // de la location voitures et que la location véhicule n'est pas annulée
+
+                if (userRentalVehicle?.StartDate > carpoolAnnouncementDTO.StartDate)
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Data = null,
+                        IsSuccess = false,
+                        CodeStatus = 403,
+                        Message = "La date du début de covoiturage doit être supérieure ou égale à la date de début de location du véhicule"
+                    };
+
+                if (carpoolAnnouncementDTO.PickupAddressId == carpoolAnnouncementDTO.DropOffAddressId)
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Message = "L'addresse de départ doit être différente de l'addresse d'arrivée",
+                        Data = null,
+                        IsSuccess = false,
+                        CodeStatus = 403,
+                    };
+
                 CarpoolAnnouncement carpoolAnnouncement = new CarpoolAnnouncement
                 {
-                    PickupAddressId = carpoolAnnouncementDTO.PickupAddressId,
-                    DropOffAddressId = carpoolAnnouncementDTO.DropOffAddressId,
                     StartDate = DateTime.Now,
-                    RideDuration = carpoolAnnouncementDTO.RideDuration,
-                    RideDistance = carpoolAnnouncementDTO.RideDistance,
+                    RentalVehicleId = carpoolAnnouncementDTO.RentalVehicleId,
+                    PickupAddressId = carpoolAnnouncementDTO.PickupAddressId,
+                    DropOffAddressId = carpoolAnnouncementDTO.DropOffAddressId
                 };
 
                 _ecoMoveDbContext.CarpoolAnnouncements.Add(carpoolAnnouncement);
@@ -50,11 +98,10 @@ namespace ecomove_back.Repositories
                     IsSuccess = false,
                     CodeStatus = 500
                 };
-
             }
         }
 
-        public async Task<Response<CarpoolAnnouncement>> DeleteCarpoolAnnouncement(Guid id)
+        public async Task<Response<CarpoolAnnouncement>> DeleteCarpoolAnnouncement(Guid id, string userId)
         {
             try
             {
@@ -67,6 +114,23 @@ namespace ecomove_back.Repositories
                         Message = "Aucune annonce de covoiturage n'a été trouvée",
                         IsSuccess = false,
                         CodeStatus = 404
+                    };
+
+                var carpoolOrganizer = _ecoMoveDbContext.CarpoolAnnouncements
+                    .Include(c => c.RentalVehicle)
+                    .Where(c => c.CarpoolAnnouncementId == id)
+                    .Select(c => new { c.RentalVehicle.AppUserId }).First();
+
+
+                // Vérifier si l'utilisateur connecté est celui le créateur de l'annonce pour pouvoir la supprimer par la suite
+
+                if (userId != carpoolOrganizer.AppUserId)
+                    return new Response<CarpoolAnnouncement>
+                    {
+                        Data = null,
+                        Message = "Vous pouvez pas supprimer cette annonce de covoiturage",
+                        IsSuccess = false,
+                        CodeStatus = 403
                     };
 
                 _ecoMoveDbContext.CarpoolAnnouncements.Remove(carpoolAnnouncement);
@@ -92,18 +156,22 @@ namespace ecomove_back.Repositories
             };
 
         }
-
-        public async Task<Response<List<CarpoolAnnouncement>>> GetAllCarpoolAnnouncements()
+        public async Task<Response<List<CarpoolAnnouncementOutGoingDTO>>> GetAllCarpoolAnnouncements()
         {
             try
             {
-                List<CarpoolAnnouncement> carpoolAnnouncements = await _ecoMoveDbContext.CarpoolAnnouncements
-                .Include(c => c.PickupAddress)
-                .Include(c => c.DropOffAddress)
-                .ToListAsync();
+                List<CarpoolAnnouncementOutGoingDTO> carpoolAnnouncements = await _ecoMoveDbContext.CarpoolAnnouncements
+                    .Include(c => c.PickupAddress)
+                    .Include(c => c.DropOffAddress)
+                    .Select(c => new CarpoolAnnouncementOutGoingDTO
+                    {
+                        StartDate = c.StartDate,
+                        PickupAddress = c.PickupAddress,
+                        DropOffAddress = c.DropOffAddress,
+                    }).ToListAsync();
 
                 if (carpoolAnnouncements.Count > 0)
-                    return new Response<List<CarpoolAnnouncement>>()
+                    return new Response<List<CarpoolAnnouncementOutGoingDTO>>()
                     {
                         Data = carpoolAnnouncements,
                         IsSuccess = true,
@@ -112,7 +180,7 @@ namespace ecomove_back.Repositories
                     };
 
 
-                return new Response<List<CarpoolAnnouncement>>
+                return new Response<List<CarpoolAnnouncementOutGoingDTO>>
                 {
                     Data = null,
                     IsSuccess = false,
@@ -122,7 +190,7 @@ namespace ecomove_back.Repositories
             }
             catch (Exception ex)
             {
-                return new Response<List<CarpoolAnnouncement>>
+                return new Response<List<CarpoolAnnouncementOutGoingDTO>>
                 {
                     Data = null,
                     IsSuccess = false,
@@ -132,14 +200,27 @@ namespace ecomove_back.Repositories
             }
         }
 
-        public async Task<Response<CarpoolAnnouncement>> GetCarpoolAnnouncementById(Guid id)
+        public async Task<Response<CarpoolAnnouncementOutGoingDTO>> GetCarpoolAnnouncementById(Guid id)
         {
             try
             {
-                CarpoolAnnouncement? carpoolAnnouncement = await _ecoMoveDbContext.CarpoolAnnouncements.FindAsync(id);
+                CarpoolAnnouncement? carpoolAnnouncement = (await _ecoMoveDbContext.CarpoolAnnouncements
+                    .Include(c => c.PickupAddress)
+                    .Include(c => c.DropOffAddress)
+                    .Where(c => c.CarpoolAnnouncementId == id)
+                    .ToListAsync())
+                    .First();
+
+                CarpoolAnnouncementOutGoingDTO carpoolAnnouncementOutGoingDTO = new()
+                {
+                    StartDate = carpoolAnnouncement.StartDate,
+                    PickupAddress = carpoolAnnouncement.PickupAddress,
+                    DropOffAddress = carpoolAnnouncement.DropOffAddress
+                };
+
 
                 if (carpoolAnnouncement is null)
-                    return new Response<CarpoolAnnouncement>
+                    return new Response<CarpoolAnnouncementOutGoingDTO>
                     {
                         Data = null,
                         Message = "Aucune annonce de covoiturage n'a été trouvée",
@@ -147,9 +228,9 @@ namespace ecomove_back.Repositories
                         CodeStatus = 404
                     };
 
-                return new Response<CarpoolAnnouncement>
+                return new Response<CarpoolAnnouncementOutGoingDTO>
                 {
-                    Data = carpoolAnnouncement,
+                    Data = carpoolAnnouncementOutGoingDTO,
                     Message = null,
                     IsSuccess = true,
                     CodeStatus = 200
@@ -157,7 +238,7 @@ namespace ecomove_back.Repositories
             }
             catch (Exception ex)
             {
-                return new Response<CarpoolAnnouncement>
+                return new Response<CarpoolAnnouncementOutGoingDTO>
                 {
                     Data = null,
                     Message = ex.Message,
@@ -167,10 +248,11 @@ namespace ecomove_back.Repositories
             };
         }
 
-        public async Task<Response<CarpoolAnnouncement>> UpdateCarpoolAnnouncement(Guid id, CarpoolAnnouncementDTO carpoolAnnouncementDTO)
+        public async Task<Response<CarpoolAnnouncement>> UpdateCarpoolAnnouncement(Guid id, string userId, CarpoolAnnouncementInGoingDTO carpoolAnnouncementDTO)
         {
             try
             {
+
                 CarpoolAnnouncement? carpoolAnnouncement = await _ecoMoveDbContext.CarpoolAnnouncements.FindAsync(id);
 
                 if (carpoolAnnouncement is null)
@@ -182,12 +264,11 @@ namespace ecomove_back.Repositories
                         Message = "Aucune annonce covoiturage n'a été trouvée"
                     };
 
-                carpoolAnnouncement.StartDate = carpoolAnnouncementDTO.StartDate;
 
-                carpoolAnnouncement.PickupAddress = carpoolAnnouncement.PickupAddress;
-                carpoolAnnouncement.DropOffAddress = carpoolAnnouncement.DropOffAddress;
-                carpoolAnnouncement.RideDuration = carpoolAnnouncementDTO.RideDuration;
-                carpoolAnnouncement.RideDistance = carpoolAnnouncementDTO.RideDistance;
+                carpoolAnnouncement.StartDate = carpoolAnnouncementDTO.StartDate;
+                carpoolAnnouncement.PickupAddressId = carpoolAnnouncementDTO.PickupAddressId;
+                carpoolAnnouncement.DropOffAddressId = carpoolAnnouncementDTO.DropOffAddressId;
+                carpoolAnnouncement.RentalVehicleId = carpoolAnnouncementDTO.RentalVehicleId;
 
 
                 await _ecoMoveDbContext.SaveChangesAsync();

@@ -30,7 +30,7 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de créer une réservation de véhicule
+        /// Permet de crÃ©er une rÃ©servation de vÃ©hicule
         /// </summary>
         /// <param name="vehicleId">Guid : identifiant du vehicule</param>
         /// <param name="userDTO"></param>
@@ -43,9 +43,7 @@ namespace ecomove_back.Controllers
         public async Task<IActionResult> CreateRentalVehicle(Guid vehicleId, RentalVehicleDTO userDTO)
         {
             var idUserConnect = _userManager.GetUserId(User);
-
             Response<string> response = await _rentalVehicleRepository.CreateRentalVehicleAsync(idUserConnect!, vehicleId, userDTO);
-
             if (response.IsSuccess)
                 return Ok(response);
             else
@@ -53,9 +51,9 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de modifier les dates d'une réservation
+        /// Permet de modifier les dates d'une rÃ©servation
         /// </summary>
-        /// <param name="rentalId">int : identifiant de la réservation</param>
+        /// <param name="rentalId">int : identifiant de la rÃ©servation</param>
         /// <param name="rentalVehicleDTO"></param>
         /// <returns></returns>
         [HttpPut("{rentalId}")]
@@ -79,9 +77,9 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet d'annuler une réservation de véhicule
+        /// Permet d'annuler une rÃ©servation de vÃ©hicule
         /// </summary>
-        /// <param name="rentalId">Guid : identifiant de la réservation</param>
+        /// <param name="rentalId">Guid : identifiant de la rÃ©servation</param>
         /// <returns></returns>
         [HttpPut("{rentalId}")]
         [ProducesResponseType(200)]
@@ -100,7 +98,7 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de récupérer toutes les réservations de véhicule
+        /// Permet de rÃ©cupÃ©rer toutes les rÃ©servations de vÃ©hicule
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -120,9 +118,9 @@ namespace ecomove_back.Controllers
         }
 
         /// <summary>
-        /// Permet de récupérer une réservation de véhicule avec son id
+        /// Permet de rÃ©cupÃ©rer une rÃ©servation de vÃ©hicule avec son id
         /// </summary>
-        /// <param name="rentalId">Guid : identifiant de la réservation</param>
+        /// <param name="rentalId">Guid : identifiant de la rÃ©servation</param>
         /// <returns></returns>
         [HttpGet("{rentalId}")]
         [ProducesResponseType(200)]

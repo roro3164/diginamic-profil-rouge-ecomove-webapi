@@ -24,7 +24,7 @@ namespace ecomove_back.Repositories
         {
             // Vérification que le vehicule existe bien en BDD
             Vehicle? vehicle = await _ecoMoveDbContext.Vehicles
-                .Include( v => v.RentalVehicles)
+                .Include(v => v.RentalVehicles)
                 .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
 
             if (vehicle == null)
@@ -36,7 +36,7 @@ namespace ecomove_back.Repositories
                     CodeStatus = 404
                 };
             }
-            else if (vehicle.StatusId != 1) 
+            else if (vehicle.StatusId != 1)
             {
                 return new Response<string>
                 {
@@ -350,12 +350,6 @@ namespace ecomove_back.Repositories
                     CodeStatus = 500
                 };
             }
-
-
         }
-
-
-
-
     }
 }
