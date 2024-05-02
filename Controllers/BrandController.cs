@@ -9,7 +9,7 @@ namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [Authorize(Roles = $"{Roles.ADMIN}")]
+    //[Authorize(Roles = $"{Roles.ADMIN}")]
     public class BrandController : ControllerBase
     {
         private readonly IBrandRepository _brandRepository;
@@ -71,9 +71,9 @@ namespace ecomove_back.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetAllBrands()
+        public async Task<IActionResult> GetAllBrands(string search = null)
         {
-            Response<List<BrandDTO>> response = await _brandRepository.GetAllBrandAysnc();
+            Response<List<BrandDTO>> response = await _brandRepository.GetAllBrandAysnc(search);
 
             if (response.IsSuccess)
                 return Ok(response);

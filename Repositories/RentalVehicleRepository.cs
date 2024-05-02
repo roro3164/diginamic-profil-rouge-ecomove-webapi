@@ -307,7 +307,7 @@ namespace ecomove_back.Repositories
 
                 if (rentalVehicle.CarpoolAnnouncement != null)
                 {
-                    await _carpoolAnnouncementRepository.DeleteCarpoolAnnouncement(rentalId);
+                    await _carpoolAnnouncementRepository.DeleteCarpoolAnnouncement(rentalId, idUserConnect);
                 }
 
                 rentalVehicle.Confirmed = false;
