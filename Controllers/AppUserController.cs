@@ -3,6 +3,7 @@ using ecomove_back.DTOs.AppUserDTOs;
 using ecomove_back.DTOs.RentalVehicleDTO;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,6 +56,7 @@ namespace ecomove_back.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -158,11 +160,9 @@ namespace ecomove_back.Controllers
 
             foreach (var rentalDate in rentalDates)
             {
-                //if (rentalDate[0] >= newStartDate && rentalDate[0] <= newEndDate && newStartDate >= rentalDate[1])
-                if (
-                    (newStartDate >= rentalDate[0] && newStartDate <= rentalDate[1]) ||
-                    (newEndDate <= rentalDate[1] && newEndDate >= rentalDate[0])
-                )
+                if ((newStartDate >= rentalDate[0] && newStartDate <= rentalDate[1]) ||
+                    (newEndDate >= rentalDate[0] && newEndDate <= rentalDate[1]) ||
+                    (newStartDate <= rentalDate[0] && newEndDate >= rentalDate[1]))
                 {
                     return Ok("Pas possible");
                 }
@@ -170,6 +170,10 @@ namespace ecomove_back.Controllers
 
             return Ok("SUPER");
         }
+
+
+
+
 
     }
 }

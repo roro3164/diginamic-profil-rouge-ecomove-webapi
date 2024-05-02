@@ -3,7 +3,7 @@
 namespace ecomove_back.Data.Models
 {
         public class CarpoolBooking
-        {
+        {     
                 public Guid CarpoolAnnouncementId { get; set; }
                 [DeleteBehavior(DeleteBehavior.NoAction)]
                 public CarpoolAnnouncement CarpoolAnnouncement { get; set; }

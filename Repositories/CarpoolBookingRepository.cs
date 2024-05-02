@@ -1,9 +1,6 @@
 using ecomove_back.Data;
 using ecomove_back.Data.Models;
-using ecomove_back.DTOs.CapoolAnnouncementDTOs;
 using ecomove_back.DTOs.CarpoolBookingDTOs;
-using ecomove_back.DTOs.ModelDTOs;
-using ecomove_back.DTOs.MotorizationDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -17,29 +14,24 @@ namespace ecomove_back.Repositories
         {
             _ecoMoveDbContext = ecoMoveDbContext;
         }
-        public async Task<Response<CarpoolBookingCreateDTO>> CreateCarpoolBookingAsync(CarpoolBookingCreateDTO bookingCreateDTO)
+        public async Task<Response<CarpoolBookingCreateDTO>> CreateCarpoolBookingAsync(CarpoolBookingCreateDTO bookingCreateDTO, string idUserConnect)
         {
             try
             {
-                var booking = new CarpoolBooking
+                var carpoolbooking = new CarpoolBooking
                 {
-                    Confirmed = bookingCreateDTO.Confirmed,
+                    Confirmed = true,
                     CarpoolAnnouncementId = bookingCreateDTO.CarpoolAnnouncementId,
-                    AppUserId = bookingCreateDTO.AppUserId
+                    AppUserId = idUserConnect
                 };
 
-                await _ecoMoveDbContext.CarpoolBookings.AddAsync(booking);
+                await _ecoMoveDbContext.CarpoolBookings.AddAsync(carpoolbooking);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
                 return new Response<CarpoolBookingCreateDTO>
                 {
                     Message = "Covoiturage réservé avec succès",
-                    Data = new CarpoolBookingCreateDTO
-                    {
-                        Confirmed = booking.Confirmed,
-                        CarpoolAnnouncementId = booking.CarpoolAnnouncementId,
-                        AppUserId = booking.AppUserId
-                    },
+                    Data = bookingCreateDTO,
                     IsSuccess = true,
                     CodeStatus = 201
                 };
@@ -52,13 +44,15 @@ namespace ecomove_back.Repositories
                     IsSuccess = false
                 };
             }
-
         }
-        public async Task<Response<string>> CancelCarpoolBookingAsync(int id)
+        public async Task<Response<string>> CancelCarpoolBookingAsync(Guid id)
         {
-            var booking = await _ecoMoveDbContext.CarpoolBookings.FindAsync(id);
 
-            if (booking == null)
+            var carpoolBooking = _ecoMoveDbContext.CarpoolBookings
+                .Where(cb => cb.CarpoolAnnouncementId == id)
+                .FirstOrDefault();
+
+            if (carpoolBooking == null)
             {
                 return new Response<string>
                 {
@@ -68,11 +62,11 @@ namespace ecomove_back.Repositories
                 };
             }
 
-            booking.Confirmed = false;
+            carpoolBooking.Confirmed = false;
 
             try
             {
-                _ecoMoveDbContext.CarpoolBookings.Update(booking);
+                _ecoMoveDbContext.CarpoolBookings.Update(carpoolBooking);
                 await _ecoMoveDbContext.SaveChangesAsync();
 
                 return new Response<string>
@@ -90,71 +84,173 @@ namespace ecomove_back.Repositories
                 };
             }
         }
+        public async Task<Response<List<CarpoolBooking>>> GetAllCarpoolBookingsByUserIdAsync(string idUserConnect)
+        {
+            try
+            {
+                List<CarpoolBooking> carpoolBookings = await _ecoMoveDbContext.CarpoolBookings
+                    .Include(cb => cb.CarpoolAnnouncement)
+                        .ThenInclude(ca => ca.PickupAddress)
+                    .Include(cb => cb.CarpoolAnnouncement)
+                        .ThenInclude(ca => ca.DropOffAddress)
+                    .Where(cb => cb.AppUserId == idUserConnect)
+                    .ToListAsync();
 
-   
+                if (carpoolBookings == null || carpoolBookings.Count == 0)
+                {
+                    return new Response<List<CarpoolBooking>>
+                    {
+                        Data = null,
+                        Message = "Aucun covoiturage n'a été trouvé",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
 
+                return new Response<List<CarpoolBooking>>
+                {
+                    Data = carpoolBookings,
+                    Message = "Covoiturages trouvés avec succès",
+                    IsSuccess = true,
+                    CodeStatus = 200
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<List<CarpoolBooking>>
+                {
+                    Data = null,
+                    Message = e.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500
+                };
+            }
+        }
+        public async Task<Response<List<CarpoolBooking>>> GetFutureCarpoolBookingsByUserIdAsync(string idUserConnect)
+        {
+            DateTime currentDate = DateTime.Now;
+            try
+            {
+                List<CarpoolBooking> carpoolBookings = await _ecoMoveDbContext.CarpoolBookings
+                    .Include(cb => cb.CarpoolAnnouncement)
+                        .ThenInclude(ca => ca.PickupAddress)
+                    .Include(cb => cb.CarpoolAnnouncement)
+                        .ThenInclude(ca => ca.DropOffAddress)
+                    .Where(cb => cb.AppUserId == idUserConnect && cb.CarpoolAnnouncement.StartDate > currentDate)
+                    .ToListAsync();
 
+                if (carpoolBookings == null || carpoolBookings.Count == 0)
+                {
+                    return new Response<List<CarpoolBooking>>
+                    {
+                        Data = null,
+                        Message = "Aucun covoiturage n'a été trouvé",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
 
-        //VIENDO LISTAS
+                return new Response<List<CarpoolBooking>>
+                {
+                    Data = carpoolBookings,
+                    Message = "Covoiturages trouvés avec succès",
+                    IsSuccess = true,
+                    CodeStatus = 200
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<List<CarpoolBooking>>
+                {
+                    Data = null,
+                    Message = e.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500
+                };
+            }
+        }
+        public async Task<Response<List<CarpoolBooking>>> GetPastCarpoolBookingsByUserIdAsync(string idUserConnect)
+        {
+            DateTime currentDate = DateTime.Now;
+            try
+            {
+                List<CarpoolBooking> carpoolBookings = await _ecoMoveDbContext.CarpoolBookings
+                    .Include(cb => cb.CarpoolAnnouncement)
+                        .ThenInclude(ca => ca.PickupAddress)
+                    .Include(cb => cb.CarpoolAnnouncement)
+                        .ThenInclude(ca => ca.DropOffAddress)
+                    .Where(cb => cb.AppUserId == idUserConnect && cb.CarpoolAnnouncement.StartDate < currentDate)
+                    .ToListAsync();
 
-        //    public async Task<List<CarpoolBooking>> GetCarpoolBookingsByUserIdAsync(string userId)
-        //    {
-        //        return await _context.CarpoolBookings
-        //            .Where(cb => cb.AppUserId == userId)
-        //            .ToListAsync();
-        //    }
+                if (carpoolBookings == null || carpoolBookings.Count == 0)
+                {
+                    return new Response<List<CarpoolBooking>>
+                    {
+                        Data = null,
+                        Message = "Aucun covoiturage n'a été trouvé",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
 
-        //    public async Task<List<CarpoolBooking>> GetFutureCarpoolBookingsByUserIdAsync(string userId)
-        //    {
-        //        if (carpoolBokings.Count > 0)
-        //        {
-        //            foreach (CarpoolBooking carpool in carpoolBokings)
-        //            {
-        //                motorizationDTOs.Add(new CarpoolBooking { AppUserId = carpoolBoking.AppUserId });
-        //            }
+                return new Response<List<CarpoolBooking>>
+                {
+                    Data = carpoolBookings,
+                    Message = "Covoiturages trouvés avec succès",
+                    IsSuccess = true,
+                    CodeStatus = 200
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<List<CarpoolBooking>>
+                {
+                    Data = null,
+                    Message = e.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500
+                };
+            }
+        }
+        public async Task<Response<CarpoolBooking>> GetCarpoolBookingsByIdAsync(Guid id)
+        {
+            var carpoolBooking = await _ecoMoveDbContext.CarpoolBookings
+                .Where(cb => cb.CarpoolAnnouncementId == id)
+                .FirstOrDefaultAsync();
 
-        //            return new Response<List<MotorizationDTO>>
-        //            {
-        //                IsSuccess = true,
-        //                Data = motorizationDTOs,
-        //                Message = null,
-        //                CodeStatus = 201,
-        //            };
-        //        }
+            try
+            {
+                if (carpoolBooking == null)
+                {
+                    return new Response<CarpoolBooking>
+                    {
+                        Data = null,
+                        Message = "Aucune annonce de covoiturage n'a été trouvée",
+                        IsSuccess = false,
+                        CodeStatus = 404
+                    };
+                }
 
-        //        if (futureBookings.Count == 0)
-        //        {
-        //            return new Response<List<MotorizationDTO>>
-        //            {
-        //                IsSuccess = false,
-        //                Message = "La liste des motorisations est vide",
-        //                CodeStatus = 404
-        //            };
-        //        }
-        //        else
-        //        {
-        //            return new Response<List<MotorizationDTO>>
-        //            {
-        //                IsSuccess = false,
-        //            };
-        //        }
-
-        //        DateTime currentDate = DateTime.Now;
-        //        return await _context.CarpoolBookings
-        //            .Where(cb => cb.AppUserId == userId && cb.CarpoolAnnouncement.Date > currentDate)
-        //            .ToListAsync();
-        //    }
-
-        //    public async Task<List<CarpoolBooking>> GetPastCarpoolBookingsByUserIdAsync(string userId)
-        //    {
-        //        DateTime currentDate = DateTime.Now;
-        //        return await _context.CarpoolBookings
-        //            .Where(cb => cb.AppUserId == userId && cb.CarpoolAnnouncement.Date < currentDate)
-        //            .ToListAsync();
-        //    }
-        //}
-
-      
-
+                return new Response<CarpoolBooking>
+                {
+                    Data = carpoolBooking,
+                    Message = null,
+                    IsSuccess = true,
+                    CodeStatus = 200
+                };
+            }
+            catch (Exception e)
+            {
+                return new Response<CarpoolBooking>
+                {
+                    Data = null,
+                    Message = e.Message,
+                    IsSuccess = false,
+                    CodeStatus = 500
+                };
+            }
+        }
     }
 }
+
+
