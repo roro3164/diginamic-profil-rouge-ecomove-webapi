@@ -2,21 +2,21 @@
 
 Projet de formation CDA .NET chez Diginamic.
 
-Développement d'une application de location de véhicules et de covoiturages.
+DÃ©veloppement d'une application de location de vÃ©hicules et de covoiturages.
 
-## Déploiement
+## DÃ©ploiement
 
-Pour déployer le projet, ouvrez le Packager Manager Nuget et lancer les commandes suivantes :
+Pour dÃ©ployer le projet, ouvrez le Packager Manager Nuget et lancer les commandes suivantes :
 
 ```bash
   Add-Migration Initit
   Update-Database
 ```
-Après ces commandes la base de données devrait étre créée.
+AprÃ¨s ces commandes la base de donnÃ©es devrait Ã©tre crÃ©Ã©e.
 
 ## Fixtures
 
-Les tables suivantes ont été remplis avec des données :
+Les tables suivantes ont Ã©tÃ© remplis avec des donnÃ©es :
  - Brands
  - Models
  - Motorizations
@@ -25,7 +25,7 @@ Les tables suivantes ont été remplis avec des données :
  - Vehicle
 
 
-## Rôle ADMIN
+## RÃ´le ADMIN
 
 Voici les identifiants pour vous connecter avec un compte administrateur
 
@@ -33,7 +33,7 @@ Voici les identifiants pour vous connecter avec un compte administrateur
 
 `Mot de passe : Azerty1!`
 
-## Rôle USER
+## RÃ´le USER
 
 Voici les identifiants pour vous connecter avec un compte utilisateur
 
@@ -41,12 +41,12 @@ Voici les identifiants pour vous connecter avec un compte utilisateur
 
 `Mot de passe : Azerty1!`
 
-## Points restants à dévelopepr
+## Points restants Ã  dÃ©velopper
 
-- Envoi d'un email aux passagers d'un covoiturage si celui-ci est annulé
+- Envoi d'un email aux passagers d'un covoiturage si celui-ci est annulÃ©
 - Filtres de recherche
 - Tests unitaires
 - Refactoring
 - Mot de passe plus fort
-- L'Admin doit pouvoir modifier, supprimer une réservation de véhicule, un covoiturage...
+- L'Admin doit pouvoir modifier, supprimer une rÃ©servation de vÃ©hicule, un covoiturage...
 
