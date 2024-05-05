@@ -23,7 +23,6 @@ namespace ecomove_back.Controllers
         /// Permet de créer un modèle de véhicule
         /// </summary>
         /// <returns></returns>
-
         [HttpPost]
         public async Task<IActionResult> CreateModelAsync(ModelFKeyDTO modelFKeyDTO)
         {
@@ -39,7 +38,6 @@ namespace ecomove_back.Controllers
         /// Permet de supprimer un modèle de véhicule
         /// </summary>
         /// <returns></returns>
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteModelAsync(int id)
         {
@@ -92,7 +90,6 @@ namespace ecomove_back.Controllers
         /// Permet de modifier un modèle
         /// </summary>
         /// <returns></returns>
-        
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateModelById(int id, ModelLabelDTO modelLabelDTO)
         {

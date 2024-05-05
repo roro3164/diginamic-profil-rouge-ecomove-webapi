@@ -1,4 +1,5 @@
-﻿using ecomove_back.Data.Models;
+﻿using Azure;
+using ecomove_back.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,67 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
         IdentityRole roleAdmin = new IdentityRole { Name = "ADMIN", NormalizedName = "ADMIN" };
         IdentityRole roleUser = new IdentityRole { Name = "USER", NormalizedName = "USER" };
         builder.Entity<IdentityRole>().HasData(new List<IdentityRole> { roleAdmin, roleUser });
+
+        // Fixtures
+        Brand peugeot = new Brand { BrandId = 1, BrandLabel = "Peugeot" };
+        Brand renault = new Brand { BrandId = 2, BrandLabel = "Renault" };
+        Brand citroen = new Brand { BrandId = 3, BrandLabel = "Citroen" };
+        Brand mercedes = new Brand { BrandId = 4, BrandLabel = "Mercedes" };
+        builder.Entity<Brand>().HasData(new List<Brand> { peugeot, renault, citroen, mercedes });
+
+        Model p206 = new Model { ModelId = 1, ModelLabel = "206", BrandId = peugeot.BrandId };
+        Model p308 = new Model { ModelId = 2, ModelLabel = "308", BrandId = peugeot.BrandId };
+        Model p2008 = new Model { ModelId = 3, ModelLabel = "2008", BrandId = peugeot.BrandId };
+        Model p508 = new Model { ModelId = 4, ModelLabel = "508", BrandId = peugeot.BrandId };
+        Model r5 = new Model { ModelId = 5, ModelLabel = "Renault 5", BrandId = renault.BrandId };
+        Model clio = new Model { ModelId = 6, ModelLabel = "Clio", BrandId = renault.BrandId };
+        Model megane = new Model { ModelId = 7, ModelLabel = "Megane", BrandId = renault.BrandId };
+        Model c4 = new Model { ModelId = 8, ModelLabel = "C4", BrandId = citroen.BrandId };
+        builder.Entity<Model>().HasData(new List<Model> { p206, p308, p2008, p508, r5, clio, megane, c4 });
+
+        Category suv = new Category { CategoryId = 1, CategoryLabel = "SUV" };
+        Category berline = new Category { CategoryId = 2, CategoryLabel = "Berline" };
+        Category citadine = new Category { CategoryId = 3, CategoryLabel = "Citadine" };
+        Category monospace = new Category { CategoryId = 4, CategoryLabel = "Monospace" };
+        builder.Entity<Category>().HasData(new List<Category> { suv, berline, citadine, monospace });
+
+        Motorization essence = new Motorization { MotorizationId = 1, MotorizationLabel = "Essence" };
+        Motorization hybride = new Motorization { MotorizationId = 2, MotorizationLabel = "Hybride" };
+        Motorization electric = new Motorization { MotorizationId = 3, MotorizationLabel = "Éléctrique" };
+        Motorization gazoil = new Motorization { MotorizationId = 4, MotorizationLabel = "Gazoile" };
+        builder.Entity<Motorization>().HasData(new List<Motorization> { essence, hybride, electric, gazoil });
+
+        Status InOperation = new Status { StatusId = 1, StatusLabel = StatusEnum.InOperation };
+        Status OutOfService = new Status { StatusId = 2, StatusLabel = StatusEnum.OutOfService };
+        Status UnderRepair = new Status { StatusId = 3, StatusLabel = StatusEnum.UnderRepair };
+        builder.Entity<Status>().HasData(new List<Status> { InOperation, OutOfService, UnderRepair });
+
+        Vehicle vehicle206 = new Vehicle { 
+            VehicleId = Guid.NewGuid(),
+            ModelId = 1, 
+            MotorizationId = 4, 
+            StatusId = 1, 
+            Registration = "SD-267-AZ", 
+            CategoryId = 3, 
+            CO2emission = 90,
+            CarSeatNumber = 5, 
+            Consumption = 6.5,
+            Photo = "https://images.caradisiac.com/images/2/6/7/9/192679/S1-peugeot-206-s16-1999-2005-la-gti-qui-ne-dit-pas-son-nom-des-2-500-eur-694126.jpg"
+        };
+        Vehicle vehicleClio = new Vehicle
+        {
+            VehicleId = Guid.NewGuid(),
+            ModelId = 6,
+            MotorizationId =1,
+            StatusId = 1,
+            Registration = "KN-324-LM",
+            CategoryId = 3,
+            CO2emission = 95,
+            CarSeatNumber = 5,
+            Consumption = 8.5,
+            Photo = "https://images.caradisiac.com/logos/8/6/0/3/268603/S8-renault-clio-comment-le-prix-de-base-s-est-envole-en-deux-ans-192370.jpg"
+        };
+        builder.Entity<Vehicle>().HasData(new List<Vehicle> { vehicle206 });
 
         base.OnModelCreating(builder);
     }

@@ -1,13 +1,16 @@
+using ecomove_back.Data;
 using ecomove_back.DTOs.AdressDTOs;
 using ecomove_back.DTOs.CarpoolAddressDTOs;
 using ecomove_back.Helpers;
 using ecomove_back.Interfaces.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
+    [Authorize(Roles = $"{Roles.ADMIN}")]
     public class CarpoolAddressController : ControllerBase
     {
         private readonly ICarpoolAddressRepository _carpoolAddressRepository;

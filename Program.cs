@@ -1,9 +1,11 @@
 using ecomove_back.Data;
+using ecomove_back.Data.Fixtures;
 using ecomove_back.Data.Models;
 using ecomove_back.Interfaces.IRepositories;
 using ecomove_back.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
@@ -80,10 +82,24 @@ builder.Services.AddIdentityApiEndpoints<AppUser>(c =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<EcoMoveDbContext>();
 
-
 var app = builder.Build();
 
 app.MapIdentityApi<AppUser>();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<EcoMoveDbContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
+    // Appliquer les migrations si nécessaire
+    context.Database.Migrate();
+
+    // Initialiser les rôles et les utilisateurs
+    UsersFixtures.SeedAdminUser(userManager);
+    UsersFixtures.SeedUser(userManager);
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
