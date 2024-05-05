@@ -1,3 +1,4 @@
+using ecomove_back.Data;
 using ecomove_back.Data.Models;
 using ecomove_back.DTOs.CapoolAnnouncementDTOs;
 using ecomove_back.DTOs.CarpoolAnnouncementDTOs;
@@ -24,7 +25,7 @@ namespace ecomove_back.Controllers
 
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = $"{Roles.USER}")]
         public async Task<IActionResult> CreateCarpoolAnnouncement(CarpoolAnnouncementInGoingDTO carpoolAnnouncementDTO)
         {
             // Get the connected user ID
@@ -38,9 +39,8 @@ namespace ecomove_back.Controllers
                 return Problem(response.Message);
         }
 
-
-
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetCarpoolAnnouncementById(Guid id)
         {
             Response<CarpoolAnnouncementOutGoingDTO>? response = await _carpoolAnnouncementRepository.GetCarpoolAnnouncementById(id);
@@ -54,6 +54,7 @@ namespace ecomove_back.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllCarpoolAnnouncements()
         {
             Response<List<CarpoolAnnouncementOutGoingDTO>>? response = await _carpoolAnnouncementRepository.GetAllCarpoolAnnouncements();
@@ -85,7 +86,7 @@ namespace ecomove_back.Controllers
 
 
         [HttpDelete]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> DeleteCarpoolAnnouncement(Guid id)
         {
             // Get the connected user ID

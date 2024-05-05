@@ -9,7 +9,6 @@ namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [Authorize(Roles = $"{Roles.ADMIN}")]
     public class VehicleController : ControllerBase
     {
         private readonly IVehicleRepository _vehicleRepository;
@@ -23,6 +22,7 @@ namespace ecomove_back.Controllers
         /// Permet de créer un véhicule
         /// </summary>
         [HttpPost]
+        [Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> CreateVehicleAsync(VehicleForCreateDTO vehicleForCreationDTO)
         {
             Response<VehicleForCreateDTO> response = await _vehicleRepository.CreateVehicleAsync(vehicleForCreationDTO);
@@ -41,6 +41,7 @@ namespace ecomove_back.Controllers
         /// Permet de récupérer tous les véhicules
         /// </summary>
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllVehiclesAsync()
         {
             Response<List<VehicleForGetDTO>> response = await _vehicleRepository.GetAllVehiclesAsync();
@@ -55,6 +56,7 @@ namespace ecomove_back.Controllers
         /// Permet de trouver un véhicule avec un ID
         /// </summary>
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetVehicleById(Guid id)
         {
             Response<VehicleForGetDTO> response = await _vehicleRepository.GetVehicleByIdAsync(id);
@@ -72,6 +74,7 @@ namespace ecomove_back.Controllers
         /// Permet de trouver un véhicule avec un ID pour un admin
         /// </summary>
         [HttpGet("{id}/admin")]
+        [Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> GetVehicleByIdForAdmin(Guid id)
         {
             Response<VehicleForGetByIdForAdminDTO> response = await _vehicleRepository.GetVehicleByIdForAdminAsync(id);
@@ -85,6 +88,7 @@ namespace ecomove_back.Controllers
         /// Permet de supprimer un véhicule
         /// </summary>
         [HttpDelete("{id}")]
+        [Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> DeleteVehicle(Guid id)
         {
             Response<bool> response = await _vehicleRepository.DeleteVehicleAsync(id);
@@ -98,6 +102,7 @@ namespace ecomove_back.Controllers
         /// Permet de mettre à jour un véhicule
         /// </summary>
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> UpdateVehicle(Guid id, VehicleForUpdateDTO vehicleDto)
         {
             Response<VehicleForUpdateDTO> response = await _vehicleRepository.UpdateVehicleAsync(id, vehicleDto);
@@ -115,6 +120,7 @@ namespace ecomove_back.Controllers
         /// Permet de changer le statut d'un véhicule
         /// </summary>
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> ChangeVehicleStatus(Guid id, VehicleForChangeStatusDTO statusDto)
         {
             Response<VehicleForChangeStatusDTO> response = await _vehicleRepository.ChangeVehicleStatusAsync(id, statusDto);

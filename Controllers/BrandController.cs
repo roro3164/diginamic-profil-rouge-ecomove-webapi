@@ -9,7 +9,7 @@ namespace ecomove_back.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    //[Authorize(Roles = $"{Roles.ADMIN}")]
+    [Authorize(Roles = $"{Roles.ADMIN}")]
     public class BrandController : ControllerBase
     {
         private readonly IBrandRepository _brandRepository;
@@ -125,9 +125,5 @@ namespace ecomove_back.Controllers
             else
                 return Problem(response.Message);
         }
-
-
-
-
     }
 }

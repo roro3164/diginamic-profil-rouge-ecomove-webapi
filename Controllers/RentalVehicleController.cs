@@ -57,7 +57,7 @@ namespace ecomove_back.Controllers
         /// <param name="rentalVehicleDTO"></param>
         /// <returns></returns>
         [HttpPut("{rentalId}")]
-        [Authorize(Roles = $"{Roles.USER}")]
+        [Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -81,7 +81,7 @@ namespace ecomove_back.Controllers
         /// <param name="rentalId">Guid : identifiant de la réservation</param>
         /// <returns></returns>
         [HttpPut("{rentalId}")]
-        [Authorize(Roles = $"{Roles.USER}")]
+        [Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -104,7 +104,7 @@ namespace ecomove_back.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize(Roles = $"{Roles.USER}")]
+        [Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
@@ -128,7 +128,7 @@ namespace ecomove_back.Controllers
         /// <param name="rentalId">Guid : identifiant de la réservation</param>
         /// <returns></returns>
         [HttpGet("{rentalId}")]
-        [Authorize(Roles = $"{Roles.USER}")]
+        [Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
