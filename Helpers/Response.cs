@@ -1,16 +1,13 @@
-﻿namespace ecomove_back.Helpers
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ecomove_back.Helpers
 {
     public class Response<T>
     {
-        public required T Data { get; set; }
-        public required string Message { get; set; }
+        public string? Message { get; set; }
+        public T? Data { get; set; }
         public required bool IsSuccess { get; set; }
+        public int CodeStatus { get; set; }
     }
-
-    public class Response
-    {
-        public required string Message { get; set; }
-        public required bool IsSuccess { get; set; }
-    }
-
 }
+

@@ -1,9 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+
 namespace ecomove_back.Data.Models
 {
+    [Index("CategoryLabel", IsUnique = true)]
     public class Category
     {
         public int CategoryId { get; set; }
-        public string CategroyLabel { get; set; }
+
+        [MaxLength(50)]
+        public string CategoryLabel { get; set; } = string.Empty;
 
         public List<Vehicle>? Vehicles { get; set; }
     }
