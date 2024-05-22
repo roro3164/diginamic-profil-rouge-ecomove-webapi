@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.Interfaces.IRepositories
+﻿namespace Ecomove.Api.Interfaces.IRepositories
 {
     public class IFilterRepository
     {

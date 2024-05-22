@@ -1,8 +1,8 @@
-﻿using ecomove_back.DTOs.AppUserDTOs;
-using ecomove_back.DTOs.BrandDTOs;
-using ecomove_back.Helpers;
+﻿using Ecomove.Api.DTOs.AppUserDTOs;
+using Ecomove.Api.DTOs.BrandDTOs;
+using Ecomove.Api.Helpers;
 
-namespace ecomove_back.Interfaces.IRepositories
+namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface IAppUserRepository
     {

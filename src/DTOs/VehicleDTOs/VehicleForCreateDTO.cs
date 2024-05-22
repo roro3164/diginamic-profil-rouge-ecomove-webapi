@@ -1,6 +1,6 @@
-﻿namespace ecomove_back.DTOs.VehicleDTOs
+﻿namespace Ecomove.Api.DTOs.VehicleDTOs
 {
-    public class VehicleForCreateDTO: VehicleDTO
+    public class VehicleForCreateDTO : VehicleDTO
     {
         public int CategoryId { get; set; }
         public int MotorizationId { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.DTOs.MotorizationDTOs
+﻿namespace Ecomove.Api.DTOs.MotorizationDTOs
 {
     public class MotorizationDTO
     {

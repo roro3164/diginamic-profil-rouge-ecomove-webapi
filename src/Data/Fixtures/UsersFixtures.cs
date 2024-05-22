@@ -1,7 +1,7 @@
-﻿using ecomove_back.Data.Models;
+﻿using Ecomove.Api.Data.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace ecomove_back.Data.Fixtures
+namespace Ecomove.Api.Data.Fixtures
 {
     public static class UsersFixtures
     {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Data.Models
+namespace Ecomove.Api.Data.Models
 {
     public class Model
     {
@@ -15,7 +15,7 @@ namespace ecomove_back.Data.Models
         public int BrandId { get; set; }
 
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Brand Brand { get; set; } 
+        public Brand Brand { get; set; }
 
         public List<Vehicle>? Vehicles { get; set; }
     }

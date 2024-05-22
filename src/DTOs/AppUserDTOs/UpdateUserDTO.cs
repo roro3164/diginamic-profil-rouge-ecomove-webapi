@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace ecomove_back.DTOs.AppUserDTOs
+namespace Ecomove.Api.DTOs.AppUserDTOs
 {
     public class UpdateUserDTO
     {

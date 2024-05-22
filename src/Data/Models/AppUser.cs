@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ecomove_back.Data.Models
+namespace Ecomove.Api.Data.Models
 {
     [Index("Email", IsUnique = true)]
     public class AppUser : IdentityUser

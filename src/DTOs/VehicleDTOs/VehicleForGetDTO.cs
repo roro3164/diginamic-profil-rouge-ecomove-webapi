@@ -1,6 +1,6 @@
-﻿namespace ecomove_back.DTOs.VehicleDTOs
+﻿namespace Ecomove.Api.DTOs.VehicleDTOs
 {
-    public class VehicleForGetDTO: VehicleDTO
+    public class VehicleForGetDTO : VehicleDTO
     {
         public Guid VehicleId { get; set; }
         public string BrandLabel { get; set; } = string.Empty;

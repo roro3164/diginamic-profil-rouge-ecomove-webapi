@@ -1,7 +1,7 @@
-using ecomove_back.DTOs.ModelDTOs;
-using ecomove_back.Helpers;
+using Ecomove.Api.DTOs.ModelDTOs;
+using Ecomove.Api.Helpers;
 
-namespace ecomove_back.Interfaces.IRepositories
+namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface IModelRepository
     {

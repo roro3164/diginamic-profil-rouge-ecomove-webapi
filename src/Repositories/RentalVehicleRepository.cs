@@ -1,11 +1,11 @@
-using ecomove_back.Data.Models;
-using ecomove_back.Data;
-using ecomove_back.DTOs.RentalVehicleDTO;
-using ecomove_back.Helpers;
-using ecomove_back.Interfaces.IRepositories;
+using Ecomove.Api.Data.Models;
+using Ecomove.Api.Data;
+using Ecomove.Api.DTOs.RentalVehicleDTO;
+using Ecomove.Api.Helpers;
+using Ecomove.Api.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Repositories
+namespace Ecomove.Api.Repositories
 {
     public class RentalVehicleRepository : IRentalVehicleRepository
     {

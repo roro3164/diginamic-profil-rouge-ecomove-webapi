@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.Data.Models
+﻿namespace Ecomove.Api.Data.Models
 {
     public class RentalVehicle
     {

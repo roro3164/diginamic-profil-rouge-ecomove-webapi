@@ -1,5 +1,5 @@
 using System.Text;
-using ecomove_back.DTOs.AdressDTOs;
+using Ecomove.Api.DTOs.AdressDTOs;
 
 public class OpenStreetMapHttpRequest
 {

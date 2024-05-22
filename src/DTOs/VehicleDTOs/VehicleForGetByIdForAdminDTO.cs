@@ -1,8 +1,8 @@
-﻿using ecomove_back.Data;
+﻿using Ecomove.Api.Data;
 
-namespace ecomove_back.DTOs.VehicleDTOs
+namespace Ecomove.Api.DTOs.VehicleDTOs
 {
-    public class VehicleForGetByIdForAdminDTO: VehicleForGetDTO
+    public class VehicleForGetByIdForAdminDTO : VehicleForGetDTO
     {
         public StatusEnum StatusLabel { get; set; }
     }

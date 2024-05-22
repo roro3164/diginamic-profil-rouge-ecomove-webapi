@@ -1,7 +1,7 @@
-using ecomove_back.DTOs.VehicleDTOs;
-using ecomove_back.Helpers;
+using Ecomove.Api.DTOs.VehicleDTOs;
+using Ecomove.Api.Helpers;
 
-namespace ecomove_back.Interfaces.IRepositories
+namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface IVehicleRepository
     {

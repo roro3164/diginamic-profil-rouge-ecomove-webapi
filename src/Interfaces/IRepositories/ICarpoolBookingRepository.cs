@@ -1,8 +1,8 @@
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.CarpoolBookingDTOs;
-using ecomove_back.Helpers;
+using Ecomove.Api.Data.Models;
+using Ecomove.Api.DTOs.CarpoolBookingDTOs;
+using Ecomove.Api.Helpers;
 
-namespace ecomove_back.Interfaces.IRepositories
+namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface ICarpoolBookingRepository
     {

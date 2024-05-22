@@ -1,13 +1,13 @@
-using ecomove_back.Data;
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.CapoolAnnouncementDTOs;
-using ecomove_back.DTOs.CarpoolAnnouncementDTOs;
-using ecomove_back.Helpers;
-using ecomove_back.Interfaces.IRepositories;
+using Ecomove.Api.Data;
+using Ecomove.Api.Data.Models;
+using Ecomove.Api.DTOs.CapoolAnnouncementDTOs;
+using Ecomove.Api.DTOs.CarpoolAnnouncementDTOs;
+using Ecomove.Api.Helpers;
+using Ecomove.Api.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Repositories
+namespace Ecomove.Api.Repositories
 {
     public class CarpoolAnnouncementRepository : ICarpoolAnnouncementRepository
     {

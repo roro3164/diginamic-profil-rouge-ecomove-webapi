@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ecomove_back.DTOs.RentalVehicleDTO
+namespace Ecomove.Api.DTOs.RentalVehicleDTO
 {
     public class RentalVehicleDTO
     {

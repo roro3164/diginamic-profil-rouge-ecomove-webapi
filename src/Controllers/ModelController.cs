@@ -1,11 +1,11 @@
-using ecomove_back.Data;
-using ecomove_back.DTOs.ModelDTOs;
-using ecomove_back.Helpers;
-using ecomove_back.Interfaces.IRepositories;
+using Ecomove.Api.Data;
+using Ecomove.Api.DTOs.ModelDTOs;
+using Ecomove.Api.Helpers;
+using Ecomove.Api.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ecomove_back.Controllers
+namespace Ecomove.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]

@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.DTOs.CapoolAnnouncementDTOs
+﻿namespace Ecomove.Api.DTOs.CapoolAnnouncementDTOs
 {
     public class CarpoolAnnouncementDTO
     {

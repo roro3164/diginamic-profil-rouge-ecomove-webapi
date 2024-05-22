@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.DTOs.ModelDTOs
+﻿namespace Ecomove.Api.DTOs.ModelDTOs
 {
     public class ModelLabelDTO
     {

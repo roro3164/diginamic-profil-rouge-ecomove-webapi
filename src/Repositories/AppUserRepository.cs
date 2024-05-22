@@ -1,12 +1,12 @@
-﻿using ecomove_back.Data;
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.AppUserDTOs;
-using ecomove_back.Helpers;
-using ecomove_back.Interfaces.IRepositories;
+﻿using Ecomove.Api.Data;
+using Ecomove.Api.Data.Models;
+using Ecomove.Api.DTOs.AppUserDTOs;
+using Ecomove.Api.Helpers;
+using Ecomove.Api.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Repositories
+namespace Ecomove.Api.Repositories
 {
     public class AppUserRepository : IAppUserRepository
     {
@@ -192,14 +192,14 @@ namespace ecomove_back.Repositories
                     };
                 }
 
-                if (userDTO.Email != null) 
-                { 
+                if (userDTO.Email != null)
+                {
                     var resultEmail = await _userManager.SetEmailAsync(appUser, userDTO.Email);
 
                     if (resultEmail.Succeeded)
                     {
                         await _userManager.SetUserNameAsync(appUser, userDTO.Email);
-                    } 
+                    }
                     else
                     {
                         return new Response<UpdateUserDTO>
@@ -279,7 +279,7 @@ namespace ecomove_back.Repositories
                 };
             }
 
-            var result = await  _userManager.DeleteAsync(appUser);
+            var result = await _userManager.DeleteAsync(appUser);
 
             if (result.Succeeded)
             {

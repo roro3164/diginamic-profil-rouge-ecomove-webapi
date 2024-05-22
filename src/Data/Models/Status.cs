@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Data.Models
+namespace Ecomove.Api.Data.Models
 {
     [Index("StatusLabel", IsUnique = true)]
     public class Status

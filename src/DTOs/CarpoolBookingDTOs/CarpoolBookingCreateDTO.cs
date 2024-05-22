@@ -1,6 +1,6 @@
-﻿using ecomove_back.Data.Models;
+﻿using Ecomove.Api.Data.Models;
 
-namespace ecomove_back.DTOs.CarpoolBookingDTOs
+namespace Ecomove.Api.DTOs.CarpoolBookingDTOs
 {
     public class CarpoolBookingCreateDTO
     {

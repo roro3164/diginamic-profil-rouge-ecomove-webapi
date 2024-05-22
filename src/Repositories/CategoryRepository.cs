@@ -1,217 +1,95 @@
-using ecomove_back.Data;
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.CategoryDTOs;
-using ecomove_back.Helpers;
-using ecomove_back.Interfaces.IRepositories;
+using Ecomove.Api.Data;
+using Ecomove.Api.Data.Models;
+using Ecomove.Api.DTOs.CategoryDTOs;
+using Ecomove.Api.Interfaces.IRepositories;
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Repositories
+namespace Ecomove.Api.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository(EcoMoveDbContext ecoMoveDbContext) : ICategoryRepository
     {
-        private readonly EcoMoveDbContext _ecoMoveDbContext;
-
-        public CategoryRepository(EcoMoveDbContext ecoMoveDbContext)
-        {
-            _ecoMoveDbContext = ecoMoveDbContext;
-        }
-
-        public async Task<Response<CategoryDTO>> CreateCategoryAsync(CategoryDTO categoryDTO)
+        public async Task<ErrorOr<Created>> CreateCategoryAsync(CategoryDTO categoryDto)
         {
             try
             {
-                Category category = new Category
-                {
-                    CategoryLabel = categoryDTO.CategoryLabel,
-                };
+                Category category = new Category { CategoryLabel = categoryDto.CategoryLabel };
 
-                await _ecoMoveDbContext.Categories.AddAsync(category);
-                await _ecoMoveDbContext.SaveChangesAsync();
+                await ecoMoveDbContext.Categories.AddAsync(category);
 
-                return new Response<CategoryDTO>
-                {
-                    Message = $"La catégorie {category.CategoryLabel} a bien été créée",
-                    Data = categoryDTO,
-                    IsSuccess = true,
-                    CodeStatus = 201,
-                };
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Created;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new Response<CategoryDTO>
-                {
-                    Message = ex.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500,
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
-
-        public async Task<Response<string>> DeleteCategoryAsync(int cateogoryId)
+        public async Task<ErrorOr<List<Category>>> GetAllCategoriesAsync()
         {
             try
             {
-                Category? category = await _ecoMoveDbContext.Categories
-                    .Include(c => c.Vehicles)
-                    .FirstOrDefaultAsync(category => category.CategoryId == cateogoryId);
-
-                if (category is null)
-                {
-                    return new Response<string>
-                    {
-                        Message = "La catégorie que vous voulez supprimer n'existe pas.",
-                        IsSuccess = false,
-                        CodeStatus = 404,
-                    };
-                }
-
-                if (category.Vehicles.Count != 0)
-                {
-                    return new Response<string>
-                    {
-                        Message = "Vous ne pouvez pas supprimer cette catégorie car des véhicules y sont associés",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
-
-                _ecoMoveDbContext.Categories.Remove(category);
-                await _ecoMoveDbContext.SaveChangesAsync();
-
-                return new Response<string>
-                {
-                    Message = $"La catégorie {category.CategoryLabel} a été supprimée avec succés.",
-                    IsSuccess = true,
-                    CodeStatus = 200
-                };
+                return await ecoMoveDbContext.Categories.ToListAsync();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new Response<string>
-                {
-                    Message = ex.Message,
-                    IsSuccess = false
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
-
-        public async Task<Response<List<CategoryDTO>>> GetAllCategoriesAsync()
+        public async Task<ErrorOr<Category>> GetCategoryByIdAsync(int id)
         {
             try
             {
-                List<Category> categories = await _ecoMoveDbContext.Categories.ToListAsync();
+                Category? category = await ecoMoveDbContext.Categories.FindAsync(id);
 
-                List<CategoryDTO> vehicleCategoriesDTO = new();
+                if (category is null) return Error.NotFound(description: $"Category with ID {id} not found.");
 
-                foreach (var category in categories)
-                {
-                    vehicleCategoriesDTO.Add(new CategoryDTO { CategoryLabel = category.CategoryLabel });
-                }
-
-                if (categories.Count > 0)
-                {
-                    return new Response<List<CategoryDTO>>
-                    {
-                        IsSuccess = true,
-                        Data = vehicleCategoriesDTO,
-                        Message = null,
-                        CodeStatus = 200,
-                    };
-                }
-                else
-                {
-                    return new Response<List<CategoryDTO>>
-                    {
-                        IsSuccess = false,
-                        Message = "La liste des catégories est vide",
-                        CodeStatus = 404
-                    };
-                }
-
+                return category;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new Response<List<CategoryDTO>>
-                {
-                    IsSuccess = false,
-                    Message = ex.Message
-                };
+                return Error.Unexpected(e.Message);
             }
-
         }
-
-        public async Task<Response<CategoryDTO>> GetCategoryByIdAsync(int cateogoryId)
+        public async Task<ErrorOr<Updated>> UpdateCategoryAsync(int id, CategoryDTO categoryDto)
         {
             try
             {
-                Category? category = await _ecoMoveDbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == cateogoryId);
+                Category? category = await ecoMoveDbContext.Categories.FindAsync(id);
 
-                if (category is null)
-                {
-                    return new Response<CategoryDTO>
-                    {
-                        Message = $"La catégorie que vous recherchez n'existe pas.",
-                        IsSuccess = false,
-                        CodeStatus = 404,
-                    };
-                }
-                else
-                {
-                    CategoryDTO vehicleCategoryDTO = new() { CategoryLabel = category.CategoryLabel };
+                if (category is null) return Error.NotFound(description: $"Category with ID {id} not found.");
 
-                    return new Response<CategoryDTO>
-                    {
-                        Data = vehicleCategoryDTO,
-                        CodeStatus = 200,
-                        IsSuccess = true,
-                    };
-                }
+                category.CategoryLabel = categoryDto.CategoryLabel;
+
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Updated;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new Response<CategoryDTO>
-                {
-                    Message = ex.Message,
-                    IsSuccess = false,
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
-
-        public async Task<Response<CategoryDTO>> UpdateCategoryAsync(int categoryId, CategoryDTO categoryDTO)
+        public async Task<ErrorOr<Deleted>> DeleteCategoryAsync(int id)
         {
             try
             {
-                Category? category = await _ecoMoveDbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == categoryId);
+                Category? category = await ecoMoveDbContext.Categories.FindAsync(id);
 
-                if (category is null)
-                {
-                    return new Response<CategoryDTO>
-                    {
-                        CodeStatus = 404,
-                        Message = "La catégorie que vous recherchez n'existe pas",
-                        IsSuccess = false,
-                    };
-                }
+                if (category is null) return Error.NotFound(description: $"Category with ID {id} not found.");
 
-                category.CategoryLabel = categoryDTO.CategoryLabel;
-                await _ecoMoveDbContext.SaveChangesAsync();
+                ecoMoveDbContext.Categories.Remove(category);
 
-                return new Response<CategoryDTO>
-                {
-                    Message = $"La catégorie a été bien modifiée",
-                    IsSuccess = true,
-                    CodeStatus = 201,
-                };
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Deleted;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new Response<CategoryDTO>
-                {
-                    Message = ex.Message,
-                    IsSuccess = true,
-                    CodeStatus = 500,
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
+
     }
 }

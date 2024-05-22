@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace ecomove_back.Data.Models
+namespace Ecomove.Api.Data.Models
 {
     [Index("Registration", IsUnique = true)]
     public class Vehicle

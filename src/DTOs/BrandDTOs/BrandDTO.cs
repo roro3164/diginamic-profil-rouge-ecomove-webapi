@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.DTOs.BrandDTOs
+﻿namespace Ecomove.Api.DTOs.BrandDTOs
 {
     public class BrandDTO
     {

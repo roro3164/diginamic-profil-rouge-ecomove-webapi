@@ -1,6 +1,6 @@
-﻿using ecomove_back.Data;
+﻿using Ecomove.Api.Data;
 
-namespace ecomove_back.DTOs.VehicleDTOs
+namespace Ecomove.Api.DTOs.VehicleDTOs
 {
     public class VehicleForChangeStatusDTO
     {

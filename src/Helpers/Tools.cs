@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.Helpers
+﻿namespace Ecomove.Api.Helpers
 {
     public class Tools
     {

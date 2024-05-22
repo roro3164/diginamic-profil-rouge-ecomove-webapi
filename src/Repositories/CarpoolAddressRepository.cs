@@ -1,13 +1,13 @@
 using System.Text;
-using ecomove_back.Data;
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.AdressDTOs;
-using ecomove_back.DTOs.CarpoolAddressDTOs;
-using ecomove_back.Helpers;
-using ecomove_back.Interfaces.IRepositories;
+using Ecomove.Api.Data;
+using Ecomove.Api.Data.Models;
+using Ecomove.Api.DTOs.AdressDTOs;
+using Ecomove.Api.DTOs.CarpoolAddressDTOs;
+using Ecomove.Api.Helpers;
+using Ecomove.Api.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Repositories
+namespace Ecomove.Api.Repositories
 {
     public class CarpoolAddressRepository : ICarpoolAddressRepository
     {

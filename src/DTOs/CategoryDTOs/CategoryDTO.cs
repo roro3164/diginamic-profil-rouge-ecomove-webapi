@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.DTOs.CategoryDTOs
+﻿namespace Ecomove.Api.DTOs.CategoryDTOs
 {
     public class CategoryDTO
     {

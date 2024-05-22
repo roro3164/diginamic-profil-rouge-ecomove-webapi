@@ -1,11 +1,11 @@
-using ecomove_back.Data;
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.BrandDTOs;
-using ecomove_back.Helpers;
-using ecomove_back.Interfaces.IRepositories;
+using Ecomove.Api.Data;
+using Ecomove.Api.Data.Models;
+using Ecomove.Api.DTOs.BrandDTOs;
+using Ecomove.Api.Helpers;
+using Ecomove.Api.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Repositories
+namespace Ecomove.Api.Repositories
 {
     public class BrandRepository : IBrandRepository
     {
@@ -75,7 +75,7 @@ namespace ecomove_back.Repositories
                 };
             }
 
-            if (brand.Models.Count != 0) 
+            if (brand.Models.Count != 0)
             {
                 return new Response<string>
                 {

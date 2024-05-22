@@ -1,10 +1,10 @@
-﻿using ecomove_back.Data.Models;
+﻿using Ecomove.Api.Data.Models;
 
-namespace ecomove_back.DTOs.CarpoolAnnouncementDTOs
+namespace Ecomove.Api.DTOs.CarpoolAnnouncementDTOs
 {
     public class CarpoolAnnouncementOutGoingDTO
     {
-        public DateTime StartDate { get; set; }     
+        public DateTime StartDate { get; set; }
         public CarpoolAddress PickupAddress { get; set; }
         public CarpoolAddress DropOffAddress { get; set; }
     }

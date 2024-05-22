@@ -1,8 +1,8 @@
-using ecomove_back.DTOs.StatusDTOs;
-using ecomove_back.Helpers;
+using Ecomove.Api.DTOs.StatusDTOs;
+using Ecomove.Api.Helpers;
 
 
-namespace ecomove_back.Interfaces.IRepositories
+namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface IStatusRepository
     {

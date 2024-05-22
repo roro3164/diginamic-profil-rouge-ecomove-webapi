@@ -1,11 +1,11 @@
-using ecomove_back.Data;
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.StatusDTOs;
-using ecomove_back.Interfaces.IRepositories;
+using Ecomove.Api.Data;
+using Ecomove.Api.Data.Models;
+using Ecomove.Api.DTOs.StatusDTOs;
+using Ecomove.Api.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
-using ecomove_back.Helpers;
+using Ecomove.Api.Helpers;
 
-namespace ecomove_back.Repositories
+namespace Ecomove.Api.Repositories
 {
     public class StatusRepository : IStatusRepository
     {

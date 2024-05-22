@@ -1,9 +1,9 @@
-using ecomove_back.Data.Models;
-using ecomove_back.DTOs.CapoolAnnouncementDTOs;
-using ecomove_back.DTOs.CarpoolAnnouncementDTOs;
-using ecomove_back.Helpers;
+using Ecomove.Api.Data.Models;
+using Ecomove.Api.DTOs.CapoolAnnouncementDTOs;
+using Ecomove.Api.DTOs.CarpoolAnnouncementDTOs;
+using Ecomove.Api.Helpers;
 
-namespace ecomove_back.Interfaces.IRepositories
+namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface ICarpoolAnnouncementRepository
     {

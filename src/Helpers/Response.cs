@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ecomove_back.Helpers
+namespace Ecomove.Api.Helpers
 {
     public class Response<T>
     {

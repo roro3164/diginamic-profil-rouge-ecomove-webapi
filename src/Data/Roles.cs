@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.Data
+﻿namespace Ecomove.Api.Data
 {
     public class Roles
     {

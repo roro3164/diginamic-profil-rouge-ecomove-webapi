@@ -1,10 +1,10 @@
 ﻿using Azure;
-using ecomove_back.Data.Models;
+using Ecomove.Api.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Data;
+namespace Ecomove.Api.Data;
 
 public class EcoMoveDbContext : IdentityDbContext<AppUser>
 {
@@ -82,15 +82,16 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
         Status UnderRepair = new Status { StatusId = 3, StatusLabel = StatusEnum.UnderRepair };
         builder.Entity<Status>().HasData(new List<Status> { InOperation, OutOfService, UnderRepair });
 
-        Vehicle vehicle206 = new Vehicle { 
+        Vehicle vehicle206 = new Vehicle
+        {
             VehicleId = Guid.NewGuid(),
-            ModelId = 1, 
-            MotorizationId = 4, 
-            StatusId = 1, 
-            Registration = "SD-267-AZ", 
-            CategoryId = 3, 
+            ModelId = 1,
+            MotorizationId = 4,
+            StatusId = 1,
+            Registration = "SD-267-AZ",
+            CategoryId = 3,
             CO2emission = 90,
-            CarSeatNumber = 5, 
+            CarSeatNumber = 5,
             Consumption = 6.5,
             Photo = "https://images.caradisiac.com/images/2/6/7/9/192679/S1-peugeot-206-s16-1999-2005-la-gti-qui-ne-dit-pas-son-nom-des-2-500-eur-694126.jpg"
         };
@@ -98,7 +99,7 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
         {
             VehicleId = Guid.NewGuid(),
             ModelId = 6,
-            MotorizationId =1,
+            MotorizationId = 1,
             StatusId = 1,
             Registration = "KN-324-LM",
             CategoryId = 3,

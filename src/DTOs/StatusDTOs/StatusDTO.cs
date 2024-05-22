@@ -1,6 +1,6 @@
-using ecomove_back.Data;
+using Ecomove.Api.Data;
 
-namespace ecomove_back.DTOs.StatusDTOs
+namespace Ecomove.Api.DTOs.StatusDTOs
 {
 	public class StatusDTO
 	{

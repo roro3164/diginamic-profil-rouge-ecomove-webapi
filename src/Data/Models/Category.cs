@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace ecomove_back.Data.Models
+namespace Ecomove.Api.Data.Models
 {
     [Index("CategoryLabel", IsUnique = true)]
     public class Category

@@ -1,8 +1,8 @@
-using ecomove_back.DTOs.AdressDTOs;
-using ecomove_back.DTOs.CarpoolAddressDTOs;
-using ecomove_back.Helpers;
+using Ecomove.Api.DTOs.AdressDTOs;
+using Ecomove.Api.DTOs.CarpoolAddressDTOs;
+using Ecomove.Api.Helpers;
 
-namespace ecomove_back.Interfaces.IRepositories
+namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface ICarpoolAddressRepository
     {

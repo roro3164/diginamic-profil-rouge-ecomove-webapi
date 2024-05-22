@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.DTOs.AppUserDTOs
+﻿namespace Ecomove.Api.DTOs.AppUserDTOs
 {
     public class AllUsersDTO
     {

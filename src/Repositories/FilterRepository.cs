@@ -1,4 +1,4 @@
-﻿namespace ecomove_back.Repositories
+﻿namespace Ecomove.Api.Repositories
 {
     public class FilterRepository
     {

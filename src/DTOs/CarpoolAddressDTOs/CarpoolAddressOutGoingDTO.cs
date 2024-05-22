@@ -1,4 +1,4 @@
-namespace ecomove_back.DTOs.CarpoolAddressDTOs
+namespace Ecomove.Api.DTOs.CarpoolAddressDTOs
 {
     public class CarpoolAddressOutGoingDTO
     {
