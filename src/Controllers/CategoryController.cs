@@ -39,7 +39,7 @@ namespace Ecomove.Api.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateCategory(int id, CategoryDTO categoryDto)
         {
-            var updateCategoryResult = await categoryService.UpdateCategoryAsync(id, categoryDto);
+            Response<bool> updateCategoryResult = await categoryService.UpdateCategoryAsync(id, categoryDto);
 
             return new JsonResult(updateCategoryResult) { StatusCode = updateCategoryResult.CodeStatus };
         }

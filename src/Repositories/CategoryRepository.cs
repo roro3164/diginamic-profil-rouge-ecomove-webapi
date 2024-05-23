@@ -43,7 +43,7 @@ namespace Ecomove.Api.Repositories
             {
                 Category? category = await ecoMoveDbContext.Categories.FindAsync(id);
 
-                if (category is null) return Error.NotFound(description: $"Category with ID {id} not found.");
+                if (category is null) return Error.NotFound(description: $"Category with ID {id} is not found.");
 
                 return category;
             }
