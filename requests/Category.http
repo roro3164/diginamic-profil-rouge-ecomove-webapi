@@ -1,0 +1,4 @@
+@baseUrl = http://localhost:5065/api
+
+GET {{baseUrl}}/categories
+Content-Type: application/json

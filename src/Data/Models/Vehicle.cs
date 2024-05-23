@@ -24,18 +24,18 @@ namespace Ecomove.Api.Data.Models
         public int StatusId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
 
-        public Status Status { get; set; }
+        public Status? Status { get; set; }
         public int CategoryId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
 
         public int MotorizationId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Motorization Motorization { get; set; }
+        public Motorization? Motorization { get; set; }
 
         public int ModelId { get; set; }
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Model Model { get; set; }
+        public Model? Model { get; set; }
 
         public List<RentalVehicle>? RentalVehicles { get; set; }
     }

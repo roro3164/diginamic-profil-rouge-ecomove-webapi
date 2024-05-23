@@ -62,7 +62,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger<Cat
             {
                 IsSuccess = false,
                 Message = "Une erreur est survenue lors de la récupération des catégories",
-                CodeStatus = 404
+                CodeStatus = 500
             };
         });
     }
@@ -86,11 +86,21 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger<Cat
         {
             logger.LogError(getCategroyResult.FirstError.Description);
 
+            if (getCategroyResult.FirstError.NumericType == (int)ErrorType.NotFound)
+            {
+                return new Response<CategoryDTO>
+                {
+                    IsSuccess = false,
+                    CodeStatus = 404,
+                    Message = "Aucune catégorie n'a été trouvée"
+                };
+            }
+
             return new Response<CategoryDTO>
             {
                 IsSuccess = false,
                 Message = "Une erreur est survenue lors de la récupération de la catégorie",
-                CodeStatus = 500,
+                CodeStatus = 500
             };
         });
 
@@ -115,11 +125,24 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger<Cat
         {
             logger.LogError(updateCategoryResult.FirstError.Description);
 
+            if (updateCategoryResult.FirstError.NumericType == (int)ErrorType.NotFound)
+            {
+                return new Response<bool>
+                {
+                    IsSuccess = false,
+                    CodeStatus = 404,
+                    Message = "Aucune catégorie n'a été trouvée",
+                    Data = false,
+                };
+            }
+
+
             return new Response<bool>
             {
                 IsSuccess = false,
                 Message = "Une erreur est survenue lors de la mise à jour de la catégorie",
                 CodeStatus = 500,
+                Data = false,
             };
         });
     }
@@ -135,7 +158,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger<Cat
             return new Response<bool>
             {
                 IsSuccess = true,
-                CodeStatus = 201,
+                CodeStatus = 200,
                 Message = "La catégorie a bien été supprimée"
             };
 
@@ -143,11 +166,23 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger<Cat
         {
             logger.LogError(deleteCategoryResult.FirstError.Description);
 
+            if (deleteCategoryResult.FirstError.NumericType == (int)ErrorType.NotFound)
+            {
+                return new Response<bool>
+                {
+                    IsSuccess = false,
+                    CodeStatus = 404,
+                    Message = "Aucune catégorie n'a été trouvée",
+                    Data = false,
+                };
+            }
+
             return new Response<bool>
             {
                 IsSuccess = false,
                 Message = "Une erreur est survenue lors de la suppression de la catégorie",
                 CodeStatus = 500,
+                Data = false
             };
         });
     }

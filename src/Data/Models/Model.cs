@@ -15,7 +15,7 @@ namespace Ecomove.Api.Data.Models
         public int BrandId { get; set; }
 
         [DeleteBehavior(DeleteBehavior.NoAction)]
-        public Brand Brand { get; set; }
+        public Brand? Brand { get; set; }
 
         public List<Vehicle>? Vehicles { get; set; }
     }

@@ -90,6 +90,5 @@ namespace Ecomove.Api.Repositories
                 return Error.Unexpected(description: e.Message);
             }
         }
-
     }
 }
