@@ -86,7 +86,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger<Cat
         {
             logger.LogError(getCategroyResult.FirstError.Description);
 
-            if (getCategroyResult.FirstError.NumericType == (int)ErrorType.NotFound)
+            if (getCategroyResult.FirstError.Type == ErrorType.NotFound)
             {
                 return new Response<CategoryDTO>
                 {
@@ -125,7 +125,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger<Cat
         {
             logger.LogError(updateCategoryResult.FirstError.Description);
 
-            if (updateCategoryResult.FirstError.NumericType == (int)ErrorType.NotFound)
+            if (updateCategoryResult.FirstError.Type == ErrorType.NotFound)
             {
                 return new Response<bool>
                 {
@@ -166,7 +166,7 @@ public class CategoryService(ICategoryRepository categoryRepository, ILogger<Cat
         {
             logger.LogError(deleteCategoryResult.FirstError.Description);
 
-            if (deleteCategoryResult.FirstError.NumericType == (int)ErrorType.NotFound)
+            if (deleteCategoryResult.FirstError.Type == ErrorType.NotFound)
             {
                 return new Response<bool>
                 {
