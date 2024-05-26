@@ -71,7 +71,7 @@ namespace tests.CategoryTests
         {
             Category expectedCategory = new Category() { CategoryId = 1, CategoryLabel = "Category test" };
 
-            // Configure GetCategoryByIdAsync to return an empty list
+            // Configure GetCategoryByIdAsync to return the expected category
             categoryRepository.GetCategoryByIdAsync(1).Returns(expectedCategory);
 
             // Act
