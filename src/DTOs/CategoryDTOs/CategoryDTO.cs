@@ -2,6 +2,6 @@
 {
     public class CategoryDTO
     {
-        public string CategoryLabel { get; set; } = string.Empty;
+        public required string CategoryLabel { get; set; }
     }
 }

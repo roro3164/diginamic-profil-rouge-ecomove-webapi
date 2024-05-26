@@ -6,7 +6,6 @@
 # dotenv files
 .env
 
-appsettings.json
 /Migrations
 
 # User-specific files
