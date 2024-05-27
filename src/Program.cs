@@ -11,6 +11,7 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Ecomove.Api.Services.Categories;
+using Ecomove.Api.Services.Brands;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddScoped<ICarpoolAddressRepository, CarpoolAddressRepository>(
 builder.Services.AddScoped<ICarpoolBookingRepository, CarpoolBookingRepository>();
 builder.Services.AddScoped<ICarpoolAnnouncementRepository, CarpoolAnnouncementRepository>();
 builder.Services.AddScoped<IRentalVehicleRepository, RentalVehicleRepository>();
+builder.Services.AddScoped<IBrandService, BrandService>();
 
 builder.Services.AddScoped<OpenStreetMapHttpRequest>();
 

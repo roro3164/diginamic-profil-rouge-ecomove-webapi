@@ -1,14 +1,15 @@
+using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.BrandDTOs;
-using Ecomove.Api.Helpers;
+using ErrorOr;
 
 namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface IBrandRepository
     {
-        public Task<Response<BrandDTO>> CreateBrandAsync(BrandDTO brandDTO);
-        public Task<Response<string>> DeleteBrandAsync(int brandId);
-        public Task<Response<List<BrandDTO>>> GetAllBrandAysnc(string search);
-        public Task<Response<BrandDTO>> GetBrandByIdAysnc(int brandId);
-        public Task<Response<BrandDTO>> UpdateBrandAysnc(int brandId, BrandDTO brandDTO);
+        Task<ErrorOr<Created>> CreateBrandAsync(BrandDTO brandDTO);
+        Task<ErrorOr<List<Brand>>> GetAllBrandsAsync();
+        Task<ErrorOr<Brand>> GetBrandByIdAsync(int id);
+        Task<ErrorOr<Updated>> UpdateBrandAsync(int id, BrandDTO brandDTO);
+        Task<ErrorOr<Deleted>> DeleteBrandAsync(int id);
     }
 }
