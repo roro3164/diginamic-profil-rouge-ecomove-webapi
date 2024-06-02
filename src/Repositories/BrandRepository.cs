@@ -1,8 +1,6 @@
 using Ecomove.Api.Data;
 using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.BrandDTOs;
-using Ecomove.Api.DTOs.CategoryDTOs;
-using Ecomove.Api.Helpers;
 using Ecomove.Api.Interfaces.IRepositories;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;

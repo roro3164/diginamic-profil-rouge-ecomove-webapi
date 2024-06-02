@@ -12,6 +12,9 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Ecomove.Api.Services.Categories;
 using Ecomove.Api.Services.Brands;
+using Ecomove.Api.Services.AppUser;
+using Ecomove.Api.Services.AppUser2;
+using Ecomove.Api.Services.RentalVehicles;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +32,8 @@ builder.Services.AddScoped<ICarpoolBookingRepository, CarpoolBookingRepository>(
 builder.Services.AddScoped<ICarpoolAnnouncementRepository, CarpoolAnnouncementRepository>();
 builder.Services.AddScoped<IRentalVehicleRepository, RentalVehicleRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IAppUserService, AppUserService>();
+builder.Services.AddScoped<IRentalVehicleService, RentalVehicleService>();
 
 builder.Services.AddScoped<OpenStreetMapHttpRequest>();
 

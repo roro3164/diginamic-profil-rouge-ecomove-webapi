@@ -1,81 +1,35 @@
 using Ecomove.Api.Data.Models;
 using Ecomove.Api.Data;
 using Ecomove.Api.DTOs.RentalVehicleDTO;
-using Ecomove.Api.Helpers;
 using Ecomove.Api.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using ErrorOr;
 
 namespace Ecomove.Api.Repositories
 {
-    public class RentalVehicleRepository : IRentalVehicleRepository
+    public class RentalVehicleRepository(EcoMoveDbContext ecoMoveDbContext, ICarpoolAnnouncementRepository carpoolAnnouncementRepository) : IRentalVehicleRepository
     {
-        private EcoMoveDbContext _ecoMoveDbContext;
-        private ICarpoolAnnouncementRepository _carpoolAnnouncementRepository;
-
-        public RentalVehicleRepository(
-            EcoMoveDbContext ecoMoveDbContext,
-            ICarpoolAnnouncementRepository carpoolAnnouncementRepository
-        )
+        public async Task<ErrorOr<Created>> CreateRentalVehicleAsync(string userId, Guid vehicleId, RentalVehicleDTO rentalVehicleDTO)
         {
-            _ecoMoveDbContext = ecoMoveDbContext;
-            _carpoolAnnouncementRepository = carpoolAnnouncementRepository;
-        }
-
-
-        // Changer userID dans le controller par le user connecte
-        public async Task<Response<string>> CreateRentalVehicleAsync(string userId, Guid vehicleId, RentalVehicleDTO rentalVehicleDTO)
-        {
-            // Vérification que le vehicule existe bien en BDD
-            Vehicle? vehicle = await _ecoMoveDbContext.Vehicles
+            Vehicle? vehicle = await ecoMoveDbContext.Vehicles
                 .Include(v => v.RentalVehicles)
                 .FirstOrDefaultAsync(v => v.VehicleId == vehicleId);
 
-            if (vehicle == null)
-            {
-                return new Response<string>
-                {
-                    Message = "Le véhicle n'existe pas",
-                    IsSuccess = false,
-                    CodeStatus = 404
-                };
-            }
-            else if (vehicle.StatusId != 1)
-            {
-                return new Response<string>
-                {
-                    Message = "Le véhicle que vous voulez n'est pas en service",
-                    IsSuccess = false,
-                    CodeStatus = 404
-                };
-            }
+            if (vehicle is null) return Error.NotFound(description: $"Le véhicle n'existe pas");
+            if (vehicle.StatusId != 1) return Error.NotFound(description: $"Le véhicle que vous voulez n'est pas en service");
 
             // À refactorer car utilisé dans d'autres méthodes
             if (rentalVehicleDTO.EndDate < rentalVehicleDTO.StartDate)
             {
-                return new Response<string>
-                {
-                    Message = "La date de fin ne peut pas être inférieur à la date de début",
-                    IsSuccess = false,
-                    CodeStatus = 400
-                };
+                return Error.Conflict(description: $"La date de fin ne peut pas être inférieur à la date de début");
             }
             else if (rentalVehicleDTO.StartDate.ToString("d") == rentalVehicleDTO.EndDate.ToString("d"))
             {
-                return new Response<string>
-                {
-                    Message = "La date minimale d'une réservation est de 1 jour",
-                    IsSuccess = false,
-                    CodeStatus = 400
-                };
+                return Error.Conflict(description: $"La date minimale d'une réservation est de 1 jour");
             }
             else if (rentalVehicleDTO.StartDate.Date < DateTime.Now.Date)
             {
-                return new Response<string>
-                {
-                    Message = "La date de début ne peut pas être antérieur à la date du jour",
-                    IsSuccess = false,
-                    CodeStatus = 400
-                };
+                return Error.Conflict(description: $"La date de début ne peut pas être antérieur à la date du jour");
             }
 
             // À refectoré car utilisé autre part
@@ -98,12 +52,7 @@ namespace Ecomove.Api.Repositories
                         (newStartDate <= currentStartDate && newEndDate >= currentEndDate)
                     )
                     {
-                        return new Response<string>
-                        {
-                            Message = "Les nouvelles dates que vous voulez ne sont pas disponibles",
-                            IsSuccess = false,
-                            CodeStatus = 400
-                        };
+                        return Error.Conflict(description: $"Les nouvelles dates que vous voulez ne sont pas disponibles");
                     }
                 }
             }
@@ -119,118 +68,130 @@ namespace Ecomove.Api.Repositories
 
             try
             {
-                await _ecoMoveDbContext.RentalVehicles.AddAsync(newRentalVehicle);
-                await _ecoMoveDbContext.SaveChangesAsync();
+                await ecoMoveDbContext.RentalVehicles.AddAsync(newRentalVehicle);
+                await ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<string>
-                {
-                    Message = $"Votre réservation pour le {rentalVehicleDTO.StartDate} au {rentalVehicleDTO.EndDate} a bien été crée",
-                    IsSuccess = true,
-                    CodeStatus = 201
-                };
+                return Result.Created;
             }
             catch (Exception e)
             {
-                return new Response<string>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
 
-        // Manque verification sur les reservations presentes en BDD
-        public async Task<Response<RentalVehicleDTO>> UpdateRentalVehicleAsync(string idUserConnect, Guid rentalId, RentalVehicleDTO rentalVehicleDTO)
+
+        public async Task<ErrorOr<Deleted>> CancelRentalVehicleAsync(string idUserConnect, Guid rentalId)
         {
             try
             {
-                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles
-                    .Include(r => r.CarpoolAnnouncement.Bookings)
+                RentalVehicle? rentalVehicle = await ecoMoveDbContext.RentalVehicles
+                    .Include(r => r.CarpoolAnnouncement)
                     .FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
 
-                if (rentalVehicle == null)
+                if (rentalVehicle is null) return Error.NotFound(description: $"Aucune location ne correspond à cette ID");
+                if (rentalVehicle.AppUserId != idUserConnect) return Error.Forbidden(description: $"Vous ne pouvez pas annuler cette réservation");
+
+                if (rentalVehicle.CarpoolAnnouncement != null)
                 {
-                    return new Response<RentalVehicleDTO>
-                    {
-                        Message = "Aucune location ne correspond à cette ID",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
+                    await carpoolAnnouncementRepository.DeleteCarpoolAnnouncement(rentalId, idUserConnect);
                 }
 
-                if (rentalVehicle.AppUserId != idUserConnect)
-                {
-                    return new Response<RentalVehicleDTO>
-                    {
-                        Message = "Vous ne pouvez pas modifier cette réservation",
-                        IsSuccess = false,
-                        CodeStatus = 403
-                    };
-                }
+                rentalVehicle.Confirmed = false;
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Deleted;
+            }
+            catch (Exception e)
+            {
+                return Error.Unexpected(description: e.Message);
+            }
+        }
+
+
+        // Ajout plus de vérification
+        public async Task<ErrorOr<List<RentalVehicle>>> GetAllRentalVehiclesAysnc(string idUserConnect)
+        {
+            try
+            {
+                return await ecoMoveDbContext.RentalVehicles
+                    .Where(r => r.AppUserId == idUserConnect)
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                return Error.Unexpected(description: e.Message);
+            }
+        }
+
+
+        // Ajouter plus d'éléments à renvoyer
+        public async Task<ErrorOr<RentalVehicle>> GetRentalVehicleByIdAysnc(string idUserConnect, Guid rentalId)
+        {
+            try
+            {
+                RentalVehicle? rentalVehicle = await ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
+
+                if (rentalVehicle is null) return Error.NotFound(description: $"La réservation que vous voulez n'existe pas");
+                if (rentalVehicle.AppUserId != idUserConnect) return Error.Forbidden(description: $"Vous ne pouvez pas accéder cette réservation");
+
+                return rentalVehicle;
+            }
+            catch (Exception e)
+            {
+                return Error.Unexpected(e.Message);
+            }
+        }
+
+
+        // Manque verification sur les reservations presentes en BDD
+        public async Task<ErrorOr<Updated>> UpdateRentalVehicleAsync(string idUserConnect, Guid rentalId, RentalVehicleDTO rentalVehicleDTO)
+        {
+
+            try
+            {
+                RentalVehicle? rentalVehicle = await ecoMoveDbContext.RentalVehicles
+                   .Include(r => r.CarpoolAnnouncement.Bookings)
+                   .FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
+
+                if (rentalVehicle is null) return Error.NotFound(description: $"Aucune location ne correspond à cette ID");
 
                 // S'il a un covoiturage, vérifier que la date de covoiturage rentre bien dans les nouvelles dates de réservation
                 if (rentalVehicle.CarpoolAnnouncement != null)
                 {
                     if (rentalVehicle.CarpoolAnnouncement.StartDate > rentalVehicle.StartDate && rentalVehicle.CarpoolAnnouncement.StartDate < rentalVehicle.EndDate)
                     {
-                        return new Response<RentalVehicleDTO>
-                        {
-                            Message = "Vous avez un covoiturage avec une date qui ne correspond pas à vos nouvelles dates de réservations",
-                            IsSuccess = false,
-                            CodeStatus = 404
-                        };
+                        return Error.Conflict(description: $"Vous avez un covoiturage avec une date qui ne correspond pas à vos nouvelles dates de réservations");
                     }
-
                 }
 
                 if (rentalVehicle.CarpoolAnnouncement == null)
-                {
-                    // À refactorer car utiliser dans d'autres methodes
+                { 
+                    // À refactorer car utilisé dans d'autres méthodes
                     if (rentalVehicleDTO.EndDate < rentalVehicleDTO.StartDate)
                     {
-                        return new Response<RentalVehicleDTO>
-                        {
-                            Message = "La date de fin ne peut pas être inférieur à la date de début",
-                            IsSuccess = false,
-                            CodeStatus = 400
-                        };
+                        return Error.Conflict(description: $"La date de fin ne peut pas être inférieur à la date de début");
                     }
-                    else if (rentalVehicleDTO.EndDate.ToString("d") == DateTime.Now.ToString("d"))
+                    else if (rentalVehicleDTO.StartDate.ToString("d") == rentalVehicleDTO.EndDate.ToString("d"))
                     {
-                        return new Response<RentalVehicleDTO>
-                        {
-                            Message = "La date minimale d'une réservation est de 1 jour",
-                            IsSuccess = false,
-                            CodeStatus = 400
-                        };
+                        return Error.Conflict(description: $"La date minimale d'une réservation est de 1 jour");
                     }
                     else if (rentalVehicleDTO.StartDate.Date < DateTime.Now.Date)
                     {
-                        return new Response<RentalVehicleDTO>
-                        {
-                            Message = "La date de début ne peut pas être antérieur à la date du jour",
-                            IsSuccess = false,
-                            CodeStatus = 400
-                        };
+                        return Error.Conflict(description: $"La date de début ne peut pas être antérieur à la date du jour");
                     }
                 }
+
                 // Vérifier que le covoiturage n'a pas de places réservées
                 else if (rentalVehicle.CarpoolAnnouncement.Bookings != null)
                 {
                     if (rentalVehicle.CarpoolAnnouncement.Bookings.Count != 0)
                     {
-                        return new Response<RentalVehicleDTO>
-                        {
-                            Message = "Vous ne pouvez modifier cette réservation car vous avez des passagers pour votre covoiturage",
-                            IsSuccess = false,
-                            CodeStatus = 404
-                        };
+                        return Error.Conflict(description: $"Vous ne pouvez modifier cette réservation car vous avez des passagers pour votre covoiturage");
                     }
                 }
 
                 // Récupération des réservations de véhicule qui sont confirmées et que la date de 
-                List<RentalVehicle>? rentalVehiclesConfirmed = _ecoMoveDbContext.RentalVehicles.Where(r => r.VehicleId == rentalVehicle.VehicleId && r.Confirmed == true).ToList();
+                List<RentalVehicle>? rentalVehiclesConfirmed = ecoMoveDbContext.RentalVehicles.Where(r => r.VehicleId == rentalVehicle.VehicleId && r.Confirmed == true).ToList();
 
                 // Vérification que les nouvelles ne sont pas déjà réservées
                 foreach (var rentalVehicleConfirmed in rentalVehiclesConfirmed)
@@ -246,192 +207,21 @@ namespace Ecomove.Api.Repositories
                         (newStartDate <= currentStartDate && newEndDate >= currentEndDate)
                     )
                     {
-                        return new Response<RentalVehicleDTO>
-                        {
-                            Message = "Les nouvelles dates que vous voulez ne sont pas disponibles",
-                            IsSuccess = false,
-                            CodeStatus = 400
-                        };
+                        return Error.Conflict(description: $"Les nouvelles dates que vous voulez ne sont pas disponibles");
                     }
                 }
 
                 rentalVehicle.StartDate = rentalVehicleDTO.StartDate;
                 rentalVehicle.EndDate = rentalVehicleDTO.EndDate;
-                await _ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<RentalVehicleDTO>
-                {
-                    Message = "Votre réservatiopn a bien été modifiée",
-                    IsSuccess = true,
-                    CodeStatus = 201
-                };
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Updated;
+
             }
             catch (Exception e)
             {
-                return new Response<RentalVehicleDTO>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
-            }
-        }
-
-        public async Task<Response<string>> CancelRentalVehicleAsync(string idUserConnect, Guid rentalId)
-        {
-            try
-            {
-                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles
-                    .Include(r => r.CarpoolAnnouncement)
-                    .FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
-
-                if (rentalVehicle == null)
-                {
-                    return new Response<string>
-                    {
-                        Message = "Aucune location ne correspond à cette ID",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
-
-                if (rentalVehicle.AppUserId != idUserConnect)
-                {
-                    return new Response<string>
-                    {
-                        Message = "Vous ne pouvez pas annuler cette réservation",
-                        IsSuccess = false,
-                        CodeStatus = 403
-                    };
-                }
-
-                if (rentalVehicle.CarpoolAnnouncement != null)
-                {
-                    await _carpoolAnnouncementRepository.DeleteCarpoolAnnouncement(rentalId, idUserConnect);
-                }
-
-                rentalVehicle.Confirmed = false;
-
-                await _ecoMoveDbContext.SaveChangesAsync();
-
-                return new Response<string>
-                {
-                    Message = "Votre réservatiopn a bien été annulée, si vous avez un covoiturage lié à cette",
-                    IsSuccess = true,
-                    CodeStatus = 200
-                };
-            }
-            catch (Exception e)
-            {
-                return new Response<string>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
-            }
-        }
-
-
-        // Ajout plus de vérification
-        public async Task<Response<List<AllRentalVehicles>>> GetAllRentalVehiclesAysnc(string idUserConnect)
-        {
-            try
-            {
-                List<RentalVehicle> rentalVehicles = await _ecoMoveDbContext.RentalVehicles
-                    .Where(r => r.AppUserId == idUserConnect)
-                    .ToListAsync();
-
-                if (rentalVehicles.Count == 0)
-                {
-                    return new Response<List<AllRentalVehicles>>
-                    {
-                        Message = "Aucune réservation trouvée",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
-
-                List<AllRentalVehicles> rentalvehiclesDTO = new List<AllRentalVehicles>();
-
-                foreach (RentalVehicle rentalVehicle in rentalVehicles)
-                {
-                    rentalvehiclesDTO.Add(new AllRentalVehicles
-                    {
-                        RentalVehicleId = rentalVehicle.RentalVehicleId,
-                        StartDate = rentalVehicle.StartDate,
-                        EndDate = rentalVehicle.EndDate,
-                    });
-                }
-
-                return new Response<List<AllRentalVehicles>>
-                {
-                    Data = rentalvehiclesDTO,
-                    IsSuccess = true,
-                    CodeStatus = 200
-                };
-            }
-            catch (Exception e)
-            {
-                return new Response<List<AllRentalVehicles>>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
-            }
-        }
-
-
-        // Ajouter plus d'éléments à renvoyer
-        public async Task<Response<SingleRentalVehicleDTO>> GetRentalVehicleByIdAysnc(string idUserConnect, Guid rentalId)
-        {
-            try
-            {
-                RentalVehicle? rentalVehicle = await _ecoMoveDbContext.RentalVehicles.FirstOrDefaultAsync(r => r.RentalVehicleId == rentalId);
-
-                if (rentalVehicle == null)
-                {
-                    return new Response<SingleRentalVehicleDTO>
-                    {
-                        Message = "La réservation que vous voulez n'existe pas",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
-
-                if (rentalVehicle.AppUserId != idUserConnect)
-                {
-                    return new Response<SingleRentalVehicleDTO>
-                    {
-                        Message = "Vous ne pouvez pas accéder à cette réservation",
-                        IsSuccess = false,
-                        CodeStatus = 403
-                    };
-                }
-
-                SingleRentalVehicleDTO rentalVehicleDTO = new SingleRentalVehicleDTO
-                {
-                    RentalVehicleId = rentalVehicle.RentalVehicleId,
-                    StartDate = rentalVehicle.StartDate,
-                    EndDate = rentalVehicle.EndDate,
-                };
-
-                return new Response<SingleRentalVehicleDTO>
-                {
-                    Data = rentalVehicleDTO,
-                    IsSuccess = true,
-                    CodeStatus = 200
-                };
-            }
-            catch (Exception e)
-            {
-                return new Response<SingleRentalVehicleDTO>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
     }
