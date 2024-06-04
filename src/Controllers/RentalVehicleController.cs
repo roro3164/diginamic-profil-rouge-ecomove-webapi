@@ -2,102 +2,59 @@ using Ecomove.Api.Data;
 using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.RentalVehicleDTO;
 using Ecomove.Api.Helpers;
-using Ecomove.Api.Interfaces.IRepositories;
+using Ecomove.Api.Services.RentalVehicles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 
 namespace Ecomove.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
-    public class RentalVehicleController : ControllerBase
+    [Route("api/RentalVehicles")]
+    public class RentalVehicleController(IRentalVehicleService rentalService, UserManager<AppUser> userManager) : ControllerBase
     {
-        private IRentalVehicleRepository _rentalVehicleRepository;
-        private UserManager<AppUser> _userManager;
-        private RoleManager<IdentityRole> _roleManager;
-
-        public RentalVehicleController(
-            IRentalVehicleRepository rentalVehicleRepository,
-            UserManager<AppUser> userManager,
-            RoleManager<IdentityRole> roleManager
-        )
-        {
-            _rentalVehicleRepository = rentalVehicleRepository;
-            _userManager = userManager;
-            _roleManager = roleManager;
-        }
-
         /// <summary>
         /// Permet de créer une réservation de véhicule
         /// </summary>
         /// <param name="vehicleId">Guid : identifiant du vehicule</param>
-        /// <param name="userDTO"></param>
+        /// <param name="rentalVehicleDTO"></param>
         /// <returns></returns>
         [HttpPost("{vehicleId}")]
         [Authorize(Roles = $"{Roles.USER}")]
         [ProducesResponseType(201)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> CreateRentalVehicle(Guid vehicleId, RentalVehicleDTO userDTO)
+        public async Task<IActionResult> CreateRentalVehicle(Guid vehicleId, RentalVehicleDTO rentalVehicleDTO)
         {
-            var idUserConnect = _userManager.GetUserId(User);
-            Response<string> response = await _rentalVehicleRepository.CreateRentalVehicleAsync(idUserConnect!, vehicleId, userDTO);
-            if (response.IsSuccess)
-                return Ok(response);
-            else
-                return Problem(response.Message);
+            var idUserConnect = userManager.GetUserId(User);
+
+            Response<bool> createRentalVehicleResult = await rentalService.CreateRentalVehicleAsync(idUserConnect!, vehicleId, rentalVehicleDTO);
+
+            return new JsonResult(createRentalVehicleResult) { StatusCode = createRentalVehicleResult.CodeStatus };
         }
 
-        /// <summary>
-        /// Permet de modifier les dates d'une réservation
-        /// </summary>
-        /// <param name="rentalId">int : identifiant de la réservation</param>
-        /// <param name="rentalVehicleDTO"></param>
-        /// <returns></returns>
-        [HttpPut("{rentalId}")]
-        [Authorize]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(500)]
-        public async Task<IActionResult> UpdateRentalVehicle(Guid rentalId, RentalVehicleDTO rentalVehicleDTO)
-        {
-            var idUserConnect = _userManager.GetUserId(User);
-
-            Response<RentalVehicleDTO> response = await _rentalVehicleRepository.UpdateRentalVehicleAsync(idUserConnect!, rentalId, rentalVehicleDTO);
-
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
-        }
 
         /// <summary>
         /// Permet d'annuler une réservation de véhicule
         /// </summary>
         /// <param name="rentalId">Guid : identifiant de la réservation</param>
         /// <returns></returns>
-        [HttpPut("{rentalId}")]
+        [HttpDelete("{rentalId}")]
         [Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> CancelRentalVehicle(Guid rentalId)
         {
-            var idUserConnect = _userManager.GetUserId(User);
+            var idUserConnect = userManager.GetUserId(User);
 
-            Response<string> response = await _rentalVehicleRepository.CancelRentalVehicleAsync(idUserConnect!, rentalId);
+            Response<bool> cancelRentalVehicleResult = await rentalService.CancelRentalVehicleAsync(idUserConnect!, rentalId);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(cancelRentalVehicleResult) { StatusCode = cancelRentalVehicleResult.CodeStatus };
         }
+
 
         /// <summary>
         /// Permet de récupérer toutes les réservations de véhicule
@@ -106,21 +63,16 @@ namespace Ecomove.Api.Controllers
         [HttpGet]
         [Authorize]
         [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetAllRentalVehicles()
         {
-            var idUserConnect = _userManager.GetUserId(User);
+            var idUserConnect = userManager.GetUserId(User);
 
-            Response<List<AllRentalVehicles>> response = await _rentalVehicleRepository.GetAllRentalVehiclesAysnc(idUserConnect!);
+            Response<List<AllRentalVehicles>> getAllRentalVehiclesResult = await rentalService.GetAllRentalVehiclesAysnc(idUserConnect!);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(getAllRentalVehiclesResult) { StatusCode = getAllRentalVehiclesResult.CodeStatus };
         }
+
 
         /// <summary>
         /// Permet de récupérer une réservation de véhicule avec son id
@@ -134,19 +86,34 @@ namespace Ecomove.Api.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetRentalVehicleById(Guid rentalId)
         {
-            var idUserConnect = _userManager.GetUserId(User);
+            var idUserConnect = userManager.GetUserId(User);
 
-            Response<SingleRentalVehicleDTO> response = await _rentalVehicleRepository.GetRentalVehicleByIdAysnc(idUserConnect!, rentalId);
+            Response<SingleRentalVehicleDTO> getRentalVehicleByIdResult = await rentalService.GetRentalVehicleByIdAysnc(idUserConnect!, rentalId);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(getRentalVehicleByIdResult) { StatusCode = getRentalVehicleByIdResult.CodeStatus };
         }
 
 
+        /// <summary>
+        /// Permet de modifier les dates d'une réservation
+        /// </summary>
+        /// <param name="rentalId">int : identifiant de la réservation</param>
+        /// <param name="rentalVehicleDTO"></param>
+        /// <returns></returns>
+        [HttpPut("{rentalId}")]
+        [Authorize]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UpdateRentalVehicle(Guid rentalId, RentalVehicleDTO rentalVehicleDTO)
+        {
+            var idUserConnect = userManager.GetUserId(User);
 
+            Response<bool> updateRentalVehicleResult = await rentalService.UpdateRentalVehicleAsync(idUserConnect!, rentalId, rentalVehicleDTO);
+
+            return new JsonResult(updateRentalVehicleResult) { StatusCode = updateRentalVehicleResult.CodeStatus };
+        }
     }
 }

@@ -1,15 +1,15 @@
+using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.RentalVehicleDTO;
-using Ecomove.Api.Helpers;
+using ErrorOr;
 
 namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface IRentalVehicleRepository
     {
-        public Task<Response<string>> CreateRentalVehicleAsync(string userId, Guid vehicleId, RentalVehicleDTO rentalVehicleDTO);
-        public Task<Response<RentalVehicleDTO>> UpdateRentalVehicleAsync(string idUserConnect, Guid rentalId, RentalVehicleDTO userDTO);
-        public Task<Response<string>> CancelRentalVehicleAsync(string idUserConnect, Guid rentalId);
-        public Task<Response<List<AllRentalVehicles>>> GetAllRentalVehiclesAysnc(string idUserConnect);
-        public Task<Response<SingleRentalVehicleDTO>> GetRentalVehicleByIdAysnc(string idUserConnect, Guid rentalId);
-
+        Task<ErrorOr<Created>> CreateRentalVehicleAsync(string userId, Guid vehicleId, RentalVehicleDTO rentalVehicleDTO);
+        Task<ErrorOr<List<RentalVehicle>>> GetAllRentalVehiclesAysnc(string idUserConnect);
+        Task<ErrorOr<RentalVehicle>> GetRentalVehicleByIdAysnc(string idUserConnect, Guid rentalId);
+        Task<ErrorOr<Updated>> UpdateRentalVehicleAsync(string idUserConnect, Guid rentalId, RentalVehicleDTO rentalVehicleDTO);
+        Task<ErrorOr<Deleted>> CancelRentalVehicleAsync(string idUserConnect, Guid rentalId);
     }
 }

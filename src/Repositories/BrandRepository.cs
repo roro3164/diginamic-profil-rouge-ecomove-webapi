@@ -1,240 +1,110 @@
 using Ecomove.Api.Data;
 using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.BrandDTOs;
-using Ecomove.Api.Helpers;
 using Ecomove.Api.Interfaces.IRepositories;
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecomove.Api.Repositories
 {
-    public class BrandRepository : IBrandRepository
+    public class BrandRepository(EcoMoveDbContext ecoMoveDbContext) : IBrandRepository
     {
-        private EcoMoveDbContext _ecoMoveDbContext;
-
-        public BrandRepository(EcoMoveDbContext ecoMoveDbContext)
+        public async Task<ErrorOr<Created>> CreateBrandAsync(BrandDTO brandDTO)
         {
-            _ecoMoveDbContext = ecoMoveDbContext;
-        }
+            var existingBrand = await ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandLabel == brandDTO.BrandLabel);
 
-        public async Task<Response<BrandDTO>> CreateBrandAsync(BrandDTO brandDTO)
-        {
-            var existingBrand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandLabel == brandDTO.BrandLabel);
-
-            if (existingBrand != null)
-            {
-                return new Response<BrandDTO>
-                {
-                    Message = $"La marque {brandDTO.BrandLabel} existe déjà en base de données.",
-                    IsSuccess = false,
-                    CodeStatus = 400
-                };
-            }
-
-            Brand brand = new Brand
-            {
-                BrandLabel = brandDTO.BrandLabel
-            };
+            if (existingBrand != null) return Error.Conflict(description: $"La marque {brandDTO.BrandLabel} existe déjà en base de données.");
 
             try
             {
-                await _ecoMoveDbContext.Brands.AddAsync(brand);
-                await _ecoMoveDbContext.SaveChangesAsync();
+                Brand brand = new Brand { BrandLabel = brandDTO.BrandLabel };
 
-                return new Response<BrandDTO>
-                {
-                    Message = $"La marque {brand.BrandLabel} a bien été créée",
-                    Data = brandDTO,
-                    IsSuccess = true,
-                    CodeStatus = 201
-                };
+                await ecoMoveDbContext.Brands.AddAsync(brand);
+
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Created;
             }
             catch (Exception e)
             {
-                return new Response<BrandDTO>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
 
-        public async Task<Response<string>> DeleteBrandAsync(int brandId)
+
+        public async Task<ErrorOr<Deleted>> DeleteBrandAsync(int brandId)
         {
-            Brand? brand = await _ecoMoveDbContext.Brands
-                .Include(b => b.Models)
-                .FirstOrDefaultAsync(b => b.BrandId == brandId);
-
-            if (brand == null)
-            {
-                return new Response<string>
-                {
-                    Message = "La Marque que vous voulez supprimer n'existe pas",
-                    IsSuccess = false,
-                    CodeStatus = 404
-                };
-            }
-
-            if (brand.Models.Count != 0)
-            {
-                return new Response<string>
-                {
-                    Message = "Vous ne pouvez pas supprimer cette marque car des modèles y sont associés",
-                    IsSuccess = false,
-                    CodeStatus = 404
-                };
-            }
-
             try
             {
-                _ecoMoveDbContext.Brands.Remove(brand);
-                await _ecoMoveDbContext.SaveChangesAsync();
+                Brand? brand = await ecoMoveDbContext.Brands
+                    .Include(b => b.Models)
+                    .FirstOrDefaultAsync(b => b.BrandId == brandId);
 
-                return new Response<string>
-                {
-                    Message = $"La marque {brand.BrandLabel} a bien été suprimée",
-                    IsSuccess = true,
-                    CodeStatus = 201
-                };
+                if (brand is null) return Error.NotFound(description: $"La Marque que vous voulez supprimer n'existe pas");
+                if (brand?.Models?.Count != 0) return Error.Conflict(description: $"Vous ne pouvez pas supprimer cette marque car des modèles y sont associés");
+
+                ecoMoveDbContext.Brands.Remove(brand);
+
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Deleted;
             }
             catch (Exception e)
             {
-                return new Response<string>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
 
-        public async Task<Response<List<BrandDTO>>> GetAllBrandAysnc(string search)
+
+        public async Task<ErrorOr<List<Brand>>> GetAllBrandsAsync()
         {
             try
             {
-                List<Brand> brands = await _ecoMoveDbContext.Brands
-                    .ToListAsync();
-
-                if (!string.IsNullOrEmpty(search))
-                {
-                    brands = brands.Where(s => s.BrandLabel == search).ToList();
-                }
-
-                if (brands.Count == 0)
-                {
-                    return new Response<List<BrandDTO>>
-                    {
-                        Message = "Aucune marque trouvé",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
-
-                List<BrandDTO> brandsDTO = new List<BrandDTO>();
-
-                foreach (var brand in brands)
-                {
-                    brandsDTO.Add(new BrandDTO
-                    {
-                        BrandLabel = brand.BrandLabel
-                    });
-                }
-
-                return new Response<List<BrandDTO>>
-                {
-                    Data = brandsDTO,
-                    IsSuccess = true,
-                    CodeStatus = 200
-                };
+                return await ecoMoveDbContext.Brands.ToListAsync();
             }
             catch (Exception e)
             {
-                return new Response<List<BrandDTO>>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
 
-        public async Task<Response<BrandDTO>> GetBrandByIdAysnc(int brandId)
+
+        public async Task<ErrorOr<Brand>> GetBrandByIdAsync(int brandId)
         {
             try
             {
-                Brand? brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == brandId);
+                Brand? brand = await ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == brandId);
 
-                if (brand == null)
-                {
-                    return new Response<BrandDTO>
-                    {
-                        Message = "La Marque que vous voulez n'existe pas",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
+                if (brand is null) return Error.NotFound(description: $"La Marque que vous voulez n'existe pas.");
 
-                BrandDTO brandDTO = new BrandDTO
-                {
-                    BrandLabel = brand.BrandLabel
-                };
-
-                return new Response<BrandDTO>
-                {
-                    Data = brandDTO,
-                    IsSuccess = true,
-                    CodeStatus = 200
-                };
+                return brand;
             }
             catch (Exception e)
             {
-                return new Response<BrandDTO>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
+                return Error.Unexpected(e.Message);
             }
         }
 
-        public async Task<Response<BrandDTO>> UpdateBrandAysnc(int brandId, BrandDTO brandDTO)
+
+        public async Task<ErrorOr<Updated>> UpdateBrandAsync(int brandId, BrandDTO brandDTO)
         {
             try
             {
-                Brand? brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == brandId);
+                Brand? brand = await ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == brandId);
 
-                if (brand == null)
-                {
-                    return new Response<BrandDTO>
-                    {
-                        Message = "La Marque que vous voulez modifier n'existe pas",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
+                if (brand is null) return Error.NotFound(description: $"La Marque que vous voulez modifier n'existe pas");
 
                 brand.BrandLabel = brandDTO.BrandLabel;
 
-                await _ecoMoveDbContext.SaveChangesAsync();
+                await ecoMoveDbContext.SaveChangesAsync();
 
-                return new Response<BrandDTO>
-                {
-                    Message = "La Marque a bien été modifiée",
-                    Data = brandDTO,
-                    IsSuccess = true,
-                    CodeStatus = 201
-                };
+                return Result.Updated;
+
             }
             catch (Exception e)
             {
-                return new Response<BrandDTO>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
+                return Error.Unexpected(description: e.Message);
             }
-
         }
     }
 }

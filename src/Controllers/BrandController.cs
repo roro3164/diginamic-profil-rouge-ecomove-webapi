@@ -1,25 +1,17 @@
 using Ecomove.Api.Data;
 using Ecomove.Api.DTOs.BrandDTOs;
 using Ecomove.Api.Helpers;
-using Ecomove.Api.Interfaces.IRepositories;
+using Ecomove.Api.Services.Brands;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecomove.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/brands")]
     [Authorize(Roles = $"{Roles.ADMIN}")]
-    public class BrandController : ControllerBase
+    public class BrandController(IBrandService brandService) : ControllerBase
     {
-        private readonly IBrandRepository _brandRepository;
-
-        public BrandController(IBrandRepository brandRepository)
-
-        {
-            _brandRepository = brandRepository;
-        }
-
         /// <summary>
         /// Permet de créer une marque
         /// </summary>
@@ -28,102 +20,78 @@ namespace Ecomove.Api.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> Createbrand(BrandDTO brandDTO)
+        public async Task<IActionResult> CreateBrand(BrandDTO brandDTO)
         {
-            Response<BrandDTO> response = await _brandRepository.CreateBrandAsync(brandDTO);
+            Response<bool> createBrandResult = await brandService.CreateBrandAsync(brandDTO);
 
-            if (response.IsSuccess)
-            {
-                return Ok(response);
-            }
-            else
-            {
-                return Problem(response.Message);
-            }
+            return new JsonResult(createBrandResult) { StatusCode = createBrandResult.CodeStatus };
         }
 
+
         /// <summary>
-        /// Permet de supprimer une marque
+        /// Permet de supprimer une marque de véhicules par son ID
         /// </summary>
-        /// <param name="id">int : identifiant de la marque</param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteBrand(int id)
         {
-            Response<string> response = await _brandRepository.DeleteBrandAsync(id);
+            Response<bool> deleteBrandResult = await brandService.DeleteBrandAsync(id);
 
-            if (response.IsSuccess)
-                return Ok(response.Message);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(deleteBrandResult) { StatusCode = deleteBrandResult.CodeStatus };
         }
 
+
         /// <summary>
-        /// Permet de récupérer la liste des marques de véhicule
+        /// Permet de récupérer toutes les marques de véhicules
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> GetAllBrands(string search = null)
+        public async Task<IActionResult> GetAllBrands()
         {
-            Response<List<BrandDTO>> response = await _brandRepository.GetAllBrandAysnc(search);
+            Response<List<BrandDTO>> getAllBrandsResult = await brandService.GetAllBrandsAsync();
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(getAllBrandsResult) { StatusCode = getAllBrandsResult.CodeStatus };
         }
 
+
         /// <summary>
-        /// Permet de récuperer une marque avec son id
+        /// Permet de récupérer une marque de véhicules par son ID
         /// </summary>
-        /// <param name="id">int : identifiant de la marque</param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetBrandById(int id)
         {
-            Response<BrandDTO> response = await _brandRepository.GetBrandByIdAysnc(id);
+            Response<BrandDTO> getBrandByIdResult = await brandService.GetBrandByIdAsync(id);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(getBrandByIdResult) { StatusCode = getBrandByIdResult.CodeStatus };
         }
 
+
         /// <summary>
-        /// Permet de modifier une Marque
+        /// Permet de mettre à jour une marque de véhicules par son ID
         /// </summary>
-        /// <param name="id">int : identifiant de la marque</param>
-        /// <param name="brandDto"></param>
+        /// <param name="id"></param>
+        /// <param name="brandDTO"></param>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> UpdateBrandById(int id, BrandDTO brandDto)
+        public async Task<IActionResult> UpdateBrand(int id, BrandDTO brandDTO)
         {
-            Response<BrandDTO> response = await _brandRepository.UpdateBrandAysnc(id, brandDto);
+            Response<bool> updateBrandResult = await brandService.UpdateBrandAsync(id, brandDTO);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(updateBrandResult) { StatusCode = updateBrandResult.CodeStatus };
         }
     }
 }
