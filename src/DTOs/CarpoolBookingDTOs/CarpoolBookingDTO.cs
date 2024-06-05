@@ -2,7 +2,7 @@
 
 namespace Ecomove.Api.DTOs.CarpoolBookingDTOs
 {
-    public class CarpoolBookingCreateDTO
+    public class CarpoolBookingDTO
     {
         public bool Confirmed { get; set; }
         public Guid CarpoolAnnouncementId { get; set; }

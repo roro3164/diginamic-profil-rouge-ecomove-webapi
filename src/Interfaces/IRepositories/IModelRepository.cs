@@ -1,14 +1,15 @@
+using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.ModelDTOs;
-using Ecomove.Api.Helpers;
+using ErrorOr;
 
 namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface IModelRepository
     {
-        Task<Response<ModelLabelDTO>> CreateModelAsync(ModelFKeyDTO modelFKeyDTO);
-        Task<Response<string>> DeleteModelAsync(int id);
-        Task<Response<List<ModelLabelDTO>>> GetAllModelsAsync();
-        Task<Response<ModelLabelDTO>> GetModelByIdAsync(int modelId);
-        Task<Response<ModelLabelDTO>> UpdateModelByIdAsync(int modelId, ModelLabelDTO modelLabelDTO);
+        Task<ErrorOr<Created>> CreateModelAsync(ModelFKeyDTO modelFKeyDTO);
+        Task<ErrorOr<Deleted>> DeleteModelAsync(int id);
+        Task<ErrorOr<List<Model>>> GetAllModelsAsync();
+        Task<ErrorOr<Model>> GetModelByIdAsync(int id);
+        Task<ErrorOr<Updated>> UpdateModelByIdAsync(int id, ModelDTO modelDTO);
     }
 }

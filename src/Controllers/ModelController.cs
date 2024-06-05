@@ -1,54 +1,43 @@
-using Ecomove.Api.Data;
 using Ecomove.Api.DTOs.ModelDTOs;
 using Ecomove.Api.Helpers;
-using Ecomove.Api.Interfaces.IRepositories;
-using Microsoft.AspNetCore.Authorization;
+using Ecomove.Api.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecomove.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
-    [Authorize(Roles = $"{Roles.ADMIN}")]
-    public class ModelController : ControllerBase
+    [Route("api/model")]
+    //[Authorize(Roles = $"{Roles.ADMIN}")]
+    public class ModelController(IModelService modelService) : ControllerBase
     {
-        private readonly IModelRepository _modelRepository;
-
-        public ModelController(IModelRepository modelRepository)
-        {
-            _modelRepository = modelRepository;
-        }
-
         /// <summary>
         /// Permet de créer un modèle de véhicule
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> CreateModelAsync(ModelFKeyDTO modelFKeyDTO)
         {
-            Response<ModelLabelDTO> response = await _modelRepository.CreateModelAsync(modelFKeyDTO);
+            Response<bool> createModelResult = await modelService.CreateModelAsync(modelFKeyDTO);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else
-                return Problem(response.Message);
+            return new JsonResult(createModelResult) { StatusCode = createModelResult.CodeStatus };
         }
 
         /// <summary>
         /// Permet de supprimer un modèle de véhicule
         /// </summary>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteModelAsync(int id)
         {
-            Response<string> response = await _modelRepository.DeleteModelAsync(id);
+            Response<bool> deleteModelResult = await modelService.DeleteModelAsync(id);
 
-            if (response.IsSuccess)
-                return Ok(response.Message);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(deleteModelResult) { StatusCode = deleteModelResult.CodeStatus };
         }
 
         /// <summary>
@@ -58,50 +47,44 @@ namespace Ecomove.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllModels()
         {
-            Response<List<ModelLabelDTO>> response = await _modelRepository.GetAllModelsAsync();
+            Response<List<ModelDTO>> getAllModelsResult = await modelService.GetAllModelsAsync();
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(getAllModelsResult) { StatusCode = getAllModelsResult.CodeStatus };
+
         }
 
         /// <summary>
         /// Permet de récupérer un modèle de véhicule en utilisant son Id
         /// </summary>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetModelById(int id)
         {
 
-            Response<ModelLabelDTO> response = await _modelRepository.GetModelByIdAsync(id);
+            Response<ModelDTO> getModelByIdResult = await modelService.GetModelByIdAsync(id);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(getModelByIdResult) { StatusCode = getModelByIdResult.CodeStatus };
         }
 
         /// <summary>
         /// Permet de modifier un modèle
         /// </summary>
+        /// <param name="id"></param>
+        /// <param name="modelDTO >"></param>
         /// <returns></returns>
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateModelById(int id, ModelLabelDTO modelLabelDTO)
+        [HttpPut("{id:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UpdateModelById(int id, ModelDTO modelDTO)
         {
-            Response<ModelLabelDTO> response = await _modelRepository.UpdateModelByIdAsync(id, modelLabelDTO);
+            Response<bool> updateCategoryResult = await modelService.UpdateModelByIdAsync(id, modelDTO);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(updateCategoryResult) { StatusCode = updateCategoryResult.CodeStatus };
         }
     }
 }
-
