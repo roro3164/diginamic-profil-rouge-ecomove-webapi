@@ -1,13 +1,8 @@
 ﻿using Ecomove.Api.Data;
-using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.AppUserDTOs;
-using Ecomove.Api.DTOs.BrandDTOs;
 using Ecomove.Api.Helpers;
-using Ecomove.Api.Interfaces.IRepositories;
-using Ecomove.Api.Services.AppUser;
-using Ecomove.Api.Services.Brands;
+using Ecomove.Api.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecomove.Api.Controllers
@@ -15,7 +10,7 @@ namespace Ecomove.Api.Controllers
     [Route("api/users")]
     [ApiController]
     [Authorize(Roles = $"{Roles.ADMIN}")]
-    public class AppUserController(IAppUserService userService) : ControllerBase
+    public class AppUserController(IUserService userService) : ControllerBase
     {
         /// <summary>
         /// Permet de créer un utilisateur avec le rôle USER

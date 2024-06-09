@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecomove.Api.Migrations
 {
     [DbContext(typeof(EcoMoveDbContext))]
-    [Migration("20240526164400_refacto")]
-    partial class refacto
+    [Migration("20240609115558_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -513,7 +513,7 @@ namespace Ecomove.Api.Migrations
                     b.HasData(
                         new
                         {
-                            VehicleId = new Guid("80bb57e3-2311-4d04-9f2e-742dc266336d"),
+                            VehicleId = new Guid("2ee632a5-4f5a-4c95-8e23-c5f7a75c106e"),
                             CO2emission = 90,
                             CarSeatNumber = 5,
                             CategoryId = 3,
@@ -555,13 +555,13 @@ namespace Ecomove.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8beaf8aa-22f6-4523-a157-0b51a63807dd",
+                            Id = "84cda906-30e5-47fe-99f1-d44b0f7e4285",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "311483bb-871d-403c-b9bf-cc3c421fc256",
+                            Id = "2fe9fc0f-af23-4d7a-8393-5f543c5c983a",
                             Name = "USER",
                             NormalizedName = "USER"
                         });

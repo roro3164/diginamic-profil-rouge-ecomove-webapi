@@ -1,7 +1,5 @@
 ﻿using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.AppUserDTOs;
-using Ecomove.Api.DTOs.BrandDTOs;
-using Ecomove.Api.Helpers;
 using ErrorOr;
 
 namespace Ecomove.Api.Interfaces.IRepositories
