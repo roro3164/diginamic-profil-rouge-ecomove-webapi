@@ -1,15 +1,16 @@
+using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.MotorizationDTOs;
-using Ecomove.Api.Helpers;
+using ErrorOr;
 
 
 namespace Ecomove.Api.Interfaces.IRepositories
 {
     public interface IMotorizationRepository
     {
-        Task<Response<MotorizationDTO>> CreateMotorizationAsync(MotorizationDTO motorizationDTO);
-        Task<Response<string>> DeleteMotorizationAsync(int motorizationId);
-        Task<Response<List<MotorizationDTO>>> GetAllMotorizationsAsync();
-        Task<Response<MotorizationDTO>> GetMotorizationByIdAsync(int motorizationId);
-        Task<Response<MotorizationDTO>> UpdateMotorizationByIdAsync(int motorizationId, MotorizationDTO MotorizationDTO);
+        Task<ErrorOr<Created>> CreateMotorizationAsync(MotorizationDTO motorizationDTO);
+        Task<ErrorOr<Deleted>> DeleteMotorizationAsync(int id);
+        Task<ErrorOr<List<Motorization>>> GetAllMotorizationsAsync();
+        Task<ErrorOr<Motorization>> GetMotorizationAsync(int id);
+        Task<ErrorOr<Updated>> UpdateMotorizationAsync(int id, MotorizationDTO motorizationDTO);
     }
 }

@@ -1,209 +1,102 @@
 using Ecomove.Api.Data;
 using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.MotorizationDTOs;
-using Ecomove.Api.Helpers;
 using Ecomove.Api.Interfaces.IRepositories;
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecomove.Api.Repositories
 {
-    public class MotorizationRepository : IMotorizationRepository
+    public class MotorizationRepository(EcoMoveDbContext ecoMoveDbContext) : IMotorizationRepository
     {
-        private EcoMoveDbContext _ecoMoveDbContext;
-        public MotorizationRepository(EcoMoveDbContext ecoMoveDbContext)
+        public async Task<ErrorOr<Created>> CreateMotorizationAsync(MotorizationDTO motorizationDTO)
         {
-            _ecoMoveDbContext = ecoMoveDbContext;
-        }
-
-        public async Task<Response<MotorizationDTO>> CreateMotorizationAsync(MotorizationDTO motorizationDTO)
-        {
-            Motorization motorization = new Motorization
-            {
-                MotorizationLabel = motorizationDTO.MotorizationLabel,
-            };
-
             try
             {
-                await _ecoMoveDbContext.Motorizations.AddAsync(motorization);
-                await _ecoMoveDbContext.SaveChangesAsync();
+                Motorization motorization = new Motorization { MotorizationLabel = motorizationDTO.MotorizationLabel };
 
-                return new Response<MotorizationDTO>
-                {
-                    Message = $"La motorisation {motorization.MotorizationLabel} a bien ï¿½tï¿½ crï¿½ï¿½e",
-                    Data = motorizationDTO,
-                    IsSuccess = true,
-                    CodeStatus = 201
-                };
+                await ecoMoveDbContext.Motorizations.AddAsync(motorization);
+
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Created;
             }
             catch (Exception e)
             {
-                return new Response<MotorizationDTO>
-                {
-                    Message = e.Message,
-                    IsSuccess = false
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
 
-        public async Task<Response<string>> DeleteMotorizationAsync(int motorizationId)
-        {
-            Motorization? motorization = await _ecoMoveDbContext.Motorizations
-                .Include(m => m.Vehicles)
-                .FirstOrDefaultAsync(motorization => motorization.MotorizationId == motorizationId);
-
-            if (motorization is null)
-            {
-                return new Response<string>
-                {
-                    Message = "La motorisation que vous voulez supprimer n'existe pas.",
-                    IsSuccess = false,
-                    CodeStatus = 404
-                };
-            }
-
-            if (motorization.Vehicles.Count != 0)
-            {
-                return new Response<string>
-                {
-                    Message = "Vous ne pouvez pas supprimer cette motorisation car des véhicules y sont associés",
-                    IsSuccess = false,
-                    CodeStatus = 404
-                };
-            }
-
-            try
-            {
-                _ecoMoveDbContext.Motorizations.Remove(motorization);
-                await _ecoMoveDbContext.SaveChangesAsync();
-
-                return new Response<string>
-                {
-                    Message = $"La motorisation {motorization.MotorizationLabel} a Ã©tÃ© supprimÃ©e avec succÃ©s.",
-                    IsSuccess = true
-                };
-            }
-            catch (Exception ex)
-            {
-                return new Response<string>
-                {
-                    Message = ex.Message,
-                    IsSuccess = false
-                };
-            }
-        }
-        public async Task<Response<List<MotorizationDTO>>> GetAllMotorizationsAsync()
-        {
-            List<Motorization> motorizations = await _ecoMoveDbContext.Motorizations.ToListAsync();
-
-            List<MotorizationDTO> motorizationDTOs = new();
-
-            if (motorizations.Count > 0)
-            {
-                foreach (Motorization motorization in motorizations)
-                {
-                    motorizationDTOs.Add(new MotorizationDTO { MotorizationLabel = motorization.MotorizationLabel });
-                }
-
-                return new Response<List<MotorizationDTO>>
-                {
-                    IsSuccess = true,
-                    Data = motorizationDTOs,
-                    Message = null,
-                    CodeStatus = 201,
-                };
-            }
-            else if (motorizationDTOs.Count == 0)
-            {
-                return new Response<List<MotorizationDTO>>
-                {
-                    IsSuccess = false,
-                    Message = "La liste des motorisations est vide",
-                    CodeStatus = 404
-                };
-            }
-            else
-            {
-                return new Response<List<MotorizationDTO>>
-                {
-                    IsSuccess = false,
-                };
-            }
-        }
-
-        public async Task<Response<MotorizationDTO>> GetMotorizationByIdAsync(int id)
+        public async Task<ErrorOr<Deleted>> DeleteMotorizationAsync(int id)
         {
             try
             {
-                Motorization? motorization = await _ecoMoveDbContext.Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == id);
+                Motorization? motorization = await ecoMoveDbContext.Motorizations.FindAsync(id);
 
-                if (motorization is null)
-                {
-                    return new Response<MotorizationDTO>
-                    {
-                        Message = "La motorisation que vous voulez trouver n'existe pas.",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
+                if (motorization is null) return Error.NotFound(description: $"Motorization with ID {id} not found.");
 
-                MotorizationDTO MotorizationDTO = new MotorizationDTO
-                {
-                    MotorizationLabel = motorization.MotorizationLabel
-                };
+                ecoMoveDbContext.Motorizations.Remove(motorization);
 
-                return new Response<MotorizationDTO>
-                {
-                    Data = MotorizationDTO,
-                    IsSuccess = true,
-                    CodeStatus = 200
-                };
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Deleted;
             }
             catch (Exception e)
             {
-                return new Response<MotorizationDTO>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
-
-        public async Task<Response<MotorizationDTO>> UpdateMotorizationByIdAsync(int motorizationId, MotorizationDTO MotorizationDTO)
+        public async Task<ErrorOr<List<Motorization>>> GetAllMotorizationsAsync()
         {
             try
             {
-                Motorization? motorization = await _ecoMoveDbContext.Motorizations.FirstOrDefaultAsync(motorization => motorization.MotorizationId == motorizationId);
-
-                if (motorization is null)
-                {
-                    return new Response<MotorizationDTO>
-                    {
-                        CodeStatus = 404,
-                        Message = "La motorisation que vous recherez n'existe pas",
-                        IsSuccess = false,
-                    };
-                }
-
-                motorization.MotorizationLabel = MotorizationDTO.MotorizationLabel;
-                await _ecoMoveDbContext.SaveChangesAsync();
-
-                return new Response<MotorizationDTO>
-                {
-                    Message = $"La motorisation a Ã©tÃ© bien modifiÃ©e",
-                    IsSuccess = true,
-                    CodeStatus = 201,
-                };
+                return await ecoMoveDbContext.Motorizations.ToListAsync();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new Response<MotorizationDTO>
-                {
-                    Message = ex.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500,
-                };
+                return Error.Unexpected(description: e.Message);
             }
+        }
+
+        public async Task<ErrorOr<Motorization>> GetMotorizationAsync(int id)
+        {
+            try
+            {
+                Motorization? motorization = await ecoMoveDbContext.Motorizations.FindAsync(id);
+
+                if (motorization is null) return Error.NotFound(description: $"Motorization with ID {id} is not found.");
+
+                return motorization;
+
+            }
+            catch (Exception e)
+            {
+                return Error.Unexpected(e.Message);
+            }
+
+        }
+
+        public async Task<ErrorOr<Updated>> UpdateMotorizationAsync(int id, MotorizationDTO motorizationDTO)
+        {
+            try
+            {
+                Motorization? motorization = await ecoMoveDbContext.Motorizations.FindAsync(id);
+
+                if (motorization is null) return Error.NotFound(description: $"Motorization with ID {id} not found.");
+
+                motorization.MotorizationLabel = motorizationDTO.MotorizationLabel;
+
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Updated;
+            }
+            catch (Exception e)
+            {
+                return Error.Unexpected(description: e.Message);
+
+            }
+
         }
     }
 }
+

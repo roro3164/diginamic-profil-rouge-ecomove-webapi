@@ -1,212 +1,93 @@
 using Ecomove.Api.Data;
 using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.ModelDTOs;
-using Ecomove.Api.Helpers;
 using Ecomove.Api.Interfaces.IRepositories;
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecomove.Api.Repositories
 {
-    public class ModelRepository : IModelRepository
+    public class ModelRepository(EcoMoveDbContext ecoMoveDbContext) : IModelRepository
     {
-        private EcoMoveDbContext _ecoMoveDbContext;
-        public ModelRepository(EcoMoveDbContext ecoMoveDbContext)
-        {
-            _ecoMoveDbContext = ecoMoveDbContext;
-        }
-        public async Task<Response<ModelLabelDTO>> CreateModelAsync(ModelFKeyDTO modelFKeyDTO)
+        public async Task<ErrorOr<Created>> CreateModelAsync(ModelFKeyDTO modelFKeyDTO)
         {
             try
             {
-                var brand = await _ecoMoveDbContext.Brands.FirstOrDefaultAsync(b => b.BrandId == modelFKeyDTO.BrandId);
+                Model model = new Model { ModelLabel = modelFKeyDTO.ModelLabel };
 
-                if (brand != null)
-                {
-                    var newModel = new Model
-                    {
-                        ModelLabel = modelFKeyDTO.ModelLabel,
-                        BrandId = modelFKeyDTO.BrandId,
-                    };
+                await ecoMoveDbContext.Models.AddAsync(model);
 
-                    await _ecoMoveDbContext.Models.AddAsync(newModel);
-                    await _ecoMoveDbContext.SaveChangesAsync();
+                await ecoMoveDbContext.SaveChangesAsync();
 
-                    return new Response<ModelLabelDTO>
-                    {
-                        Message = $"Le mod?le {newModel.ModelLabel} a bien ?t? cr?e",
-                        IsSuccess = true,
-                        Data = new ModelLabelDTO { ModelLabel = newModel.ModelLabel },
-                        CodeStatus = 201
-                    };
-                }
-                else
-                {
-                    return new Response<ModelLabelDTO>
-                    {
-                        Message = "La marque spécifiée n'est pas trouvée dans la base de données",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
+                return Result.Created;
 
             }
             catch (Exception e)
             {
-                return new Response<ModelLabelDTO>
-                {
-                    Message = e.Message,
-                    IsSuccess = false
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
 
-        public async Task<Response<string>> DeleteModelAsync(int modelId)
-        {
-            Model? model = await _ecoMoveDbContext
-            .Models.FirstOrDefaultAsync(model => model.ModelId == modelId);
-
-            if (model == null)
-            {
-                return new Response<string>
-                {
-                    Message = "Le modèle que vous voulez supprimer n'existe pas.",
-                    IsSuccess = false,
-                    CodeStatus = 404
-                };
-            }
-            try
-            {
-                _ecoMoveDbContext.Models.Remove(model);
-                await _ecoMoveDbContext.SaveChangesAsync();
-
-                return new Response<string>
-                {
-                    Message = $"Le modèle {model.ModelLabel} a été supprimé avec succès",
-                    IsSuccess = true
-                };
-            }
-            catch (Exception ex)
-            {
-                return new Response<string>
-                {
-                    Message = ex.Message,
-                    IsSuccess = false
-                };
-            }
-        }
-        public async Task<Response<List<ModelLabelDTO>>> GetAllModelsAsync()
-        {
-            List<Model> models = await _ecoMoveDbContext.Models.ToListAsync();
-
-            List<ModelLabelDTO> modelLabelDTOs = new();
-
-            if (models.Count > 0)
-            {
-                foreach (Model model in models)
-                {
-                    modelLabelDTOs.Add(new ModelLabelDTO { ModelLabel = model.ModelLabel });
-                }
-
-                return new Response<List<ModelLabelDTO>>
-                {
-                    IsSuccess = true,
-                    Data = modelLabelDTOs,
-                    Message = null,
-                    CodeStatus = 201,
-                };
-            }
-            else if (modelLabelDTOs.Count == 0)
-            {
-                return new Response<List<ModelLabelDTO>>
-                {
-                    IsSuccess = false,
-                    Message = "La liste des modèles est vide",
-                    CodeStatus = 404
-                };
-            }
-            else
-            {
-                return new Response<List<ModelLabelDTO>>
-                {
-                    IsSuccess = false,
-                };
-            }
-        }
-
-        public async Task<Response<ModelLabelDTO>> GetModelByIdAsync(int id)
+        public async Task<ErrorOr<Deleted>> DeleteModelAsync(int id)
         {
             try
             {
-                Model? model = await _ecoMoveDbContext.Models.FirstOrDefaultAsync(model => model.ModelId == id);
+                Model? model = await ecoMoveDbContext.Models.FindAsync(id);
 
-                if (model is null)
-                {
-                    return new Response<ModelLabelDTO>
-                    {
-                        Message = "Le modèle que vous voulez trouver n'existe pas.",
-                        IsSuccess = false,
-                        CodeStatus = 404
-                    };
-                }
+                if (model is null) return Error.NotFound(description: $"Model with ID {id} not found.");
 
-                ModelLabelDTO ModelLabelDTO = new ModelLabelDTO
-                {
-                    ModelLabel = model.ModelLabel
-                };
+                ecoMoveDbContext.Models.Remove(model);
 
-                return new Response<ModelLabelDTO>
-                {
-                    Data = ModelLabelDTO,
-                    IsSuccess = true,
-                    CodeStatus = 200
-                };
+                await ecoMoveDbContext.SaveChangesAsync();
+
+                return Result.Deleted;
+
             }
             catch (Exception e)
             {
-                return new Response<ModelLabelDTO>
-                {
-                    Message = e.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500
-                };
+                return Error.Unexpected(description: e.Message);
             }
         }
-
-        public async Task<Response<ModelLabelDTO>> UpdateModelByIdAsync(int modelId, ModelLabelDTO modelLabelDTO)
+        public async Task<ErrorOr<List<Model>>> GetAllModelsAsync()
         {
             try
             {
-                Model? model = await _ecoMoveDbContext.Models.FirstOrDefaultAsync(model => model.ModelId == modelId);
-
-                if (model is null)
-                {
-                    return new Response<ModelLabelDTO>
-                    {
-                        CodeStatus = 404,
-                        Message = "Le modèle que vous recherchez n'existe pas",
-                        IsSuccess = false,
-                    };
-                }
-
-                model.ModelLabel = modelLabelDTO.ModelLabel;
-                await _ecoMoveDbContext.SaveChangesAsync();
-
-                return new Response<ModelLabelDTO>
-                {
-                    Message = $"Le modèle a été bien modifié",
-                    IsSuccess = true,
-                    CodeStatus = 201,
-                    Data = modelLabelDTO
-                };
+                return await ecoMoveDbContext.Models.ToListAsync();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return new Response<ModelLabelDTO>
-                {
-                    Message = ex.Message,
-                    IsSuccess = false,
-                    CodeStatus = 500,
-                };
+                return Error.Unexpected(description: e.Message);
+            }
+        }
+
+        public async Task<ErrorOr<Model>> GetModelByIdAsync(int id)
+        {
+            try
+            {
+                Model? model = await ecoMoveDbContext.Models.FindAsync(id);
+
+                if (model is null) return Error.NotFound(description: $"Model with ID {id} is not found.");
+
+                return model;
+            }
+            catch (Exception e)
+            {
+                return Error.Unexpected(e.Message);
+            }
+        }
+        public async Task<ErrorOr<Updated>> UpdateModelByIdAsync(int id, ModelDTO modelLabelDTO)
+        {
+            try
+            {
+                Model? model = await ecoMoveDbContext.Models.FindAsync(id);
+
+                if (model is null) return Error.NotFound(description: $"Model with ID {id} is not found.");
+
+                return Result.Updated;
+            }
+            catch (Exception e)
+            {
+                return Error.Unexpected(e.Message);
             }
         }
     }

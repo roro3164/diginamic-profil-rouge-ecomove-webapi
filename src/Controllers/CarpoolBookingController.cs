@@ -1,143 +1,122 @@
 using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.CarpoolBookingDTOs;
 using Ecomove.Api.Helpers;
-using Ecomove.Api.Interfaces.IRepositories;
+using Ecomove.Api.Services.CarpoolBookings;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+using ErrorOr;
 
 namespace Ecomove.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
-    public class CarpoolBookingController : ControllerBase
+    [Route("api/carpoolbookings")]
+    // [Authorize(Roles = $"{Roles.ADMIN}")]
+    public class CarpoolBookingController(ICarpoolBookingService carpoolBookingService) : ControllerBase
     {
-        private readonly ICarpoolBookingRepository _carpoolBookingRepository;
-        private UserManager<AppUser> _userManager;
-
-        public CarpoolBookingController(ICarpoolBookingRepository carpoolBookingRepository, UserManager<AppUser> userManager)
-        {
-            _carpoolBookingRepository = carpoolBookingRepository;
-            _userManager = userManager;
-        }
-
         /// <summary>
         /// Permet de créer une réservation d'une place dans un covoiturage
         /// </summary>
-        /// <param name="bookingCreateDTO">DTO contenant les informations de la réservation</param>
         /// <returns>ActionResult</returns>
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> CreateCarpoolBookingAsync(CarpoolBookingCreateDTO bookingCreateDTO)
+        [ProducesResponseType(201)]
+        [ProducesResponseType(500)]
+
+        public async Task<IActionResult> CreateCarpoolBooking(CarpoolBookingDTO bookingCreateDTO)
         {
-            var idUserConnect = _userManager.GetUserId(User);
+            var appUserId = User.Identity?.Name;
 
             if (bookingCreateDTO == null)
+            {
                 return BadRequest("Le DTO de création de réservation ne peut pas être null");
+            }
 
-            Response<CarpoolBookingCreateDTO> response = await _carpoolBookingRepository.CreateCarpoolBookingAsync(bookingCreateDTO, idUserConnect);
+            Response<bool> createCarpoolBookingResult = await carpoolBookingService.CreateCarpoolBookingAsync(bookingCreateDTO, appUserId!);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else
-                return Problem(response.Message);
+            return new JsonResult(createCarpoolBookingResult) { StatusCode = createCarpoolBookingResult.CodeStatus };
         }
 
         /// <summary>
         /// Permet d'annuler une réservation d'une place dans un covoiturage
         /// </summary>
-        /// <param name="id"> Guid: Id d'un annonce de covoiturage </param>
+        /// <param name="carpoolAnnouncementId"></param>
+        /// <param name="appUserId"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> CancelCarpoolBooking(Guid id)
+        [HttpDelete("{carpoolAnnouncementId:guid}/{appUserId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> CancelCarpoolBooking(Guid carpoolAnnouncementId, string appUserId)
         {
-            var idUserConnect = _userManager.GetUserId(User);
+            Response<bool> cancelCarpoolBookingResult = await carpoolBookingService.CancelCarpoolBookingAsync(carpoolAnnouncementId, appUserId);
 
-            Response<string> response = await _carpoolBookingRepository.CancelCarpoolBookingAsync(id);
-
-            if (response.IsSuccess)
-                return Ok(response.Message);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(cancelCarpoolBookingResult) { StatusCode = cancelCarpoolBookingResult.CodeStatus };
         }
 
         /// <summary>
-        /// Permet de récupérer toutes les covoiturages d'un collaborateur
+        /// Permet de récupérer toutes les réservations de covoiturage d'un utilisateur
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetAllCarpoolBookingsByUserIdAsync()
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetAllCarpoolBookingsByUserId()
         {
-            var idUserConnect = _userManager.GetUserId(User);
+            var appUserId = User.Identity?.Name;
 
-            Response<List<CarpoolBooking>> response = await _carpoolBookingRepository.GetAllCarpoolBookingsByUserIdAsync(idUserConnect!);
+            Response<List<CarpoolBookingDTO>> getAllCarpoolBookingsResult = await carpoolBookingService.GetAllCarpoolBookingsByUserIdAsync(appUserId!);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(getAllCarpoolBookingsResult) { StatusCode = getAllCarpoolBookingsResult.CodeStatus };
+        }
+
+
+        /// <summary>
+        /// Permet de récupérer toutes les réservations de covoiturage futures d'un utilisateur
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("future")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetFutureCarpoolBookingsByUserId()
+        {
+            var appUserId = User.Identity?.Name; // Obtiene el ID del usuario autenticado
+
+            Response<List<CarpoolBookingDTO>> getFutureCarpoolBookingsResult = await carpoolBookingService.GetFutureCarpoolBookingsByUserIdAsync(appUserId!);
+
+            return new JsonResult(getFutureCarpoolBookingsResult) { StatusCode = getFutureCarpoolBookingsResult.CodeStatus };
         }
 
         /// <summary>
-        /// Permet de récupérer toutes les covoiturages futurs d'un collaborateur
+        /// Permet de récupérer toutes les réservations de covoiturage passées d'un utilisateur
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetFutureCarpoolBookingsByUserIdAsync()
+        [HttpGet("past")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetPastCarpoolBookingsByUserId()
         {
-            var idUserConnect = _userManager.GetUserId(User);
+            var appUserId = User.Identity?.Name; // Obtiene el ID del usuario autenticado
 
-            Response<List<CarpoolBooking>> response = await _carpoolBookingRepository.GetFutureCarpoolBookingsByUserIdAsync(idUserConnect!);
+            Response<List<CarpoolBookingDTO>> getPastCarpoolBookingsResult = await carpoolBookingService.GetPastCarpoolBookingsByUserIdAsync(appUserId!);
 
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(getPastCarpoolBookingsResult) { StatusCode = getPastCarpoolBookingsResult.CodeStatus };
         }
 
         /// <summary>
-        /// Permet de récupérer toutes les covoiturages passés d'un collaborateur
+        /// Permet de récupérer une réservation de covoiturage par ID d'annonce et ID d'utilisateur
         /// </summary>
+        /// <param name="carpoolAnnouncementId"></param>
+        /// <param name="appUserId"></param>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetPastCarpoolBookingsByUserIdAsync()
+        [HttpGet("{carpoolAnnouncementId:guid}/{appUserId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetCarpoolBookingByAnnouncementId(Guid carpoolAnnouncementId, string appUserId)
         {
-            var idUserConnect = _userManager.GetUserId(User);
+            Response<CarpoolBookingDTO> getCarpoolBookingResult = await carpoolBookingService.GetCarpoolBookingByAnnouncementIdAsync(carpoolAnnouncementId, appUserId);
 
-            Response<List<CarpoolBooking>> response = await _carpoolBookingRepository.GetAllCarpoolBookingsByUserIdAsync(idUserConnect!);
-
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
-        }
-
-        /// <summary>
-        /// Permet de récupérer un covoiturage en utilisant l'Id de l'annonce 
-        /// </summary>
-        /// <param name="id"> Guid: Id d'un annonce de covoiturage </param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCarpoolBookingsByIdAsync(Guid id)
-        {
-            var idUserConnect = _userManager.GetUserId(User);
-
-            Response<CarpoolBooking> response = await _carpoolBookingRepository.GetCarpoolBookingsByIdAsync(id);
-
-            if (response.IsSuccess)
-                return Ok(response);
-            else if (response.CodeStatus == 404)
-                return NotFound(response.Message);
-            else
-                return Problem(response.Message);
+            return new JsonResult(getCarpoolBookingResult) { StatusCode = getCarpoolBookingResult.CodeStatus };
         }
     }
 }
