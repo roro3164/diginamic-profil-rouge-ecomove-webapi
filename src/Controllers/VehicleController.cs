@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ecomove.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/vehicles")]
     public class VehicleController : ControllerBase
     {
         private readonly IVehicleRepository _vehicleRepository;
@@ -63,7 +63,7 @@ namespace Ecomove.Api.Controllers
             Response<VehicleForGetDTO> response = await _vehicleRepository.GetVehicleByIdAsync(id);
             if (response.IsSuccess)
             {
-                return Ok(response.Data);
+                return Ok(response);
             }
             else
             {
@@ -74,7 +74,7 @@ namespace Ecomove.Api.Controllers
         /// <summary>
         /// Permet de trouver un véhicule avec un ID pour un admin
         /// </summary>
-        [HttpGet("{id}/admin")]
+        [HttpGet("admin/{id}")]
         //[Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> GetVehicleByIdForAdmin(Guid id)
         {
@@ -89,14 +89,14 @@ namespace Ecomove.Api.Controllers
         /// Permet de supprimer un véhicule
         /// </summary>
         [HttpDelete("{id}")]
-        [Authorize(Roles = $"{Roles.ADMIN}")]
+        //[Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> DeleteVehicle(Guid id)
         {
             Response<bool> response = await _vehicleRepository.DeleteVehicleAsync(id);
             if (response.IsSuccess)
                 return Ok(response);
             else
-                return Problem(response.Message);
+                return new JsonResult(response) { StatusCode = response.CodeStatus };
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace Ecomove.Api.Controllers
         /// <summary>
         /// Permet de changer le statut d'un véhicule
         /// </summary>
-        [HttpPut("{id}")]
+        [HttpPut("status/{id}")]
         [Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> ChangeVehicleStatus(Guid id, VehicleForChangeStatusDTO statusDto)
         {

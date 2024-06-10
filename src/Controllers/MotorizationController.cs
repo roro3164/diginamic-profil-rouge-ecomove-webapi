@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ecomove.Api.Controllers
 {
     [ApiController]
-    [Route("api/motorization")]
+    [Route("api/motorizations")]
     //[Authorize(Roles = $"{Roles.ADMIN}")]
     public class MotorizationController(IMotorizationService motorizationService) : ControllerBase
     {
