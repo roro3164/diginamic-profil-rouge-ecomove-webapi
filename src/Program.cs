@@ -5,16 +5,14 @@ using Ecomove.Api.Interfaces.IRepositories;
 using Ecomove.Api.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Ecomove.Api.Services.Categories;
 using Ecomove.Api.Services.Brands;
-using Ecomove.Api.Services.AppUser;
-using Ecomove.Api.Services.AppUser2;
 using Ecomove.Api.Services.RentalVehicles;
+using Ecomove.Api.Services.UserService;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +30,7 @@ builder.Services.AddScoped<ICarpoolBookingRepository, CarpoolBookingRepository>(
 builder.Services.AddScoped<ICarpoolAnnouncementRepository, CarpoolAnnouncementRepository>();
 builder.Services.AddScoped<IRentalVehicleRepository, RentalVehicleRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
-builder.Services.AddScoped<IAppUserService, AppUserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRentalVehicleService, RentalVehicleService>();
 
 builder.Services.AddScoped<OpenStreetMapHttpRequest>();
@@ -93,6 +91,18 @@ builder.Services.AddIdentityApiEndpoints<AppUser>(c =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<EcoMoveDbContext>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+    builder =>
+    {
+        builder.WithOrigins("*");
+        //builder.WithOrigins("https://localhost:XXX", "http://localhost:XXX")
+        //.AllowAnyHeader()
+        //.AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 app.MapIdentityApi<AppUser>();
@@ -119,6 +129,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,13 +1,13 @@
-﻿using Ecomove.Api.DTOs.AppUserDTOs;
+﻿using User = Ecomove.Api.Data.Models;
+using Ecomove.Api.DTOs.AppUserDTOs;
 using Ecomove.Api.Helpers;
 using Ecomove.Api.Interfaces.IRepositories;
-using Ecomove.Api.Services.AppUser;
 using ErrorOr;
 using Mapster;
 
-namespace Ecomove.Api.Services.AppUser2
+namespace Ecomove.Api.Services.UserService
 {
-    public class AppUserService(IAppUserRepository appUserRepository, ILogger<AppUserService> logger) : IAppUserService
+    public class UserService(IAppUserRepository appUserRepository, ILogger<UserService> logger) : IUserService
     {
         public async Task<Response<bool>> CreateUserAsync(CreateAppUserDTO userDTO)
         {
@@ -31,7 +31,7 @@ namespace Ecomove.Api.Services.AppUser2
                 return new Response<bool>
                 {
                     IsSuccess = false,
-                    Message = "Une erreur est survenue lors de la création de la marque",
+                    Message = "Une erreur est survenue lors de la création d'utilisateur",
                     CodeStatus = 500,
                     Data = false,
                 };
@@ -41,7 +41,7 @@ namespace Ecomove.Api.Services.AppUser2
 
         public async Task<Response<List<AllUsersDTO>>> GetAllUsersAysnc()
         {
-            ErrorOr<List<AppUser>> getUsersResult = await appUserRepository.GetAllUsersAysnc();
+            ErrorOr<List<User.AppUser>> getUsersResult = await appUserRepository.GetAllUsersAysnc();
 
             return getUsersResult.MatchFirst(appUser =>
             {
@@ -69,7 +69,7 @@ namespace Ecomove.Api.Services.AppUser2
 
         public async Task<Response<UserDTO>> GetUserByIdAysnc(string id)
         {
-            ErrorOr<AppUser> getUserResult = await appUserRepository.GetUserByIdAysnc(id);
+            ErrorOr<User.AppUser> getUserResult = await appUserRepository.GetUserByIdAysnc(id);
 
             return getUserResult.MatchFirst(user =>
             {
@@ -197,12 +197,6 @@ namespace Ecomove.Api.Services.AppUser2
                 };
             });
         }
-
-
-
-
-
-
 
 
     }

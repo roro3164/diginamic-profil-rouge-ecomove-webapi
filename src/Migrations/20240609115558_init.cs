@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Ecomove.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class refacto : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -382,8 +382,8 @@ namespace Ecomove.Api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "311483bb-871d-403c-b9bf-cc3c421fc256", null, "USER", "USER" },
-                    { "8beaf8aa-22f6-4523-a157-0b51a63807dd", null, "ADMIN", "ADMIN" }
+                    { "2fe9fc0f-af23-4d7a-8393-5f543c5c983a", null, "USER", "USER" },
+                    { "84cda906-30e5-47fe-99f1-d44b0f7e4285", null, "ADMIN", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -447,7 +447,7 @@ namespace Ecomove.Api.Migrations
             migrationBuilder.InsertData(
                 table: "Vehicles",
                 columns: new[] { "VehicleId", "CO2emission", "CarSeatNumber", "CategoryId", "Consumption", "ModelId", "MotorizationId", "Photo", "Registration", "StatusId" },
-                values: new object[] { new Guid("80bb57e3-2311-4d04-9f2e-742dc266336d"), 90, 5, 3, 6.5, 1, 4, "https://images.caradisiac.com/images/2/6/7/9/192679/S1-peugeot-206-s16-1999-2005-la-gti-qui-ne-dit-pas-son-nom-des-2-500-eur-694126.jpg", "SD-267-AZ", 1 });
+                values: new object[] { new Guid("2ee632a5-4f5a-4c95-8e23-c5f7a75c106e"), 90, 5, 3, 6.5, 1, 4, "https://images.caradisiac.com/images/2/6/7/9/192679/S1-peugeot-206-s16-1999-2005-la-gti-qui-ne-dit-pas-son-nom-des-2-500-eur-694126.jpg", "SD-267-AZ", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
