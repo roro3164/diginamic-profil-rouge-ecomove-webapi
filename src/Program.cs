@@ -91,6 +91,18 @@ builder.Services.AddIdentityApiEndpoints<AppUser>(c =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<EcoMoveDbContext>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+    builder =>
+    {
+        builder.WithOrigins("*");
+        //builder.WithOrigins("https://localhost:XXX", "http://localhost:XXX")
+        //.AllowAnyHeader()
+        //.AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 app.MapIdentityApi<AppUser>();
@@ -117,6 +129,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

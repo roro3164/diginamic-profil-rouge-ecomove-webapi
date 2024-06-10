@@ -3,6 +3,7 @@ using Ecomove.Api.DTOs.VehicleDTOs;
 using Ecomove.Api.Helpers;
 using Ecomove.Api.Interfaces.IRepositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecomove.Api.Controllers
@@ -41,7 +42,7 @@ namespace Ecomove.Api.Controllers
         /// Permet de récupérer tous les véhicules
         /// </summary>
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetAllVehiclesAsync()
         {
             Response<List<VehicleForGetDTO>> response = await _vehicleRepository.GetAllVehiclesAsync();
@@ -56,7 +57,7 @@ namespace Ecomove.Api.Controllers
         /// Permet de trouver un véhicule avec un ID
         /// </summary>
         [HttpGet("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetVehicleById(Guid id)
         {
             Response<VehicleForGetDTO> response = await _vehicleRepository.GetVehicleByIdAsync(id);
@@ -74,7 +75,7 @@ namespace Ecomove.Api.Controllers
         /// Permet de trouver un véhicule avec un ID pour un admin
         /// </summary>
         [HttpGet("{id}/admin")]
-        [Authorize(Roles = $"{Roles.ADMIN}")]
+        //[Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> GetVehicleByIdForAdmin(Guid id)
         {
             Response<VehicleForGetByIdForAdminDTO> response = await _vehicleRepository.GetVehicleByIdForAdminAsync(id);
