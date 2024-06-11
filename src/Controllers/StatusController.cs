@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ecomove.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/status")]
     [Authorize(Roles = $"{Roles.ADMIN}")]
     public class StatusController : ControllerBase
     {
