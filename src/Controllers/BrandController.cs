@@ -9,7 +9,7 @@ namespace Ecomove.Api.Controllers
 {
     [ApiController]
     [Route("api/brands")]
-    [Authorize(Roles = $"{Roles.ADMIN}")]
+    //[Authorize(Roles = $"{Roles.ADMIN}")]
     public class BrandController(IBrandService brandService) : ControllerBase
     {
         /// <summary>

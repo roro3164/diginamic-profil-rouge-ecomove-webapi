@@ -23,7 +23,7 @@ namespace Ecomove.Api.Controllers
         /// Permet de créer un véhicule
         /// </summary>
         [HttpPost]
-        [Authorize(Roles = $"{Roles.ADMIN}")]
+        //[Authorize(Roles = $"{Roles.ADMIN}")]
         public async Task<IActionResult> CreateVehicleAsync(VehicleForCreateDTO vehicleForCreationDTO)
         {
             Response<VehicleForCreateDTO> response = await _vehicleRepository.CreateVehicleAsync(vehicleForCreationDTO);
