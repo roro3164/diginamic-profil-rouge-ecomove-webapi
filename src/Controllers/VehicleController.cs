@@ -34,7 +34,7 @@ namespace Ecomove.Api.Controllers
             }
             else
             {
-                return Problem(response.Message);
+                return new JsonResult(response) { StatusCode = response.CodeStatus };
             }
         }
 
@@ -50,7 +50,7 @@ namespace Ecomove.Api.Controllers
             if (response.IsSuccess)
                 return Ok(response.Data);
             else
-                return Problem(response.Message);
+                return new JsonResult(response) { StatusCode = response.CodeStatus };
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Ecomove.Api.Controllers
             }
             else
             {
-                return Problem(response.Message);
+                return new JsonResult(response) { StatusCode = response.CodeStatus};
             }
         }
 
@@ -82,7 +82,7 @@ namespace Ecomove.Api.Controllers
             if (response.IsSuccess)
                 return Ok(response.Data);
             else
-                return StatusCode(response.CodeStatus, response.Message);
+                return new JsonResult(response) { StatusCode = response.CodeStatus };
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Ecomove.Api.Controllers
             }
             else
             {
-                return Problem(response.Message);
+                return new JsonResult(response) { StatusCode = response.CodeStatus };
             }
         }
 
@@ -131,7 +131,7 @@ namespace Ecomove.Api.Controllers
             }
             else
             {
-                return Problem(response.Message);
+                return new JsonResult(response) { StatusCode = response.CodeStatus };
             }
         }
     }
