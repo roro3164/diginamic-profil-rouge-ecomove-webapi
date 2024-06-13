@@ -48,7 +48,7 @@ namespace Ecomove.Api.Controllers
             Response<List<VehicleForGetDTO>> response = await _vehicleRepository.GetAllVehiclesAsync();
 
             if (response.IsSuccess)
-                return Ok(response.Data);
+                return Ok(response);
             else
                 return new JsonResult(response) { StatusCode = response.CodeStatus };
         }
