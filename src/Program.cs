@@ -14,6 +14,7 @@ using Ecomove.Api.Services.Brands;
 using Ecomove.Api.Services.RentalVehicles;
 using Ecomove.Api.Services.UserService;
 using Ecomove.Api.Services.Motorizations;
+using Ecomove.Api.Services.Models;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRentalVehicleService, RentalVehicleService>();
 builder.Services.AddScoped<IMotorizationService, MotorizationService>();
+builder.Services.AddScoped<IModelService, ModelService>();
 
 builder.Services.AddScoped<OpenStreetMapHttpRequest>();
 
