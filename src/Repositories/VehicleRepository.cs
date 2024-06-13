@@ -52,6 +52,7 @@ namespace Ecomove.Api.Repositories
                 {
                     IsSuccess = false,
                     Message = "Une erreur s'est produite lors de la création du véhicule: " + e.Message,
+                    CodeStatus = 500
                 };
             }
         }

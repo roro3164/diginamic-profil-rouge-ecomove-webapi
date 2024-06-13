@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ecomove.Api.Controllers
 {
     [ApiController]
-    [Route("api/model")]
+    [Route("api/models")]
     //[Authorize(Roles = $"{Roles.ADMIN}")]
     public class ModelController(IModelService modelService) : ControllerBase
     {
