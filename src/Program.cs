@@ -15,6 +15,9 @@ using Ecomove.Api.Services.RentalVehicles;
 using Ecomove.Api.Services.UserService;
 using Ecomove.Api.Services.Motorizations;
 using Ecomove.Api.Services.Models;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -100,12 +103,34 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
     builder =>
     {
-        builder.WithOrigins("*");
-        //builder.WithOrigins("https://localhost:XXX", "http://localhost:XXX")
+        //builder.WithOrigins("*");
+        builder.WithOrigins("https://localhost:4200", "http://localhost:4200");
         builder.AllowAnyHeader();
         builder.AllowAnyMethod();
+        builder.WithHeaders("*");
     });
 });
+
+// Configuration de l'authentification par JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
 
 var app = builder.Build();
 
@@ -120,7 +145,9 @@ using (var scope = app.Services.CreateScope())
     // Appliquer les migrations si n�cessaire
     context.Database.Migrate();
 
-    // Initialiser les r�les et les utilisateurs
+
+    UsersFixtures.SeedRole(context);
+
     UsersFixtures.SeedAdminUser(userManager);
     UsersFixtures.SeedUser(userManager);
 }

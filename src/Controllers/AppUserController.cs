@@ -1,8 +1,10 @@
 ﻿using Ecomove.Api.Data;
+using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.AppUserDTOs;
 using Ecomove.Api.Helpers;
 using Ecomove.Api.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecomove.Api.Controllers
@@ -95,5 +97,6 @@ namespace Ecomove.Api.Controllers
 
             return new JsonResult(updateUserResult) { StatusCode = updateUserResult.CodeStatus };
         }
+
     }
 }

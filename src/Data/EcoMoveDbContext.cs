@@ -43,10 +43,10 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
              .WithMany()           // Un rôle peut être lié à plusieurs utilisateurs
              .HasForeignKey(e => e.RoleId);  // Clé étrangère dans AppUser
 
-        // Création des deux rôles en BDD
-        IdentityRole roleAdmin = new IdentityRole { Name = "ADMIN", NormalizedName = "ADMIN" };
-        IdentityRole roleUser = new IdentityRole { Name = "USER", NormalizedName = "USER" };
-        builder.Entity<IdentityRole>().HasData(new List<IdentityRole> { roleAdmin, roleUser });
+        //// Création des deux rôles en BDD
+        //IdentityRole roleAdmin = new IdentityRole { Name = "ADMIN", NormalizedName = "ADMIN" };
+        //IdentityRole roleUser = new IdentityRole { Name = "USER", NormalizedName = "USER" };
+        //builder.Entity<IdentityRole>().HasData(new List<IdentityRole> { roleAdmin, roleUser });
 
         // Fixtures
         Brand peugeot = new Brand { BrandId = 1, BrandLabel = "Peugeot" };
@@ -84,7 +84,7 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
 
         Vehicle vehicle206 = new Vehicle
         {
-            VehicleId = Guid.NewGuid(),
+            VehicleId = Guid.Parse("3454E9E3-BE2F-14D7-14D7-08DC8ABF2A7F"), // Conversion de string à Guid
             ModelId = 1,
             MotorizationId = 4,
             StatusId = 1,
@@ -97,7 +97,7 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
         };
         Vehicle vehicleClio = new Vehicle
         {
-            VehicleId = Guid.NewGuid(),
+            VehicleId = Guid.Parse("6554E9E3-BE2F-45D0-14D7-08DC8ABF2A7F"), // Conversion de string à Guid
             ModelId = 6,
             MotorizationId = 1,
             StatusId = 1,
@@ -108,7 +108,7 @@ public class EcoMoveDbContext : IdentityDbContext<AppUser>
             Consumption = 8.5,
             Photo = "https://images.caradisiac.com/logos/8/6/0/3/268603/S8-renault-clio-comment-le-prix-de-base-s-est-envole-en-deux-ans-192370.jpg"
         };
-        builder.Entity<Vehicle>().HasData(new List<Vehicle> { vehicle206 });
+        builder.Entity<Vehicle>().HasData(new List<Vehicle> { vehicle206, vehicleClio });
 
         base.OnModelCreating(builder);
     }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecomove.Api.Migrations
 {
     [DbContext(typeof(EcoMoveDbContext))]
-    [Migration("20240609115558_init")]
+    [Migration("20241010081022_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -513,7 +513,7 @@ namespace Ecomove.Api.Migrations
                     b.HasData(
                         new
                         {
-                            VehicleId = new Guid("2ee632a5-4f5a-4c95-8e23-c5f7a75c106e"),
+                            VehicleId = new Guid("3454e9e3-be2f-14d7-14d7-08dc8abf2a7f"),
                             CO2emission = 90,
                             CarSeatNumber = 5,
                             CategoryId = 3,
@@ -522,6 +522,19 @@ namespace Ecomove.Api.Migrations
                             MotorizationId = 4,
                             Photo = "https://images.caradisiac.com/images/2/6/7/9/192679/S1-peugeot-206-s16-1999-2005-la-gti-qui-ne-dit-pas-son-nom-des-2-500-eur-694126.jpg",
                             Registration = "SD-267-AZ",
+                            StatusId = 1
+                        },
+                        new
+                        {
+                            VehicleId = new Guid("6554e9e3-be2f-45d0-14d7-08dc8abf2a7f"),
+                            CO2emission = 95,
+                            CarSeatNumber = 5,
+                            CategoryId = 3,
+                            Consumption = 8.5,
+                            ModelId = 6,
+                            MotorizationId = 1,
+                            Photo = "https://images.caradisiac.com/logos/8/6/0/3/268603/S8-renault-clio-comment-le-prix-de-base-s-est-envole-en-deux-ans-192370.jpg",
+                            Registration = "KN-324-LM",
                             StatusId = 1
                         });
                 });
@@ -551,20 +564,6 @@ namespace Ecomove.Api.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "84cda906-30e5-47fe-99f1-d44b0f7e4285",
-                            Name = "ADMIN",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "2fe9fc0f-af23-4d7a-8393-5f543c5c983a",
-                            Name = "USER",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
