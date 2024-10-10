@@ -27,7 +27,11 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+<<<<<<< HEAD
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.1.2" />
+=======
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
+>>>>>>> d863b98213dad8d710fe35188dad224c7a408031
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.1" />
 	</ItemGroup>

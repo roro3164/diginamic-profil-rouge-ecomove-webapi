@@ -1,12 +1,21 @@
+using System.Reflection;
+using System.Text.Json.Serialization;
 using Ecomove.Api.Data;
 using Ecomove.Api.Data.Fixtures;
 using Ecomove.Api.Data.Models;
 using Ecomove.Api.Interfaces.IRepositories;
 using Ecomove.Api.Repositories;
+using Ecomove.Api.Services.Brands;
+using Ecomove.Api.Services.Categories;
+using Ecomove.Api.Services.Models;
+using Ecomove.Api.Services.Motorizations;
+using Ecomove.Api.Services.RentalVehicles;
+using Ecomove.Api.Services.UserService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+<<<<<<< HEAD
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Ecomove.Api.Services.Categories;
@@ -18,6 +27,8 @@ using Ecomove.Api.Services.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+=======
+>>>>>>> d863b98213dad8d710fe35188dad224c7a408031
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -42,23 +53,27 @@ builder.Services.AddScoped<IModelService, ModelService>();
 
 builder.Services.AddScoped<OpenStreetMapHttpRequest>();
 
-
 // Services injection
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
-builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder
+    .Services.AddControllers()
+    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecomove Web API", Version = "v1.0.0" });
-    option.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
+    option.AddSecurityDefinition(
+        "oauth2",
+        new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey,
+        }
+    );
 
     option.OperationFilter<SecurityRequirementsOperationFilter>();
 
@@ -66,32 +81,31 @@ builder.Services.AddSwaggerGen(option =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     option.IncludeXmlComments(xmlPath);
 
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    option.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
         {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer",
+                    },
+                },
+                new string[] { }
             },
-            new string[] { }
         }
-    });
+    );
 });
 
-
-builder.Services.AddDbContext<EcoMoveDbContext>(dbContextOptionsBuilder =>
-{
-    dbContextOptionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DbString"));
-});
+builder.Services.AddDbContext<EcoMoveDbContext>();
 
 // Identity Framework
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<AppUser>(c =>
+builder
+    .Services.AddIdentityApiEndpoints<AppUser>(c =>
     {
         //c.Password
     }) // config mdp ...
@@ -100,8 +114,7 @@ builder.Services.AddIdentityApiEndpoints<AppUser>(c =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-    builder =>
+    options.AddDefaultPolicy(builder =>
     {
         //builder.WithOrigins("*");
         builder.WithOrigins("https://localhost:4200", "http://localhost:4200");
@@ -151,7 +164,6 @@ using (var scope = app.Services.CreateScope())
     UsersFixtures.SeedAdminUser(userManager);
     UsersFixtures.SeedUser(userManager);
 }
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
