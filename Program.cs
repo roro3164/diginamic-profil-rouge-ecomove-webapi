@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Text.Json.Serialization;
 using ecomove_back.Data;
 using ecomove_back.Data.Fixtures;
 using ecomove_back.Data.Models;
@@ -8,8 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using System.Reflection;
-using System.Text.Json.Serialization;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -30,19 +30,23 @@ builder.Services.AddScoped<ICarpoolBookingRepository, CarpoolBookingRepository>(
 builder.Services.AddScoped<ICarpoolAnnouncementRepository, CarpoolAnnouncementRepository>();
 builder.Services.AddScoped<IRentalVehicleRepository, RentalVehicleRepository>();
 
-builder.Services.AddControllers().AddJsonOptions(x =>
-x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder
+    .Services.AddControllers()
+    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecomove Web API", Version = "v1.0.0" });
-    option.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
+    option.AddSecurityDefinition(
+        "oauth2",
+        new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey,
+        }
+    );
 
     option.OperationFilter<SecurityRequirementsOperationFilter>();
 
@@ -50,35 +54,34 @@ builder.Services.AddSwaggerGen(option =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     option.IncludeXmlComments(xmlPath);
 
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    option.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
         {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer",
+                    },
+                },
+                new string[] { }
             },
-            new string[]{}
         }
-    });
+    );
 });
 
-
-builder.Services.AddDbContext<EcoMoveDbContext>(dbContextOptionsBuilder =>
-{
-    dbContextOptionsBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DbString"));
-});
+builder.Services.AddDbContext<EcoMoveDbContext>();
 
 // Identity Framework
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<AppUser>(c =>
-{
-    //c.Password
-}) // config mdp ...
+builder
+    .Services.AddIdentityApiEndpoints<AppUser>(c =>
+    {
+        //c.Password
+    }) // config mdp ...
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<EcoMoveDbContext>();
 
@@ -92,14 +95,13 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<EcoMoveDbContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
 
-    // Appliquer les migrations si nécessaire
+    // Appliquer les migrations si nï¿½cessaire
     context.Database.Migrate();
 
-    // Initialiser les rôles et les utilisateurs
+    // Initialiser les rï¿½les et les utilisateurs
     UsersFixtures.SeedAdminUser(userManager);
     UsersFixtures.SeedUser(userManager);
 }
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
