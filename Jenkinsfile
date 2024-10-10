@@ -43,6 +43,17 @@ pipeline {
         }
 
         stage('Publish') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/dotnet/sdk:8.0'
+                    reuseNode true
+                }
+            }
+            
+            environment {
+                DOTNET_CLI_HOME = "/tmp/dotnet_tools"  // Set the tools directory to a path Jenkins can access
+            }
+
             steps {
                 sh '''
                     echo "Running .NET publish"
@@ -52,8 +63,9 @@ pipeline {
         }
 
         stage('Deploy application') {
+            
             steps {
-                sh 'dotnet publish --configuration Release --output ./publish'
+                echo "Deploying application ... "
             }
         }
     }
