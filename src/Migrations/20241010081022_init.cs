@@ -378,15 +378,6 @@ namespace Ecomove.Api.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "2fe9fc0f-af23-4d7a-8393-5f543c5c983a", null, "USER", "USER" },
-                    { "84cda906-30e5-47fe-99f1-d44b0f7e4285", null, "ADMIN", "ADMIN" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Brands",
                 columns: new[] { "BrandId", "BrandLabel" },
                 values: new object[,]
@@ -447,7 +438,11 @@ namespace Ecomove.Api.Migrations
             migrationBuilder.InsertData(
                 table: "Vehicles",
                 columns: new[] { "VehicleId", "CO2emission", "CarSeatNumber", "CategoryId", "Consumption", "ModelId", "MotorizationId", "Photo", "Registration", "StatusId" },
-                values: new object[] { new Guid("2ee632a5-4f5a-4c95-8e23-c5f7a75c106e"), 90, 5, 3, 6.5, 1, 4, "https://images.caradisiac.com/images/2/6/7/9/192679/S1-peugeot-206-s16-1999-2005-la-gti-qui-ne-dit-pas-son-nom-des-2-500-eur-694126.jpg", "SD-267-AZ", 1 });
+                values: new object[,]
+                {
+                    { new Guid("3454e9e3-be2f-14d7-14d7-08dc8abf2a7f"), 90, 5, 3, 6.5, 1, 4, "https://images.caradisiac.com/images/2/6/7/9/192679/S1-peugeot-206-s16-1999-2005-la-gti-qui-ne-dit-pas-son-nom-des-2-500-eur-694126.jpg", "SD-267-AZ", 1 },
+                    { new Guid("6554e9e3-be2f-45d0-14d7-08dc8abf2a7f"), 95, 5, 3, 8.5, 6, 1, "https://images.caradisiac.com/logos/8/6/0/3/268603/S8-renault-clio-comment-le-prix-de-base-s-est-envole-en-deux-ans-192370.jpg", "KN-324-LM", 1 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
