@@ -1,4 +1,5 @@
-﻿using Ecomove.Api.Data.Models;
+﻿using Ecomove.Api.Data;
+using Ecomove.Api.Data.Models;
 using Ecomove.Api.DTOs.AuthDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,33 +20,48 @@ namespace Ecomove.Api.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
             var user = await _userManager.FindByNameAsync(model.Email);
+
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 return Unauthorized();
             }
 
-            var claims = new List<Claim>
-            {
-                 new Claim(ClaimTypes.NameIdentifier, user.Id), 
-            };
+            var claims = new ClaimsIdentity();
+
+            claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             var roles = await _userManager.GetRolesAsync(user);
-            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            // Configurer le token
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            foreach (var role in roles)
+            { 
+                claims.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"], 
-                audience: _configuration["Jwt:Audience"], 
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
+            //var issuer = _configuration["Jwt:Issuer"];
+
+            var jwtKey = _configuration["Jwt:Key"];
+            var creds = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)), SecurityAlgorithms.HmacSha256);
+
+
+            var handler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(jwtKey);
+
+            //var creds = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("abcdefghijklmnopqrstuvwxyz123456")));
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = null,
+                Audience = null,
+                Subject = claims,
+                Expires = DateTime.UtcNow.AddDays(30),
+                SigningCredentials = creds,
+            };
+            var token = handler.CreateToken(tokenDescriptor);
+
 
             return Ok(new
             {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                Token = handler.WriteToken(token),
                 UserId = user.Id, // ID de l'utilisateur
                 Roles = roles // Liste des rôles
             });
@@ -59,4 +75,3 @@ namespace Ecomove.Api.Controllers
         }
     }
 }
-
