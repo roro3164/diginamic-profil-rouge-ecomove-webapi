@@ -1,4 +1,8 @@
 using System.Reflection;
+<<<<<<< HEAD
+=======
+using System.Text;
+>>>>>>> 0d08b85fd1ee544eb92dfd2c26e3a12a97a34e17
 using System.Text.Json.Serialization;
 using Ecomove.Api.Data;
 using Ecomove.Api.Data.Fixtures;
@@ -11,6 +15,7 @@ using Ecomove.Api.Services.Models;
 using Ecomove.Api.Services.Motorizations;
 using Ecomove.Api.Services.RentalVehicles;
 using Ecomove.Api.Services.UserService;
+<<<<<<< HEAD
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -21,6 +26,14 @@ using System.Text;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 
+=======
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+>>>>>>> 0d08b85fd1ee544eb92dfd2c26e3a12a97a34e17
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -117,6 +130,7 @@ builder.Services.AddCors(options =>
 });
 
 // Configuration de l'authentification par JWT
+<<<<<<< HEAD
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -148,6 +162,29 @@ builder.Services.AddAuthentication(x =>
                 x.IncludeErrorDetails = true;
             });
 
+=======
+builder
+    .Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+            ),
+        };
+    });
+>>>>>>> 0d08b85fd1ee544eb92dfd2c26e3a12a97a34e17
 
 var app = builder.Build();
 
@@ -161,7 +198,6 @@ using (var scope = app.Services.CreateScope())
 
     // Appliquer les migrations si n�cessaire
     context.Database.Migrate();
-
 
     UsersFixtures.SeedRole(context);
 
