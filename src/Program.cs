@@ -15,20 +15,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-<<<<<<< HEAD
-using System.Reflection;
-using System.Text.Json.Serialization;
-using Ecomove.Api.Services.Categories;
-using Ecomove.Api.Services.Brands;
-using Ecomove.Api.Services.RentalVehicles;
-using Ecomove.Api.Services.UserService;
-using Ecomove.Api.Services.Motorizations;
-using Ecomove.Api.Services.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
-=======
->>>>>>> d863b98213dad8d710fe35188dad224c7a408031
+using System.Collections.Generic;
+using Microsoft.Extensions.Options;
+
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -125,24 +117,36 @@ builder.Services.AddCors(options =>
 });
 
 // Configuration de l'authentification par JWT
-builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthentication(x =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    };
-});
+            .AddJwtBearer(x =>
+            {
+                //x.UseSecurityTokenValidators = true;
+
+                var jwtKey = builder.Configuration["Jwt:Key"];
+                //var issuer = builder.Configuration["Jwt:Issuer"];
+
+
+                x.RequireHttpsMetadata = false; // Si vous n'utilisez pas HTTPS en local
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidIssuer = null,
+                    ValidAudience = null,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)), // Utilisation de la même clé que pour la génération
+
+                };
+                x.IncludeErrorDetails = true;
+            });
 
 
 var app = builder.Build();
@@ -172,8 +176,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors();
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
