@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecomove.Api.Migrations
 {
     [DbContext(typeof(EcoMoveDbContext))]
-    [Migration("20241010095609_Init")]
-    partial class Init
+    [Migration("20241021124352_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -18,13 +18,10 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.Extensions.Options;
 
+var builder = WebApplication.CreateBuilder(args);
 
-WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
-
+// Configuration des services
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
@@ -44,17 +41,14 @@ builder.Services.AddScoped<IRentalVehicleService, RentalVehicleService>();
 builder.Services.AddScoped<IMotorizationService, MotorizationService>();
 builder.Services.AddScoped<IModelService, ModelService>();
 
+// Configurer OpenStreetMap
 builder.Services.AddScoped<OpenStreetMapHttpRequest>();
 
-// Services injection
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-
-builder
-    .Services.AddControllers()
+// JSON et Swagger
+builder.Services.AddControllers()
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecomove Web API", Version = "v1.0.0" });
@@ -92,24 +86,18 @@ builder.Services.AddSwaggerGen(option =>
     );
 });
 
+// Base de données et authentification
 builder.Services.AddDbContext<EcoMoveDbContext>();
 
-// Identity Framework
 builder.Services.AddAuthorization();
-
-builder
-    .Services.AddIdentityApiEndpoints<AppUser>(c =>
-    {
-        //c.Password
-    }) // config mdp ...
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<EcoMoveDbContext>();
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<EcoMoveDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        //builder.WithOrigins("*");
         builder.WithOrigins("https://localhost:4200", "http://localhost:4200");
         builder.AllowAnyHeader();
         builder.AllowAnyMethod();
@@ -117,57 +105,31 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddAuthentication(x =>
+builder.Services.AddAuthentication(options =>
 {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-            .AddJwtBearer(x =>
-            {
-                //x.UseSecurityTokenValidators = true;
+.AddJwtBearer(options =>
+{
+    var jwtKey = builder.Configuration["Jwt:Key"];
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+    };
+});
 
-                var jwtKey = builder.Configuration["Jwt:Key"];
-                //var issuer = builder.Configuration["Jwt:Issuer"];
-
-
-                x.RequireHttpsMetadata = false; // Si vous n'utilisez pas HTTPS en local
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidIssuer = null,
-                    ValidAudience = null,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)), // Utilisation de la même clé que pour la génération
-
-                };
-                x.IncludeErrorDetails = true;
-            });
-
+// Construction de l'application
 var app = builder.Build();
 
-app.MapIdentityApi<AppUser>();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<EcoMoveDbContext>();
-    var userManager = services.GetRequiredService<UserManager<AppUser>>();
-
-    // Appliquer les migrations si n�cessaire
-    //context.Database.Migrate();
-
-    UsersFixtures.SeedRole(context);
-
-    UsersFixtures.SeedAdminUser(userManager);
-    UsersFixtures.SeedUser(userManager);
-}
-
-// Configure the HTTP request pipeline.
+// Middleware et routage
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -178,5 +140,19 @@ app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
+// Seeding de données initiales
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<EcoMoveDbContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    UsersFixtures.SeedRole(context);
+    UsersFixtures.SeedAdminUser(userManager);
+    UsersFixtures.SeedUser(userManager);
+}
+
+// Exécute l'application
 app.Run();

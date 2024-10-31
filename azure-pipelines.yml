@@ -1,0 +1,53 @@
+# Déclenche le pipeline lorsque des changements sont poussés dans la branche 'feature/ci-cd-setup'
+trigger:
+  branches:
+    include:
+      - feature/ci-cd-setup
+
+# Spécifie l'image de machine virtuelle sur laquelle les étapes seront exécutées
+pool:
+  vmImage: 'ubuntu-latest'
+
+# Variables pour le build et les configurations de déploiement
+variables:
+  buildConfiguration: 'Release'
+  DB_URL: $(DB_URL)      # URL de la base de données, injectée depuis les variables Azure DevOps
+  DB_USER: $(DB_USER)    # Nom d'utilisateur de la base de données
+  DB_PASS: $(DB_PASS)    # Mot de passe de la base de données
+
+# Liste des étapes du pipeline
+steps:
+  # Étape 1 : Installer le SDK .NET
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '8.x' # Version de .NET SDK que vous utilisez
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  # Étape 2 : Restaurer les dépendances NuGet nécessaires pour le projet
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
+
+  # Étape 3 : Compiler l'application en mode Release
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '--configuration $(buildConfiguration)'
+
+  # Étape 4 : Exécuter les tests unitaires pour valider le code
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'test'
+      projects: '**/*Tests/*.csproj'
+      arguments: '--configuration $(buildConfiguration)'
+
+  # Étape 5 : Déployer l'application sur Azure Web App
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: '<Nom-de-votre-abonnement-Azure>' # Nom de votre abonnement Azure DevOps
+      appName: '<Nom-de-votre-application-Azure>'          # Nom de l'application sur Azure
+      package: $(System.DefaultWorkingDirectory)/path/to/your/package.zip # Chemin vers le package de l'application
+      deploymentMethod: 'runFromPackage'                   # Méthode de déploiement
