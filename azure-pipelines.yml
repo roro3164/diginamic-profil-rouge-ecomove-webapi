@@ -1,0 +1,73 @@
+# Pipeline CI/CD avec build, tests, et déploiement
+trigger:
+  branches:
+    include:
+      - main
+      - feature/ci-cd-setup  # Branche utilisée pour les tests CI/CD
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+# Variables pour le build et les configurations de déploiement
+variables:
+  buildConfiguration: 'Release'
+  DB_URL: $(DB_URL)      # URL de la base de données, injectée depuis les variables Azure DevOps
+  DB_USER: $(DB_USER)    # Nom d'utilisateur de la base de données
+  DB_PASS: $(DB_PASS)    # Mot de passe de la base de données
+
+steps:
+  # Installer .NET SDK
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '8.x'
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  # Restaurer les packages NuGet
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
+
+  # Compiler l'application
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '--configuration $(buildConfiguration)'
+
+  # Exécuter les tests unitaires
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'test'
+      projects: '**/*Tests/*.csproj'
+      arguments: '--configuration $(buildConfiguration)'
+
+  # Étape de déploiement (simplifiée pour un serveur AWS avec SSH)
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        echo "Déploiement en cours..."
+        ssh -o StrictHostKeyChecking=no -i $(YOUR_SSH_KEY_PATH) ubuntu@13.60.97.190 <<EOF
+          # Étapes de déploiement ici
+          # Par exemple, navigation vers le répertoire et démarrage de l'application
+          cd /path/to/deployment
+          ./start-server.sh
+EOF
+    displayName: 'Déploiement sur le serveur AWS'
+
+  # Vérification HTTP pour s'assurer que l'application est bien déployée et accessible
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        echo "Vérification de l'accessibilité HTTP..."
+        status_code=$(curl -o /dev/null -s -w "%{http_code}" http://13.60.97.190)
+        if [ "$status_code" -eq 200 ]; then
+          echo "Application accessible via HTTP."
+        else
+          echo "Erreur : l'application n'est pas accessible via HTTP."
+          exit 1
+        fi
+    displayName: 'Vérification de l’accessibilité HTTP'
