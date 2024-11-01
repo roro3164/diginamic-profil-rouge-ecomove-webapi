@@ -1,0 +1,20 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - dotnet build src/Ecomove.Api/Ecomove.Api.csproj
+
+test:
+  stage: test
+  script:
+    - dotnet test src/Ecomove.Api.Tests/Ecomove.Api.Tests.csproj
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to the server"
+    - ssh ubuntu@13.60.97.190 "cd /home/ubuntu/deployment && dotnet run --configuration Release"
